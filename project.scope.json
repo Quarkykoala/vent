@@ -1,0 +1,23 @@
+{
+  "project": "mental-health-funnel",
+  "market": "India",
+  "mvp": {
+    "age_min": 18,
+    "platform": "responsive_web",
+    "session_mode": "audio",
+    "pricing": "fixed_duration",
+    "ai_clinical_decisions": false,
+    "recording": false,
+    "transcription": false,
+    "community": false,
+    "video": false,
+    "minors": false
+  },
+  "stack": {
+    "web": "Next.js + TypeScript",
+    "database_auth": "Supabase/Postgres",
+    "audio": "LiveKit Cloud",
+    "payments": "Razorpay",
+    "jobs": "Trigger.dev"
+  }
+}
