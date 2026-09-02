@@ -1,0 +1,20 @@
+{
+  "name": "vent-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "scripts": {
+    "dev": "pnpm --filter @vent/web dev",
+    "build": "pnpm --recursive --filter \"@vent/*\" run build",
+    "test": "pnpm --recursive --filter \"@vent/*\" run test",
+    "test:coverage": "pnpm --recursive --filter \"@vent/*\" run test:coverage",
+    "lint": "pnpm --recursive --filter \"@vent/*\" run lint",
+    "typecheck": "pnpm --recursive --filter \"@vent/*\" run typecheck",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3",
+    "vitest": "^2.1.8"
+  }
+}
