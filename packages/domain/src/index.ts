@@ -3,6 +3,7 @@ export * from './types';
 export * from './errors';
 export * from './auth/roles';
 export * from './presence/presence-manager';
+export * from './safety/safety-manager';
 export * from './state-machines/support-request';
 export * from './state-machines/match-reservation';
 export * from './state-machines/session';
