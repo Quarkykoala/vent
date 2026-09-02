@@ -1,4 +1,5 @@
 export * from './env.schema';
+export * from './auth.schema';
 export * from './support-request.schema';
 export * from './match.schema';
 export * from './payment.schema';
