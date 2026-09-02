@@ -4,3 +4,4 @@ export * from './repositories/user.repository';
 export * from './repositories/listener.repository';
 export * from './repositories/payment.repository';
 export * from './repositories/matching.repository';
+export * from './repositories/session.repository';
