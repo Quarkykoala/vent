@@ -7,3 +7,4 @@ export * from './payment.schema';
 export * from './rating.schema';
 export * from './safety.schema';
 export * from './counselling.schema';
+export * from './analytics.schema';

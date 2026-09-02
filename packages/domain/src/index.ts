@@ -8,6 +8,7 @@ export * from './finance/refund-policy';
 export * from './finance/payout-engine';
 export * from './finance/reconciliation';
 export * from './counselling/counselling-funnel';
+export * from './analytics/event-tracker';
 export * from './state-machines/support-request';
 export * from './state-machines/match-reservation';
 export * from './state-machines/session';
