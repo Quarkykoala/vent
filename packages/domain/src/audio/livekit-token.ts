@@ -11,6 +11,7 @@ export interface RoomTokenConstraints {
 }
 
 export const MAX_ROOM_TOKEN_TTL_SECONDS = 900; // 15 minutes
+export const DEFAULT_ROOM_TOKEN_TTL_SECONDS = 600; // 10 minutes
 
 /**
  * Validates LiveKit room token configuration against privacy and security invariants.
@@ -67,4 +68,53 @@ export function generateParticipantAlias(
 ): string {
   const shortId = sessionAliasId.replace(/-/g, '').slice(0, 8);
   return `${role}_${shortId}`;
+}
+
+export interface LiveKitTokenClaims {
+  sub: string; // participant alias
+  video: {
+    room: string;
+    roomJoin: true;
+    canPublish: true;
+    canSubscribe: true;
+    canPublishData: false;
+    record: false; // STRICT NO-RECORDING INVARIANT
+  };
+  exp: number; // Unix timestamp seconds
+  iss: string; // api key
+}
+
+export function createRoomTokenClaims(params: {
+  apiKey: string;
+  roomName: string;
+  participantAlias: string;
+  ttlSeconds?: number;
+  nowUnixSeconds?: number;
+}): LiveKitTokenClaims {
+  const ttl = params.ttlSeconds || DEFAULT_ROOM_TOKEN_TTL_SECONDS;
+  const now = params.nowUnixSeconds || Math.floor(Date.now() / 1000);
+
+  validateRoomTokenConstraints({
+    roomName: params.roomName,
+    participantAlias: params.participantAlias,
+    ttlSeconds: ttl,
+    canPublish: true,
+    canSubscribe: true,
+    canPublishData: false,
+    recorder: false,
+  });
+
+  return {
+    sub: params.participantAlias,
+    iss: params.apiKey,
+    exp: now + ttl,
+    video: {
+      room: params.roomName,
+      roomJoin: true,
+      canPublish: true,
+      canSubscribe: true,
+      canPublishData: false,
+      record: false,
+    },
+  };
 }
