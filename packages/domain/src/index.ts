@@ -11,6 +11,7 @@ export * from './state-machines/safety-case';
 export * from './state-machines/listener-presence';
 export * from './matching/bayesian';
 export * from './matching/scoring';
+export * from './matching/matcher';
 export * from './ledger/ledger';
 export * from './audio/livekit-token';
 export * from './pricing/pricing';
