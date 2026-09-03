@@ -61,6 +61,20 @@ export class ListenerRepository {
     return (data as unknown as ListenerProfileRow) ?? null;
   }
 
+  async findByUserId(userId: string): Promise<ListenerProfileRow | null> {
+    const { data, error } = await this.client
+      .from('listener_profiles')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (error) {
+      throw new Error(`Failed to get listener profile by user ID: ${error.message}`);
+    }
+
+    return (data as unknown as ListenerProfileRow) ?? null;
+  }
+
   async updateHeartbeat(listenerId: string): Promise<void> {
     const rawClient = this.client as any;
     const { error } = await rawClient
