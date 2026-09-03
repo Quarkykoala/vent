@@ -20,23 +20,40 @@ export interface LiveKitTokenResult {
 }
 
 export class LiveKitService {
-  constructor(
-    private apiKey: string = process.env.LIVEKIT_API_KEY || 'lk_test_key',
-    private apiSecret: string = process.env.LIVEKIT_API_SECRET || 'lk_test_secret_key_12345',
-    private livekitUrl: string = process.env.LIVEKIT_URL || 'wss://test.livekit.cloud'
-  ) {}
+  private apiKey: string;
+  private apiSecret: string;
+  private livekitUrl: string;
+
+  constructor(apiKey?: string, apiSecret?: string, livekitUrl?: string) {
+    this.apiKey = apiKey || process.env.LIVEKIT_API_KEY || '';
+    this.apiSecret = apiSecret || process.env.LIVEKIT_API_SECRET || '';
+    this.livekitUrl = livekitUrl || process.env.LIVEKIT_URL || '';
+  }
+
+  isConfigured(): boolean {
+    return (
+      Boolean(this.apiKey) &&
+      Boolean(this.apiSecret) &&
+      Boolean(this.livekitUrl)
+    );
+  }
 
   /**
    * Generates a signed, short-lived LiveKit room token.
    * INVARIANT: Never enables recording, egress, or transcription.
+   * STRICT FAIL-CLOSED: Rejects generation if credentials are unconfigured.
    */
   generateRoomToken(params: GenerateTokenParams): LiveKitTokenResult {
+    if (!this.isConfigured()) {
+      throw new Error('LiveKit credentials unconfigured (fail-closed invariant).');
+    }
+
     const alias = generateParticipantAlias(params.role, params.sessionAliasId);
     const claims = createRoomTokenClaims({
       apiKey: this.apiKey,
       roomName: params.roomName,
       participantAlias: alias,
-      ttlSeconds: params.ttlSeconds,
+      ttlSeconds: params.ttlSeconds || 600, // 10 minutes default
     });
 
     const token = this.signClaims(claims);
@@ -53,6 +70,10 @@ export class LiveKitService {
    * Verifies and decodes a LiveKit JWT token.
    */
   verifyToken(token: string): LiveKitTokenClaims {
+    if (!this.apiSecret) {
+      throw new Error('Cannot verify token: LiveKit API secret unconfigured.');
+    }
+
     const parts = token.split('.');
     if (parts.length !== 3) {
       throw new Error('Invalid JWT format');
@@ -78,7 +99,7 @@ export class LiveKitService {
       throw new Error('Token expired');
     }
 
-    // Check recording flag invariant
+    // STRICT INVARIANT: Check recording flag
     if (claims.video.record) {
       throw new Error('Prohibited recording token detected');
     }
