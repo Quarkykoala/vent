@@ -1,16 +1,11 @@
 import crypto from 'node:crypto';
-import {
-  createPaymentCaptureJournal,
-  assertLedgerBalanced,
-  PaymentState,
-  type PaymentStateType,
-  type UnpersistedLedgerEntry,
-} from '@vent/domain';
+import { PaymentRepository } from '@vent/db';
+import { getSupabaseAdmin } from '@/lib/supabase-server';
 
 export interface ProcessWebhookInput {
   rawBody: string;
   signature: string;
-  webhookSecret: string;
+  webhookSecret?: string;
 }
 
 export interface WebhookPaymentEntity {
@@ -23,7 +18,7 @@ export interface WebhookPaymentEntity {
 
 export interface WebhookPayload {
   event: string;
-  account_id: string;
+  account_id?: string;
   payload: {
     payment: {
       entity: WebhookPaymentEntity;
@@ -36,56 +31,74 @@ export interface WebhookProcessingResult {
   status: number;
   message: string;
   paymentId?: string;
-  journalEntries?: UnpersistedLedgerEntry[];
   idempotentReplay?: boolean;
 }
 
 export class PaymentWebhookProcessor {
-  // In-memory idempotency store for unit/integration testing
-  private processedEvents = new Map<string, WebhookProcessingResult>();
-
+  /**
+   * Timing-safe cryptographic HMAC-SHA256 verification of Razorpay webhook signature.
+   * STRICT INVARIANT: Fails closed. Never uses hardcoded fallback secrets in production.
+   */
   verifySignature(rawBody: string, signature: string, secret: string): boolean {
+    if (!secret || secret.trim() === '') {
+      throw new Error('Razorpay webhook secret is unconfigured (fail-closed security invariant).');
+    }
+
+    if (!signature || signature.trim() === '') {
+      return false;
+    }
+
     const expected = crypto
       .createHmac('sha256', secret)
       .update(rawBody)
       .digest('hex');
 
-    return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature));
+    try {
+      return crypto.timingSafeEqual(Buffer.from(expected, 'hex'), Buffer.from(signature, 'hex'));
+    } catch {
+      return false;
+    }
   }
 
-  async processWebhook(
-    input: ProcessWebhookInput,
-    mockExistingPaymentState: PaymentStateType = PaymentState.CREATED
-  ): Promise<WebhookProcessingResult> {
-    const { rawBody, signature, webhookSecret } = input;
+  async processWebhook(input: ProcessWebhookInput): Promise<WebhookProcessingResult> {
+    const { rawBody, signature } = input;
+    const webhookSecret = input.webhookSecret || process.env.RAZORPAY_WEBHOOK_SECRET;
 
-    // 1. Signature check with timing-safe comparison
-    try {
-      if (!this.verifySignature(rawBody, signature, webhookSecret)) {
-        return {
-          success: false,
-          status: 401,
-          message: 'Invalid webhook signature',
-        };
-      }
-    } catch {
+    if (!webhookSecret || webhookSecret.trim() === '') {
       return {
         success: false,
-        status: 401,
-        message: 'Webhook signature validation failed',
+        status: 503,
+        message: 'Payment processor webhook secret unconfigured',
       };
     }
 
-    const payload: WebhookPayload = JSON.parse(rawBody);
-    const payment = payload.payload.payment.entity;
-    const eventKey = `${payload.event}_${payment.id}`;
-
-    // 2. Idempotency Check: Replay protection
-    const existing = this.processedEvents.get(eventKey);
-    if (existing) {
+    // 1. Validate signature
+    if (!this.verifySignature(rawBody, signature, webhookSecret)) {
       return {
-        ...existing,
-        idempotentReplay: true,
+        success: false,
+        status: 400,
+        message: 'Invalid webhook signature',
+      };
+    }
+
+    // 2. Parse payload safely
+    let payload: WebhookPayload;
+    try {
+      payload = JSON.parse(rawBody);
+    } catch {
+      return {
+        success: false,
+        status: 400,
+        message: 'Invalid JSON payload',
+      };
+    }
+
+    const payment = payload?.payload?.payment?.entity;
+    if (!payment || !payment.order_id || !payment.id) {
+      return {
+        success: false,
+        status: 400,
+        message: 'Malformed payment entity in webhook payload',
       };
     }
 
@@ -100,27 +113,51 @@ export class PaymentWebhookProcessor {
         };
       }
 
-      const eventId = crypto.randomUUID();
-      const journal = createPaymentCaptureJournal({
-        eventId,
-        paymentId: payment.id,
-        amountPaise,
-      });
+      if (payment.currency !== 'INR') {
+        return {
+          success: false,
+          status: 400,
+          message: `Unsupported currency: ${payment.currency}. Only INR is supported.`,
+        };
+      }
 
-      // Assert balance invariant
-      assertLedgerBalanced(journal);
-
-      const result: WebhookProcessingResult = {
+      const idempotencyKey = `razorpay_webhook_${payload.event}_${payment.id}`;
+      const idempotencyResponse = {
         success: true,
-        status: 200,
-        message: 'Payment captured and balanced ledger entries posted',
-        paymentId: payment.id,
-        journalEntries: journal,
+        orderId: payment.order_id,
+        providerPaymentId: payment.id,
+        captured: true,
       };
 
-      // Store in idempotency registry
-      this.processedEvents.set(eventKey, result);
-      return result;
+      const adminClient = getSupabaseAdmin();
+      const paymentRepo = new PaymentRepository(adminClient);
+
+      try {
+        const result = await paymentRepo.capturePaymentWebhook({
+          providerOrderId: payment.order_id,
+          providerPaymentId: payment.id,
+          amountPaise,
+          currency: payment.currency,
+          idempotencyKey,
+          idempotencyResponse,
+        });
+
+        return {
+          success: true,
+          status: 200,
+          message: result.idempotentReplay
+            ? 'Webhook event already processed (idempotent replay)'
+            : 'Payment captured and balanced double-entry ledger entries posted',
+          paymentId: result.paymentId,
+          idempotentReplay: result.idempotentReplay,
+        };
+      } catch (err: any) {
+        return {
+          success: false,
+          status: 400,
+          message: err.message || 'Payment capture failed',
+        };
+      }
     }
 
     return {
