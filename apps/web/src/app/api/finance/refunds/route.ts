@@ -1,25 +1,55 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { calculateRefundProposal, UserRole } from '@vent/domain';
-import { authenticateRequest, handleAuthError } from '@/features/auth/auth-guard';
+import { calculateRefundProposal, type RefundFailureReason } from '@vent/domain';
+import { authenticateRequest, requirePermission, handleAuthError } from '@/features/auth/auth-guard';
 import {
   createProviderRefund,
   type ProviderRefundResult,
 } from '@/features/payments/razorpay-refunds';
 import { getSupabaseAdmin } from '@/lib/supabase-server';
 
+function deriveRefundFacts(
+  requestState: string,
+  session: { state: string; duration_seconds: number | null; end_reason: string | null } | null
+): { durationSeconds: number; failureReason: RefundFailureReason } | null {
+  if (!session) {
+    if (['technical_failed', 'expired', 'cancelled'].includes(requestState)) {
+      return { durationSeconds: 0, failureReason: 'no_connection' };
+    }
+    return null;
+  }
+
+  const durationSeconds = Math.max(0, session.duration_seconds ?? 0);
+  if (session.state === 'safety_ended' || session.end_reason === 'safety_escalation') {
+    return { durationSeconds, failureReason: 'safety_ended' };
+  }
+  if (session.end_reason === 'technical_failure' || session.end_reason === 'listener_left') {
+    return { durationSeconds, failureReason: 'technical_interruption' };
+  }
+  if (session.end_reason === 'user_left' || session.end_reason === 'normal_completion') {
+    return { durationSeconds, failureReason: 'user_ended_voluntary' };
+  }
+  if (session.state === 'failed') {
+    return { durationSeconds, failureReason: durationSeconds === 0 ? 'no_connection' : 'technical_interruption' };
+  }
+  return null;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const session = await authenticateRequest(req);
     const json = await req.json().catch(() => ({}));
-    const { paymentId, sessionId, failureReason, durationSeconds = 0 } = json;
+    const paymentId = typeof json.paymentId === 'string' ? json.paymentId : '';
+    const requestedReason = typeof json.requestedReason === 'string'
+      ? json.requestedReason.slice(0, 250)
+      : typeof json.failureReason === 'string'
+        ? json.failureReason.slice(0, 250)
+        : null;
 
-    if (!paymentId || !failureReason) {
-      return NextResponse.json({ error: 'paymentId and failureReason required' }, { status: 400 });
+    if (!paymentId) {
+      return NextResponse.json({ error: 'paymentId required' }, { status: 400 });
     }
 
     const adminClient = getSupabaseAdmin();
-
-    // 1. Look up payment in PostgreSQL
     const { data: paymentRow, error: payErr } = await adminClient
       .from('payments')
       .select('*')
@@ -30,44 +60,88 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
     }
 
-    // 2. Authorize caller: must be payment owner or finance/super_admin
     const isOwner = (paymentRow as any).user_id === session.userId;
-    const isStaff = [UserRole.FINANCE, UserRole.SUPER_ADMIN].includes(session.role as any);
-
-    if (!isOwner && !isStaff) {
-      return NextResponse.json({ error: 'Forbidden: Unauthorized to refund this payment' }, { status: 403 });
+    if (!isOwner) {
+      // Staff access comes from the canonical permission matrix and therefore
+      // also enforces current-session AAL2.
+      requirePermission(session, 'canInitiateRefunds');
     }
 
-    // 3. State check
     if ((paymentRow as any).state === 'refunded') {
       return NextResponse.json({ error: 'Payment has already been refunded' }, { status: 409 });
     }
-
     if ((paymentRow as any).state !== 'captured') {
       return NextResponse.json({ error: `Cannot refund payment in state '${(paymentRow as any).state}'` }, { status: 400 });
     }
 
-    // 4. Calculate eligible refund amount based on domain rules
+    // Authoritative binding: payment -> support request -> session. No caller
+    // supplied duration/end reason participates in the policy decision.
+    const { data: supportRequest, error: supportErr } = await adminClient
+      .from('support_requests')
+      .select('id, state')
+      .eq('payment_order_id', paymentId)
+      .maybeSingle();
+    if (supportErr || !supportRequest) {
+      return NextResponse.json(
+        { error: 'Refund cannot be evaluated because the payment is not bound to a support request.', code: 'REFUND_EVIDENCE_MISSING' },
+        { status: 409 }
+      );
+    }
+
+    const { data: sessionRow, error: sessionErr } = await adminClient
+      .from('sessions')
+      .select('id, state, duration_seconds, end_reason')
+      .eq('request_id', (supportRequest as any).id)
+      .maybeSingle();
+    if (sessionErr) {
+      return NextResponse.json({ error: sessionErr.message }, { status: 500 });
+    }
+
+    const canonicalFacts = deriveRefundFacts(
+      (supportRequest as any).state,
+      sessionRow as any
+    );
+    if (!canonicalFacts) {
+      return NextResponse.json(
+        {
+          error: 'There is not enough server-owned evidence to automatically determine refund eligibility.',
+          code: 'REFUND_EVIDENCE_INCOMPLETE',
+        },
+        { status: 409 }
+      );
+    }
+
     const proposal = calculateRefundProposal({
-      durationSeconds,
-      failureReason,
+      durationSeconds: canonicalFacts.durationSeconds,
+      failureReason: canonicalFacts.failureReason,
       paymentAmountPaise: BigInt((paymentRow as any).amount_paise),
     });
 
     if (proposal.eligibleRefundPaise <= 0n) {
       return NextResponse.json({
-        error: 'Session not eligible for refund according to policy',
+        error: 'Session not eligible for automatic refund according to policy',
         rationale: proposal.rationale,
+        canonicalFailureReason: canonicalFacts.failureReason,
       }, { status: 400 });
     }
 
-    // 5. Record the refund request. No money has moved and no ledger entry is
-    //    posted until the provider (or a finance owner) confirms settlement.
+    // Safety/conduct outcomes require a human with refund permission + AAL2.
+    if (proposal.requiresSupervisorReview && isOwner) {
+      return NextResponse.json(
+        {
+          error: 'This refund requires human review before money can move.',
+          code: 'SUPERVISOR_REVIEW_REQUIRED',
+          rationale: proposal.rationale,
+        },
+        { status: 409 }
+      );
+    }
+
     const rawClient = adminClient as any;
     const { data: refundResult, error: refundErr } = await rawClient.rpc('atomic_request_refund', {
       p_payment_id: paymentId,
       p_refund_amount_paise: Number(proposal.eligibleRefundPaise),
-      p_reason: failureReason,
+      p_reason: canonicalFacts.failureReason,
       p_actor_id: session.userId,
       p_actor_role: session.role,
     });
@@ -75,14 +149,12 @@ export async function POST(req: NextRequest) {
     if (refundErr) {
       return NextResponse.json({ error: refundErr.message }, { status: 500 });
     }
-
-    if (!refundResult || !refundResult.success) {
+    if (!refundResult?.success) {
       const code = refundResult?.code;
       const status = code === 'ALREADY_REFUNDED' || code === 'REFUND_IN_FLIGHT' ? 409 : 400;
       return NextResponse.json({ error: refundResult?.error || 'Refund failed', code }, { status });
     }
 
-    // 6. Attempt the provider refund and record what actually happened.
     const providerPaymentId = (paymentRow as any).provider_payment_id;
     let provider: ProviderRefundResult = {
       outcome: 'not_configured',
@@ -94,7 +166,7 @@ export async function POST(req: NextRequest) {
       provider = await createProviderRefund({
         providerPaymentId,
         amountPaise: Number(proposal.eligibleRefundPaise),
-        reason: failureReason,
+        reason: canonicalFacts.failureReason,
       });
     }
 
@@ -130,13 +202,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         paymentId,
-        sessionId,
+        sessionId: (sessionRow as any)?.id ?? null,
         refundId: refundResult.refund_id,
         refundAmountPaise: Number(proposal.eligibleRefundPaise),
         refundPercentage: proposal.refundPercentage,
         rationale: proposal.rationale,
-        // Truthful reporting: `state` describes the provider outcome, and money
-        // is only described as returned when the provider settled it.
+        canonicalFailureReason: canonicalFacts.failureReason,
+        canonicalDurationSeconds: canonicalFacts.durationSeconds,
+        requestedReason,
         state: providerState,
         paymentState,
         providerOutcome: provider.outcome,
