@@ -1,6 +1,5 @@
 import type { TypedSupabaseClient } from '../client';
 import type { Database } from '../types';
-import { SafetyCaseState } from '@vent/domain';
 
 export type SafetyCaseRow = Database['public']['Tables']['safety_cases']['Row'];
 
@@ -49,33 +48,25 @@ export class SafetyRepository {
     caseId: string,
     supervisorId: string,
     actorRole = 'clinical_supervisor'
-  ): Promise<void> {
+  ): Promise<{ acknowledgedAt: string; idempotentReplay: boolean }> {
     const rawClient = this.client as any;
-    const now = new Date().toISOString();
+    const { data, error } = await rawClient.rpc('atomic_acknowledge_safety_case', {
+      p_case_id: caseId,
+      p_supervisor_id: supervisorId,
+      p_actor_role: actorRole,
+    });
 
-    const { error: updErr } = await rawClient
-      .from('safety_cases')
-      .update({
-        state: SafetyCaseState.ACKNOWLEDGED,
-        supervisor_id: supervisorId,
-        acknowledged_at: now,
-      })
-      .eq('id', caseId);
-
-    if (updErr) {
-      throw new Error(`Failed to acknowledge safety case: ${updErr.message}`);
+    if (error) {
+      throw new Error(`Failed to acknowledge safety case: ${error.message}`);
+    }
+    if (!data?.success) {
+      throw new Error(`${data?.code ?? 'ACKNOWLEDGE_FAILED'}: ${data?.error ?? 'Failed to acknowledge safety case'}`);
     }
 
-    // The audit row records the caller's real role, not an assumed one.
-    await rawClient.from('audit_events').insert({
-      actor_id: supervisorId,
-      actor_role: actorRole,
-      action: 'safety_case_acknowledged',
-      entity_type: 'safety_case',
-      entity_id: caseId,
-      metadata: { supervisorId },
-      created_at: now,
-    });
+    return {
+      acknowledgedAt: data.acknowledged_at,
+      idempotentReplay: Boolean(data.idempotent_replay),
+    };
   }
 
   async resolveCase(params: {
@@ -83,32 +74,25 @@ export class SafetyRepository {
     supervisorId: string;
     resolutionCode: string;
     actorRole?: string;
-  }): Promise<void> {
+  }): Promise<{ resolvedAt: string; idempotentReplay: boolean }> {
     const rawClient = this.client as any;
-    const now = new Date().toISOString();
+    const { data, error } = await rawClient.rpc('atomic_resolve_safety_case', {
+      p_case_id: params.caseId,
+      p_supervisor_id: params.supervisorId,
+      p_resolution_code: params.resolutionCode,
+      p_actor_role: params.actorRole ?? 'clinical_supervisor',
+    });
 
-    const { error: updErr } = await rawClient
-      .from('safety_cases')
-      .update({
-        state: SafetyCaseState.RESOLVED,
-        supervisor_id: params.supervisorId,
-        resolved_at: now,
-        resolution_code: params.resolutionCode,
-      })
-      .eq('id', params.caseId);
-
-    if (updErr) {
-      throw new Error(`Failed to resolve safety case: ${updErr.message}`);
+    if (error) {
+      throw new Error(`Failed to resolve safety case: ${error.message}`);
+    }
+    if (!data?.success) {
+      throw new Error(`${data?.code ?? 'RESOLVE_FAILED'}: ${data?.error ?? 'Failed to resolve safety case'}`);
     }
 
-    await rawClient.from('audit_events').insert({
-      actor_id: params.supervisorId,
-      actor_role: params.actorRole ?? 'clinical_supervisor',
-      action: 'safety_case_resolved',
-      entity_type: 'safety_case',
-      entity_id: params.caseId,
-      metadata: { resolutionCode: params.resolutionCode },
-      created_at: now,
-    });
+    return {
+      resolvedAt: data.resolved_at,
+      idempotentReplay: Boolean(data.idempotent_replay),
+    };
   }
 }
