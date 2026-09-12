@@ -90,12 +90,20 @@ export async function POST(req: NextRequest) {
       });
 
       if (error) {
+        // Do NOT advance to the post-scrub retry path. The DB transaction failed,
+        // so the next attempt must retry the scrub before Auth can be deleted.
         await rawClient.from('privacy_erasure_jobs').update({
-          status: 'partial_failure',
+          status: 'requested',
           last_error: error.message,
           updated_at: new Date().toISOString(),
         }).eq('user_id', userId);
-        return NextResponse.json({ error: error.message, status: 'erasure_partial_failure', authPurged: false }, { status: 500 });
+        return NextResponse.json({
+          error: error.message,
+          status: 'erasure_db_retry_required',
+          dbScrubbed: false,
+          authPurged: false,
+          retryable: true,
+        }, { status: 500 });
       }
 
       if (!result?.success && result?.code !== 'ALREADY_ERASED') {
@@ -109,6 +117,15 @@ export async function POST(req: NextRequest) {
         updated_at: new Date().toISOString(),
       }).eq('user_id', userId);
       job.status = 'auth_purge_pending';
+    }
+
+    // partial_failure is intentionally reserved for "DB scrub completed, Auth
+    // purge failed". Retrying that state is therefore safe: only Auth is retried.
+    if (!['auth_purge_pending', 'partial_failure'].includes(job.status)) {
+      return NextResponse.json(
+        { error: `Erasure job is not ready for Auth purge (state: ${job.status})`, code: 'INVALID_ERASURE_STATE' },
+        { status: 409 }
+      );
     }
 
     const authUserId = job.original_auth_user_id as string;
