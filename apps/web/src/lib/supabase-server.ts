@@ -4,27 +4,32 @@ import {
   type TypedSupabaseClient,
 } from '@vent/db';
 
+function requiredSecret(names: string[]): string {
+  for (const name of names) {
+    const value = process.env[name];
+    if (value?.trim()) return value.trim();
+  }
+  throw new Error(`Missing required server configuration: ${names.join(' or ')}`);
+}
+
 export function getSupabaseServerUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    process.env.SUPABASE_URL ||
-    'http://127.0.0.1:54321'
-  );
+  const configured = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+  if (configured?.trim()) return configured.trim();
+
+  // The URL is not a credential. Keep the standard local Supabase address for
+  // developer ergonomics, but privileged/anon keys below always come from env.
+  if (process.env.NODE_ENV !== 'production') {
+    return 'http://127.0.0.1:54321';
+  }
+  throw new Error('Missing required server configuration: NEXT_PUBLIC_SUPABASE_URL or SUPABASE_URL');
 }
 
 export function getSupabaseAnonKey(): string {
-  return (
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-    process.env.SUPABASE_ANON_KEY ||
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0'
-  );
+  return requiredSecret(['NEXT_PUBLIC_SUPABASE_ANON_KEY', 'SUPABASE_ANON_KEY']);
 }
 
 export function getSupabaseServiceRoleKey(): string {
-  return (
-    process.env.SUPABASE_SERVICE_ROLE_KEY ||
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
-  );
+  return requiredSecret(['SUPABASE_SERVICE_ROLE_KEY']);
 }
 
 /**
