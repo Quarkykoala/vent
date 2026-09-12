@@ -1,17 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateReconciliationReport, UserRole } from '@vent/domain';
-import { authenticateRequest, requireRole, handleAuthError } from '@/features/auth/auth-guard';
+import { generateReconciliationReport } from '@vent/domain';
+import { authenticateRequest, requirePermission, handleAuthError } from '@/features/auth/auth-guard';
 import { fetchProviderTransactions } from '@/features/payments/razorpay-reconciliation';
 import { getSupabaseAdmin } from '@/lib/supabase-server';
 
 export async function GET(req: NextRequest) {
   try {
     const session = await authenticateRequest(req);
-    requireRole(session, [UserRole.FINANCE, UserRole.SUPER_ADMIN]);
+    requirePermission(session, 'canApprovePayouts');
 
     const adminClient = getSupabaseAdmin();
-
-    // Query real ledger entries from PostgreSQL
     const { data: entries, error } = await adminClient
       .from('ledger_entries')
       .select('account_code, direction, amount_paise');
@@ -40,15 +38,12 @@ export async function GET(req: NextRequest) {
         accountBalances[code].credits = (BigInt(accountBalances[code].credits) + amount).toString();
       }
 
-      const net = BigInt(accountBalances[code].debits) - BigInt(accountBalances[code].credits);
-      accountBalances[code].net = net.toString();
+      accountBalances[code].net = (
+        BigInt(accountBalances[code].debits) - BigInt(accountBalances[code].credits)
+      ).toString();
     }
 
     const isBalanced = totalDebits === totalCredits;
-
-    // Provider reconciliation: only meaningful with a reachable provider. The
-    // local trial balance is always computed; the provider diff reports
-    // `available: false` with its reason rather than implying an all-clear.
     const windowStartIso = new Date(Date.now() - 30 * 86400000).toISOString();
     const windowEndIso = new Date().toISOString();
 
