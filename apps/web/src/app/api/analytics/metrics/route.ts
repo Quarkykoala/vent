@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { UserRole } from '@vent/domain';
-import { authenticateRequest, requireRole, handleAuthError } from '@/features/auth/auth-guard';
+import { authenticateRequest, requireRole, requirePermission, handleAuthError } from '@/features/auth/auth-guard';
 import { getSupabaseAdmin } from '@/lib/supabase-server';
 
 const K_ANONYMITY_THRESHOLD = 5;
@@ -15,10 +15,12 @@ export async function GET(req: NextRequest) {
       UserRole.CLINICAL_SUPERVISOR,
       UserRole.PRIVACY_ADMIN,
     ]);
+    // Preserve the existing role scope, but enforce the canonical staff MFA
+    // requirement as well. A staff role on an AAL1 token is not sufficient.
+    requirePermission(session, 'canAccessAdminConsole');
 
     const adminClient = getSupabaseAdmin();
 
-    // 1. Query sessions aggregation from PostgreSQL
     const { count: completedSessionsCount } = await adminClient
       .from('sessions')
       .select('*', { count: 'exact', head: true })
@@ -38,7 +40,6 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // 2. Query ratings aggregation from PostgreSQL
     const { count: ratingsCount } = await adminClient
       .from('ratings')
       .select('*', { count: 'exact', head: true });
@@ -53,12 +54,10 @@ export async function GET(req: NextRequest) {
       avgRating = Number((sum / ratingRows.length).toFixed(2));
     }
 
-    // 3. Query safety cases count from PostgreSQL
     const { count: safetyCasesCount } = await adminClient
       .from('safety_cases')
       .select('*', { count: 'exact', head: true });
 
-    // 4. K-Anonymity Enforcement: Suppress detailed breakdown if count < K
     const totalSessions = completedSessionsCount || 0;
     const isSuppressedDueToKAnonymity = totalSessions < K_ANONYMITY_THRESHOLD;
 
@@ -73,7 +72,7 @@ export async function GET(req: NextRequest) {
       kAnonymity: {
         threshold: K_ANONYMITY_THRESHOLD,
         suppressed: isSuppressedDueToKAnonymity,
-        notice: 'DPDP 2025 compliant aggregated metrics with k-anonymity suppression.',
+        notice: 'Aggregated metrics with k-anonymity suppression.',
       },
       timestamp: new Date().toISOString(),
     }, { status: 200 });
