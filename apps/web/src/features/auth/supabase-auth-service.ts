@@ -7,6 +7,24 @@ import { UserRole, type UserRoleType } from '@vent/domain';
 import { getSupabaseAdmin, getSupabaseServerClient } from '@/lib/supabase-server';
 import type { AuthSession, IAuthService } from './types';
 
+/**
+ * Reads the authenticator assurance level from an access token that has already
+ * been cryptographically validated by Supabase Auth. Factor enrollment is NOT
+ * sufficient evidence that this particular session completed MFA.
+ */
+function hasCurrentAal2(token: string): boolean {
+  try {
+    const payloadSegment = token.split('.')[1];
+    if (!payloadSegment) return false;
+    const payload = JSON.parse(Buffer.from(payloadSegment, 'base64url').toString('utf8')) as {
+      aal?: string;
+    };
+    return payload.aal === 'aal2';
+  } catch {
+    return false;
+  }
+}
+
 export class SupabaseAuthService implements IAuthService {
   /**
    * Dispatches an authentic SMS OTP via Supabase Auth.
@@ -65,7 +83,6 @@ export class SupabaseAuthService implements IAuthService {
     const adminClient = getSupabaseAdmin();
     const userRepo = new UserRepository(adminClient);
 
-    // Find or create corresponding public.users record
     let userRecord = await userRepo.findByAuthUserId(data.user.id);
     if (!userRecord) {
       userRecord = await userRepo.createUser({
@@ -80,18 +97,14 @@ export class SupabaseAuthService implements IAuthService {
     }
 
     if (!userRecord.age_verified_at) {
-      // Existing profile whose age evidence is null: repair it from this genuine
-      // age-gated OTP verification. Never fabricated — ageConfirmed was required above.
       userRecord = await userRepo.recordAgeVerification(
         userRecord.id,
         new Date().toISOString()
       );
     }
 
-    // Role derivation: staff roles must be provisioned via app_metadata by admin, NEVER client-selectable
     let role: UserRoleType = (data.user.app_metadata?.role as UserRoleType) || UserRole.USER;
 
-    // Check if user is an active listener in listener_profiles
     const listenerRepo = new ListenerRepository(adminClient);
     const listenerProfile = await listenerRepo.findByUserId(userRecord.id);
     if (listenerProfile && (listenerProfile.status === 'active' || listenerProfile.status === 'training')) {
@@ -100,11 +113,7 @@ export class SupabaseAuthService implements IAuthService {
       }
     }
 
-    // MFA status: Authenticator Assurance Level 2 (AAL2) or verified factors
-    const mfaVerified =
-      (data.session as any).aal === 'aal2' ||
-      Boolean(data.user.factors?.some((f: any) => f.status === 'verified')) ||
-      false;
+    const mfaVerified = hasCurrentAal2(data.session.access_token);
 
     const session: AuthSession = {
       userId: userRecord.id,
@@ -138,9 +147,6 @@ export class SupabaseAuthService implements IAuthService {
     let userRecord = await userRepo.findByAuthUserId(data.user.id);
 
     if (!userRecord) {
-      // F08 invariant: token-based provisioning must NOT fabricate an 18+
-      // confirmation timestamp. Durable age evidence is only recorded by the
-      // OTP flow after an explicit ageConfirmed interaction.
       userRecord = await userRepo.createUser({
         authUserId: data.user.id,
         handle: generatePseudonym(),
@@ -160,9 +166,10 @@ export class SupabaseAuthService implements IAuthService {
       }
     }
 
-    const mfaVerified =
-      Boolean(data.user.factors?.some((f: any) => f.status === 'verified')) ||
-      false;
+    // `getUser(token)` above validated the token. We only trust the assurance
+    // level carried by this current token; merely having a verified factor on
+    // the account does not make an AAL1 session privileged.
+    const mfaVerified = hasCurrentAal2(token);
 
     return {
       userId: userRecord.id,
