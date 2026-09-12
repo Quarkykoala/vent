@@ -5,8 +5,9 @@ import { POST as erasureHandler } from '../src/app/api/privacy/erasure/route';
 import { GET as metricsHandler } from '../src/app/api/analytics/metrics/route';
 import { UserRole, LedgerAccountCode } from '@vent/domain';
 import { getSupabaseAdmin, getSupabaseServerClient } from '../src/lib/supabase-server';
+import { elevateTestSessionToAal2 } from './helpers/mfa';
 
-describe('Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Analytics', () => {
+describe('Package 10 — Erasure, Auth Purging & K-Anonymity Analytics', () => {
   const admin = getSupabaseAdmin();
 
   let targetUserId: string;
@@ -22,15 +23,14 @@ describe('Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Anal
   let regularUserJwt: string;
 
   let adminStaffUserId: string;
-  let adminStaffJwt: string;
+  let adminStaffAal1Jwt: string;
+  let adminStaffAal2Jwt: string;
 
   let listenerUserId: string;
   let listenerAuthId: string;
   let listenerProfileId: string;
 
   beforeAll(async () => {
-    // 0. Own listener fixture for session creation — never borrow shared rows,
-    //    which parallel suites may legitimately delete mid-run.
     const listenerPhone = `91${Math.floor(1000000000 + Math.random() * 9000000000)}`;
     const { data: authL } = await admin.auth.admin.createUser({
       phone: listenerPhone,
@@ -59,7 +59,6 @@ describe('Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Anal
     if (lpErr || !lp) throw new Error(`listener fixture: ${lpErr?.message}`);
     listenerProfileId = (lp as any).id;
 
-    // 1. Create User to be Erased
     targetPhone = `91${Math.floor(1000000000 + Math.random() * 9000000000)}`;
     const { data: authU } = await admin.auth.admin.createUser({
       phone: targetPhone,
@@ -81,7 +80,6 @@ describe('Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Anal
     const { data: sU } = await clientU.auth.signInWithPassword({ phone: targetPhone, password: 'Password123!' });
     targetUserJwt = sU.session!.access_token;
 
-    // Attach support request and financial transaction to target user
     const { data: pay } = await admin.from('payments').insert({
       user_id: targetUserId,
       provider: 'razorpay',
@@ -103,8 +101,6 @@ describe('Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Anal
       idempotency_key: `req_erase_${Date.now()}`,
     } as any);
 
-    // One balanced double-entry event: both rows must share an event_id, or the
-    // ledger contains two one-sided events and the trial balance is wrong.
     const captureEventId = crypto.randomUUID();
     await admin.from('ledger_entries').insert([
       {
@@ -127,7 +123,6 @@ describe('Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Anal
       },
     ] as any);
 
-    // 2. Create User with Active Session
     const phoneAct = `91${Math.floor(1000000000 + Math.random() * 9000000000)}`;
     const { data: authAct } = await admin.auth.admin.createUser({
       phone: phoneAct,
@@ -147,7 +142,6 @@ describe('Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Anal
     const { data: sAct } = await clientAct.auth.signInWithPassword({ phone: phoneAct, password: 'Password123!' });
     activeSessionUserJwt = sAct.session!.access_token;
 
-    // Attach active session
     const { data: reqAct } = await admin.from('support_requests').insert({
       user_id: activeSessionUserId,
       topic: 'stress',
@@ -167,7 +161,6 @@ describe('Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Anal
     } as any);
     if (sessErr) throw new Error(`Failed to create active session: ${sessErr.message}`);
 
-    // 3. Create Regular User (not erased, for permission checks)
     const phoneReg = `91${Math.floor(1000000000 + Math.random() * 9000000000)}`;
     const { data: authReg } = await admin.auth.admin.createUser({
       phone: phoneReg,
@@ -187,7 +180,6 @@ describe('Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Anal
     const { data: sReg } = await clientReg.auth.signInWithPassword({ phone: phoneReg, password: 'Password123!' });
     regularUserJwt = sReg.session!.access_token;
 
-    // 4. Create Super Admin Staff for Metrics
     const phoneAdm = `91${Math.floor(1000000000 + Math.random() * 9000000000)}`;
     const { data: authAdm } = await admin.auth.admin.createUser({
       phone: phoneAdm,
@@ -205,7 +197,8 @@ describe('Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Anal
 
     const clientAdm = getSupabaseServerClient();
     const { data: sAdm } = await clientAdm.auth.signInWithPassword({ phone: phoneAdm, password: 'Password123!' });
-    adminStaffJwt = sAdm.session!.access_token;
+    adminStaffAal1Jwt = sAdm.session!.access_token;
+    adminStaffAal2Jwt = await elevateTestSessionToAal2(clientAdm);
   });
 
   afterAll(async () => {
@@ -216,62 +209,51 @@ describe('Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Anal
     if (listenerAuthId) await admin.auth.admin.deleteUser(listenerAuthId);
   });
 
-  it('active session prevents user account erasure with 400', async () => {
+  it('active session prevents user account erasure', async () => {
     const req = new NextRequest('http://localhost:3000/api/privacy/erasure', {
       method: 'POST',
       headers: {
         authorization: `Bearer ${activeSessionUserJwt}`,
         'content-type': 'application/json',
       },
-      body: JSON.stringify({
-        userId: activeSessionUserId,
-        consentAcknowledged: true,
-      }),
+      body: JSON.stringify({ userId: activeSessionUserId, consentAcknowledged: true }),
     });
 
     const res = await erasureHandler(req);
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(409);
     const data = await res.json();
     expect(data.code).toBe('ACTIVE_SESSION_EXISTS');
   });
 
-  it('executes real DPDP 2025 erasure: scrubs DB PII, purges Supabase Auth, and preserves financial ledger', async () => {
+  it('executes erasure: scrubs DB PII, purges Supabase Auth, and preserves financial ledger', async () => {
     const req = new NextRequest('http://localhost:3000/api/privacy/erasure', {
       method: 'POST',
       headers: {
         authorization: `Bearer ${targetUserJwt}`,
         'content-type': 'application/json',
       },
-      body: JSON.stringify({
-        userId: targetUserId,
-        consentAcknowledged: true,
-      }),
+      body: JSON.stringify({ userId: targetUserId, consentAcknowledged: true }),
     });
 
     const res = await erasureHandler(req);
     expect(res.status).toBe(200);
     const data = await res.json();
-
     expect(data.status).toBe('erasure_completed');
     expect(data.authPurged).toBe(true);
 
-    // 1. Verify user record in PostgreSQL is scrubbed and marked deleted
     const { data: dbUser } = await admin.from('users').select('*').eq('id', targetUserId).single();
     expect((dbUser as any).status).toBe('deleted');
     expect((dbUser as any).handle).toBe(`deleted_${targetUserId.slice(0, 8)}`);
     expect((dbUser as any).auth_user_id).not.toBe(targetAuthId);
 
-    // 2. Verify support request is scrubbed
     const { data: dbReq } = await admin.from('support_requests').select('*').eq('user_id', targetUserId).single();
     expect((dbReq as any).topic).toBe('erased');
     expect((dbReq as any).language).toBe('erased');
 
-    // 3. Verify user account deleted from Supabase Auth
     const { data: authLookup, error: authLookupErr } = await admin.auth.admin.getUserById(targetAuthId);
     expect(authLookup.user).toBeNull();
     expect(authLookupErr).toBeDefined();
 
-    // 4. Verify erased user CANNOT log in anymore
     const freshClient = getSupabaseServerClient();
     const { error: loginErr } = await freshClient.auth.signInWithPassword({
       phone: targetPhone,
@@ -279,28 +261,29 @@ describe('Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Anal
     });
     expect(loginErr).toBeDefined();
 
-    // 5. INVARIANT: Financial ledger records preserved for statutory audit without PII
     const { data: ledgerRows } = await admin
       .from('ledger_entries')
       .select('*')
       .eq('reference_id', targetPaymentId);
-
     expect(ledgerRows).toHaveLength(2);
     for (const row of (ledgerRows as any[])) {
       expect(Number(row.amount_paise)).toBe(19900);
-      // Contains no phone or handle
       expect(JSON.stringify(row)).not.toContain(targetPhone);
     }
   });
 
-  it('analytics endpoint computes metrics from real DB tables and applies k-anonymity privacy safeguards', async () => {
+  it('requires AAL2 for privileged analytics and still returns only aggregated data', async () => {
+    const aal1Req = new NextRequest('http://localhost:3000/api/analytics/metrics', {
+      method: 'GET',
+      headers: { authorization: `Bearer ${adminStaffAal1Jwt}` },
+    });
+    const aal1Res = await metricsHandler(aal1Req);
+    expect(aal1Res.status).toBe(403);
+
     const req = new NextRequest('http://localhost:3000/api/analytics/metrics', {
       method: 'GET',
-      headers: {
-        authorization: `Bearer ${adminStaffJwt}`,
-      },
+      headers: { authorization: `Bearer ${adminStaffAal2Jwt}` },
     });
-
     const res = await metricsHandler(req);
     expect(res.status).toBe(200);
     const data = await res.json();
@@ -309,7 +292,6 @@ describe('Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Anal
     expect(data.kAnonymity).toBeDefined();
     expect(data.kAnonymity.threshold).toBe(5);
 
-    // Verify response contains ZERO PII (no handles, phones, or user IDs)
     const jsonStr = JSON.stringify(data);
     expect(jsonStr).not.toContain(targetPhone);
     expect(jsonStr).not.toContain('UserToErase');
@@ -318,11 +300,8 @@ describe('Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Anal
   it('rejects regular user from accessing analytics metrics with 403 Forbidden', async () => {
     const req = new NextRequest('http://localhost:3000/api/analytics/metrics', {
       method: 'GET',
-      headers: {
-        authorization: `Bearer ${regularUserJwt}`, // regular user
-      },
+      headers: { authorization: `Bearer ${regularUserJwt}` },
     });
-
     const res = await metricsHandler(req);
     expect(res.status).toBe(403);
   });
