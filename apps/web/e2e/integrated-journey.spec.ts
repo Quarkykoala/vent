@@ -19,9 +19,10 @@ import crypto from 'node:crypto';
  */
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321';
-const SERVICE_KEY =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU';
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!SERVICE_KEY) {
+  throw new Error('SUPABASE_SERVICE_ROLE_KEY is required for the local integrated journey. Load it from `supabase status -o env`.');
+}
 
 const CUSTOMER_PHONE = '9999911111';
 const LISTENER_PHONE = '9999922222';
@@ -51,8 +52,6 @@ async function provisionListener(): Promise<ListenerFixture> {
   const phone = `+91${LISTENER_PHONE}`;
   const digits = (value: string | undefined) => (value ?? '').replace(/\D/g, '');
 
-  // Reuse or create the auth user for this phone. GoTrue stores the number
-  // without the leading '+', so the lookup compares digits only.
   const createRes = await adminRest('/auth/v1/admin/users', {
     method: 'POST',
     body: JSON.stringify({
@@ -102,8 +101,6 @@ async function provisionListener(): Promise<ListenerFixture> {
       status: 'active',
       tier: 'listener',
       languages: ['English', 'Hindi'],
-      // Cover the whole topic selector so the fixture stays eligible whatever
-      // default the request form submits.
       topics: [
         'Relationship Conflict',
         'Breakup',
@@ -135,8 +132,6 @@ async function provisionListener(): Promise<ListenerFixture> {
 }
 
 async function cleanupListener(fixture: ListenerFixture) {
-  // Diagnostics: keeping fixtures lets a failing run be inspected in the
-  // database afterwards (the listener profile cascades to the session).
   if (process.env.E2E_KEEP_FIXTURES === '1') return;
   await adminRest(`/rest/v1/listener_presence?listener_id=eq.${fixture.profileId}`, { method: 'DELETE' });
   await adminRest(`/rest/v1/listener_profiles?id=eq.${fixture.profileId}`, { method: 'DELETE' });
@@ -157,9 +152,6 @@ async function signIn(page: import('@playwright/test').Page, phone: string) {
 }
 
 test.describe('Integrated customer + listener journey', () => {
-  // Sign-in credentials are memory-only by design, so every full page load
-  // needs a fresh sign-in. Bound each action so a missing control fails fast
-  // instead of consuming the whole test timeout.
   test.use({ actionTimeout: 20_000 });
 
   test('pay → queue → offer → accept → session → end → rate', async ({ browser, request }) => {
@@ -171,7 +163,6 @@ test.describe('Integrated customer + listener journey', () => {
     const lPage = await listenerCtx.newPage();
 
     try {
-      // ---- Customer: sign in + create exactly one request ----
       await cPage.goto('/');
       await cPage.getByRole('checkbox').check();
       await cPage.getByLabel('Mobile number').fill(CUSTOMER_PHONE);
@@ -186,14 +177,12 @@ test.describe('Integrated customer + listener journey', () => {
       const requestId = savedText.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i)?.[0];
       expect(requestId).toBeTruthy();
 
-      // ---- Customer: server-priced order through the real order route ----
       await cPage.getByRole('button', { name: /Proceed to checkout/i }).click();
       await expect(cPage.getByText(/Payment order/)).toBeVisible();
       const orderText = (await cPage.getByText(/Order:/).textContent()) ?? '';
       const providerOrderId = orderText.match(/order_sim_[0-9a-f]+/)?.[0];
       expect(providerOrderId).toBeTruthy();
 
-      // ---- Bank webhook (locally signed; real HMAC verification path) ----
       const secret = process.env.E2E_WEBHOOK_SECRET ?? 'e2e_webhook_secret_001';
       const paymentEntityId = `pay_e2e_${Date.now()}`;
       const rawBody = JSON.stringify({
@@ -218,27 +207,21 @@ test.describe('Integrated customer + listener journey', () => {
       });
       expect(hook.ok()).toBe(true);
 
-      // ---- Customer: entitlement comes from the server, never the callback ----
       await cPage.getByRole('button', { name: /I have paid/i }).click();
       await expect(cPage.getByText(/Payment confirmed by the bank/)).toBeVisible();
 
-      // ---- Listener: sign in, go available ----
       await lPage.goto('/listener');
       await signIn(lPage, LISTENER_PHONE);
       await expect(lPage.getByText('Listener console')).toBeVisible();
       await lPage.getByRole('button', { name: /Go available/i }).click();
       await expect(lPage.getByText(/You are now available/)).toBeVisible();
 
-      // ---- Customer: queue drives the deterministic matcher ----
       await cPage.goto(`/queue?requestId=${requestId}`);
       await signIn(cPage, CUSTOMER_PHONE);
-      await expect(cPage.getByRole('button', { name: /Check for a match now/i })).toBeVisible({
-        timeout: 20_000,
-      });
+      await expect(cPage.getByRole('button', { name: /Check for a match now/i })).toBeVisible({ timeout: 20_000 });
       await cPage.getByRole('button', { name: /Check for a match now/i }).click();
       await expect(cPage.getByText(/offered your request/)).toBeVisible({ timeout: 25_000 });
 
-      // ---- Listener: accept the offer (server creates exactly one session) ----
       await lPage.reload();
       await signIn(lPage, LISTENER_PHONE);
       await expect(lPage.getByRole('button', { name: 'Accept' })).toBeVisible({ timeout: 30_000 });
@@ -250,34 +233,24 @@ test.describe('Integrated customer + listener journey', () => {
       )?.[0];
       expect(sessionId).toBeTruthy();
 
-      // ---- Customer: the same session, with a server-authoritative timer ----
       await cPage.goto(`/session/${sessionId}`);
       await signIn(cPage, CUSTOMER_PHONE);
       await expect(cPage.getByTestId('session-timer')).toBeVisible({ timeout: 20_000 });
       await expect(cPage.getByTestId('session-timer')).toContainText('remaining');
       await expect(cPage.getByTestId('safety-concern')).toBeVisible();
 
-      // ---- Server owns the terminal state ----
       await cPage.getByRole('button', { name: /End session on the server/i }).click();
       await expect(cPage.getByText(/Session ended. Duration/)).toBeVisible({ timeout: 20_000 });
 
-      // Listener console converges on the same terminal state: after a fresh
-      // sign-in there is no offer left to accept.
       await lPage.reload();
       await signIn(lPage, LISTENER_PHONE);
       await expect(lPage.getByText(/No offers right now/)).toBeVisible({ timeout: 20_000 });
       await expect(lPage.getByRole('button', { name: 'Accept' })).toHaveCount(0);
 
-      // ---- Customer: rate once, from history ----
-      // Scoped to the session this run created: the shared test phone number
-      // accumulates history across runs, and rating an arbitrary older session
-      // is both flaky and not what this journey is proving.
       await cPage.goto('/history');
       await signIn(cPage, CUSTOMER_PHONE);
       const sessionCard = cPage.locator('li').filter({ hasText: sessionId! }).first();
-      await expect(sessionCard.getByRole('button', { name: /Rate this session/i })).toBeVisible({
-        timeout: 20_000,
-      });
+      await expect(sessionCard.getByRole('button', { name: /Rate this session/i })).toBeVisible({ timeout: 20_000 });
       await sessionCard.getByRole('button', { name: /Rate this session/i }).click();
       await cPage.getByRole('button', { name: '5', exact: true }).first().click();
       const [ratingResponse] = await Promise.all([
@@ -291,9 +264,7 @@ test.describe('Integrated customer + listener journey', () => {
         ratingResponse.status(),
         `rating API returned ${ratingResponse.status()}: ${await ratingResponse.text()}`
       ).toBe(201);
-      await expect(cPage.getByText(/Rated\. Thank you\.|Thank you\. Your rating was recorded\./)).toBeVisible({
-        timeout: 20_000,
-      });
+      await expect(cPage.getByText(/Rated\. Thank you\.|Thank you\. Your rating was recorded\./)).toBeVisible({ timeout: 20_000 });
     } finally {
       await customer.close();
       await listenerCtx.close();
