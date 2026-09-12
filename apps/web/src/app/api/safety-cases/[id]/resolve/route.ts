@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ResolveSafetyCaseSchema } from '@vent/validation';
-import { SafetyCaseState, UserRole } from '@vent/domain';
+import { SafetyCaseState } from '@vent/domain';
 import { SafetyRepository } from '@vent/db';
-import { authenticateRequest, requireRole, handleAuthError } from '@/features/auth/auth-guard';
+import { authenticateRequest, requirePermission, handleAuthError } from '@/features/auth/auth-guard';
 import { getSupabaseAdmin } from '@/lib/supabase-server';
 
 export async function POST(
@@ -11,11 +11,7 @@ export async function POST(
 ) {
   try {
     const session = await authenticateRequest(req);
-    requireRole(session, [
-      UserRole.CLINICAL_SUPERVISOR,
-      UserRole.SUPER_ADMIN,
-      UserRole.LISTENER_OPS,
-    ]);
+    requirePermission(session, 'canResolveSafetyCases');
 
     const { id } = await params;
     const json = await req.json().catch(() => ({}));
@@ -31,7 +27,7 @@ export async function POST(
     const adminClient = getSupabaseAdmin();
     const safetyRepo = new SafetyRepository(adminClient);
 
-    await safetyRepo.resolveCase({
+    const result = await safetyRepo.resolveCase({
       caseId: id,
       supervisorId: session.userId,
       resolutionCode: parsed.data.resolutionCode,
@@ -43,16 +39,20 @@ export async function POST(
       state: SafetyCaseState.RESOLVED,
       supervisorId: session.userId,
       resolutionCode: parsed.data.resolutionCode,
-      resolvedAt: new Date().toISOString(),
-      message: 'Safety case resolved with clinical disposition.',
+      resolvedAt: result.resolvedAt,
+      idempotentReplay: result.idempotentReplay,
+      message: result.idempotentReplay
+        ? 'Safety case was already resolved with this disposition.'
+        : 'Safety case resolved with clinical disposition.',
     }, { status: 200 });
   } catch (err: any) {
     if (err.name === 'AuthError') {
       return handleAuthError(err);
     }
+    const status = /not found/i.test(err.message ?? '') ? 404 : /invalid state|another supervisor/i.test(err.message ?? '') ? 409 : 500;
     return NextResponse.json(
       { error: err.message || 'Resolution failed' },
-      { status: 500 }
+      { status }
     );
   }
 }
