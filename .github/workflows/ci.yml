@@ -40,6 +40,14 @@ jobs:
           # Local Supabase JWTs must come from `supabase status`, never source.
           ! grep -r "supabase-demo.*service_role" apps packages --exclude-dir=node_modules
 
+      - name: Enable local TOTP for authorization tests
+        shell: bash
+        run: |
+          sed -i '/\[auth.mfa.totp\]/,/^\[/ {
+            s/enroll_enabled = false/enroll_enabled = true/
+            s/verify_enabled = false/verify_enabled = true/
+          }' supabase/config.toml
+
       - name: Start local Supabase and apply migrations
         shell: bash
         run: |
