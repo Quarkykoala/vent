@@ -1,0 +1,93 @@
+$ vitest run "--config" "../../logs/agent-runs/2026-09-05-glm-webhook-review/baseline.config.mjs"
+
+ RUN  v2.1.9 C:/Users/lenovo/projects/vent/apps/web
+
+ ❯ tests/webhook-route-security.test.ts (24 tests | 4 failed) 48ms
+   × 'POST /api/webhooks/razorpay' fail-closed behavior > missing or invalid configuration > returns 503 and never reaches persistence when the secret is undefined 15ms
+     → expected 400 to be 503 // Object.is equality
+   × 'POST /api/webhooks/razorpay' fail-closed behavior > missing or invalid configuration > returns 503 when the secret is an empty string 2ms
+     → expected 400 to be 503 // Object.is equality
+   × 'POST /api/webhooks/razorpay' fail-closed behavior > missing or invalid configuration > rejects a capture event signed with the legacy placeholder while configuration is absent (F03) 2ms
+     → expected 200 to be 503 // Object.is equality
+   × 'POST /api/webhooks/razorpay' fail-closed behavior > configured secret with bad signatures > returns 400 when the signature header is missing 4ms
+     → .toMatch() expects to receive a string, but got undefined
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/webhook-route-security.test.ts > 'POST /api/webhooks/razorpay' fail-closed behavior > missing or invalid configuration > returns 503 and never reaches persistence when the secret is undefined
+AssertionError: expected 400 to be 503 // Object.is equality
+
+- Expected
++ Received
+
+- 503
++ 400
+
+ ❯ tests/webhook-route-security.test.ts:142:26
+    140|       );
+    141| 
+    142|       expect(res.status).toBe(503);
+       |                          ^
+    143|       const data = await res.json();
+    144|       expect(data.message).toMatch(/unconfigured/i);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/webhook-route-security.test.ts > 'POST /api/webhooks/razorpay' fail-closed behavior > missing or invalid configuration > returns 503 when the secret is an empty string
+AssertionError: expected 400 to be 503 // Object.is equality
+
+- Expected
++ Received
+
+- 503
++ 400
+
+ ❯ tests/webhook-route-security.test.ts:155:26
+    153|       );
+    154| 
+    155|       expect(res.status).toBe(503);
+       |                          ^
+    156|       expectBoundaryUntouched();
+    157|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/webhook-route-security.test.ts > 'POST /api/webhooks/razorpay' fail-closed behavior > missing or invalid configuration > rejects a capture event signed with the legacy placeholder while configuration is absent (F03)
+AssertionError: expected 200 to be 503 // Object.is equality
+
+- Expected
++ Received
+
+- 503
++ 200
+
+ ❯ tests/webhook-route-security.test.ts:183:26
+    181|       );
+    182| 
+    183|       expect(res.status).toBe(503);
+       |                          ^
+    184|       expectBoundaryUntouched();
+    185|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/webhook-route-security.test.ts > 'POST /api/webhooks/razorpay' fail-closed behavior > configured secret with bad signatures > returns 400 when the signature header is missing
+TypeError: .toMatch() expects to receive a string, but got undefined
+ ❯ tests/webhook-route-security.test.ts:199:28
+    197|       expect(res.status).toBe(400);
+    198|       const data = await res.json();
+    199|       expect(data.message).toMatch(/invalid webhook signature/i);
+       |                            ^
+    200|       expectBoundaryUntouched();
+    201|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 20 passed (24)
+   Start at  22:57:45
+   Duration  660ms (transform 104ms, setup 0ms, collect 208ms, tests 48ms, environment 0ms, prepare 152ms)
+
+C:\Users\lenovo\projects\vent\apps\web:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @vent/web@0.1.0 test: `vitest run "--config" "../../logs/agent-runs/2026-09-05-glm-webhook-review/baseline.config.mjs"`
+Exit status 1

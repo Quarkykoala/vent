@@ -1,0 +1,12 @@
+$ vitest run "tests/presence-persistence.test.ts" "--maxWorkers=2" "--minWorkers=1"
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/apps/web[39m
+
+ [32m✓[39m tests/presence-persistence.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 1449[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m8 passed[39m[22m[90m (8)[39m
+[2m   Start at [22m 00:43:13
+[2m   Duration [22m 2.67s[2m (transform 353ms, setup 0ms, collect 717ms, tests 1.45s, environment 0ms, prepare 298ms)[22m
+

@@ -1,0 +1,14 @@
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/apps/web[39m
+
+[90mstdout[2m | tests/matching-authorization.test.ts[2m > [22m[2mR1: Matching authorization regression ΓÇö state and ownership invariants[2m > [22m[2mcriterion 4 & 5: legitimate owner matches queued request, repeating while offer active produces no duplicate, and authorized lazy expiry rematches
+[22m[39mR1_REMATCH_SENSITIVITY Injected early no_candidates after real expiry; rematching suppressed
+
+ [32mΓ£ô[39m tests/matching-authorization.test.ts [2m([22m[2m6 tests[22m[2m | [22m[33m5 skipped[39m[2m)[22m[33m 1999[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m R1: Matching authorization regression ΓÇö state and ownership invariants[2m > [22mcriterion 4 & 5: legitimate owner matches queued request, repeating while offer active produces no duplicate, and authorized lazy expiry rematches [33m1005[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[2m | [22m[33m5 skipped[39m[90m (6)[39m
+[2m   Start at [22m 14:39:44
+[2m   Duration [22m 3.72s[2m (transform 361ms, setup 0ms, collect 702ms, tests 2.00s, environment 0ms, prepare 141ms)[22m
+

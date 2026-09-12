@@ -28,13 +28,18 @@ jobs:
 
       - name: Secret scan check
         run: |
-          # Ensure no private keys or committed secrets exist in working tree
-          ! grep -r "BEGIN RSA PRIVATE KEY" . --exclude-dir=node_modules --exclude-dir=.git
-          ! grep -r "BEGIN PRIVATE KEY" . --exclude-dir=node_modules --exclude-dir=.git
-          ! grep -r "rzp_live_" . --exclude-dir=node_modules --exclude-dir=.git
+          # Ensure no private keys or committed secrets exist in working tree.
+          # .github is excluded because this file necessarily contains the
+          # patterns being searched for, which otherwise fails the scan.
+          ! grep -r "BEGIN RSA PRIVATE KEY" . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.github
+          ! grep -r "BEGIN PRIVATE KEY" . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.github
+          ! grep -r "rzp_live_" . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.github
 
       - name: Typecheck
         run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
 
       - name: Unit & Invariant Tests
         run: pnpm test

@@ -1,0 +1,55 @@
+$ vitest run "--config" "../../logs/agent-runs/2026-09-08-muse-mvp-review/recovery-probes.config.mjs"
+
+ RUN  v2.1.9 C:/Users/lenovo/projects/vent/apps/web
+
+stdout | ../../logs/agent-runs/2026-09-08-muse-mvp-review/recovery-probes.test.ts > Independent long-horizon review — real local database counterexamples > recovers after a transient failure at the new recovery boundary
+{"probe":"new-r2-fault-boundary","first":400,"retry":200,"requestState":"connected","reservationStates":["accepted"],"sessionCount":1,"presenceState":"reserved"}
+
+stdout | ../../logs/agent-runs/2026-09-08-muse-mvp-review/recovery-probes.test.ts > Independent long-horizon review — real local database counterexamples > denies anonymous direct calls to privileged session recovery
+{"probe":"anonymous-recovery","authenticatedUserTokenSupplied":false,"status":200,"errorCode":null,"success":true,"before":{"requestState":"accepted","reservationStates":["accepted"],"sessionCount":0,"presenceState":"reserved"},"after":{"requestState":"connected","reservationStates":["accepted"],"sessionCount":1,"presenceState":"reserved"}}
+
+stdout | ../../logs/agent-runs/2026-09-08-muse-mvp-review/recovery-probes.test.ts > Independent long-horizon review — real local database counterexamples > keeps completed-session listener presence unchanged on accept replay
+{"probe":"accept-replay-after-end","retry":200,"before":{"requestState":"completed","reservationStates":["accepted"],"sessionCount":1,"presenceState":"available"},"after":{"requestState":"completed","reservationStates":["accepted"],"sessionCount":1,"presenceState":"reserved"}}
+
+stdout | ../../logs/agent-runs/2026-09-08-muse-mvp-review/recovery-probes.test.ts > Independent long-horizon review — real local database counterexamples
+Review synthetic fixtures cleaned up.
+
+ ❯ ../../logs/agent-runs/2026-09-08-muse-mvp-review/recovery-probes.test.ts (3 tests | 2 failed) 1829ms
+   × Independent long-horizon review — real local database counterexamples > denies anonymous direct calls to privileged session recovery 118ms
+     → expected null not to be null
+   × Independent long-horizon review — real local database counterexamples > keeps completed-session listener presence unchanged on accept replay 314ms
+     → expected 'reserved' to be 'available' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  ../../logs/agent-runs/2026-09-08-muse-mvp-review/recovery-probes.test.ts > Independent long-horizon review — real local database counterexamples > denies anonymous direct calls to privileged session recovery
+AssertionError: expected null not to be null
+ ❯ ../../logs/agent-runs/2026-09-08-muse-mvp-review/recovery-probes.test.ts:159:30
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  ../../logs/agent-runs/2026-09-08-muse-mvp-review/recovery-probes.test.ts > Independent long-horizon review — real local database counterexamples > keeps completed-session listener presence unchanged on accept replay
+AssertionError: expected 'reserved' to be 'available' // Object.is equality
+
+Expected: "available"
+Received: "reserved"
+
+ ❯ ../../logs/agent-runs/2026-09-08-muse-mvp-review/recovery-probes.test.ts:176:33
+    174|     const after = await state(requestId);
+    175|     console.info(JSON.stringify({ probe: 'accept-replay-after-end', re…
+    176|     expect(after.presenceState).toBe('available');
+       |                                 ^
+    177|     expect(after.requestState).toBe('completed');
+    178|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  06:42:39
+   Duration  3.91s (transform 407ms, setup 0ms, collect 810ms, tests 1.83s, environment 0ms, prepare 171ms)
+
+C:\Users\lenovo\projects\vent\apps\web:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @vent/web@0.1.0 test: `vitest run "--config" "../../logs/agent-runs/2026-09-08-muse-mvp-review/recovery-probes.config.mjs"`
+Exit status 1

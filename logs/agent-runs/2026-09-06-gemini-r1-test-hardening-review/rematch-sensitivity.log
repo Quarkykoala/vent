@@ -1,0 +1,40 @@
+$ vitest run "--config" "../../logs/agent-runs/2026-09-06-gemini-r1-review/rematch-sensitivity.config.mjs" "-t" "legitimate owner"
+
+ RUN  v2.1.9 C:/Users/lenovo/projects/vent/apps/web
+
+stdout | tests/matching-authorization.test.ts > R1: Matching authorization regression — state and ownership invariants > criterion 4 & 5: legitimate owner matches queued request, repeating while offer active produces no duplicate, and authorized lazy expiry rematches
+R1_REMATCH_SENSITIVITY Injected early no_candidates after real expiry; rematching suppressed
+
+ ❯ tests/matching-authorization.test.ts (6 tests | 1 failed | 5 skipped) 2570ms
+   × R1: Matching authorization regression — state and ownership invariants > criterion 4 & 5: legitimate owner matches queued request, repeating while offer active produces no duplicate, and authorized lazy expiry rematches 1674ms
+     → expected 200 to be 201 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/matching-authorization.test.ts > R1: Matching authorization regression — state and ownership invariants > criterion 4 & 5: legitimate owner matches queued request, repeating while offer active produces no duplicate, and authorized lazy expiry rematches
+AssertionError: expected 200 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 200
+
+ ❯ tests/matching-authorization.test.ts:630:25
+    628| 
+    629|     // Strict G2 expectation: MUST be 201 'reserved', producing a NEW …
+    630|     expect(res3.status).toBe(201);
+       |                         ^
+    631|     const body3 = await res3.json();
+    632|     expect(body3.status).toBe('reserved');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 skipped (6)
+   Start at  14:53:53
+   Duration  4.86s (transform 407ms, setup 0ms, collect 766ms, tests 2.57s, environment 0ms, prepare 166ms)
+
+C:\Users\lenovo\projects\vent\apps\web:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @vent/web@0.1.0 test: `vitest run "--config" "../../logs/agent-runs/2026-09-06-gemini-r1-review/rematch-sensitivity.config.mjs" "-t" "legitimate owner"`
+Exit status 1

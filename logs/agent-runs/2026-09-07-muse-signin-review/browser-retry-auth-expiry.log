@@ -1,0 +1,36 @@
+### Result
+{"lostResponse":{"persisted":{"status":201,"body":{"requestId":"7073ddda-bd4e-4da4-813f-c91c08e9e87c","state":"created","topic":"Work & Career Stress","language":"Hindi","idempotencyKey":"91bcf943-dcab-43ff-b53c-59f95d53aacc","createdAt":"2026-09-07T18:02:13.558493+00:00"}},"displayedFailure":"Error: Failed to fetch","retryStatus":200,"retryBody":{"requestId":"7073ddda-bd4e-4da4-813f-c91c08e9e87c","state":"created","topic":"Work & Career Stress","language":"Hindi","idempotencyKey":"91bcf943-dcab-43ff-b53c-59f95d53aacc","createdAt":"2026-09-07T18:02:13.558493+00:00"},"sameRequest":true,"sameKey":true},"expiredAuth":{"message":"Error: Your sign-in has expired. Please verify your number again.","submitDisabled":true,"phoneSignInVisible":true}}
+### Ran Playwright code
+```js
+await (async (page) => {
+  const pattern = '**/api/support-requests';
+  let persisted;
+  await page.route(pattern, async route => {
+    const response = await route.fetch();
+    persisted = { status: response.status(), body: await response.json() };
+    await route.abort('failed');
+  }, { times: 1 });
+  await page.getByRole('button', { name: 'Request a listener', exact: true }).click();
+  await page.getByText(/Error:.*fetch/i).waitFor();
+  const displayedFailure = await page.getByRole('alert').filter({ hasText: 'Error:' }).innerText();
+  await page.unroute(pattern);
+  const [retried] = await Promise.all([
+    page.waitForResponse(r => r.url().endsWith('/api/support-requests') && r.request().method() === 'POST'),
+    page.getByRole('button', { name: 'Request a listener', exact: true }).click()
+  ]);
+  const retryBody = await retried.json();
+  await page.waitForFunction(id => document.body.innerText.includes(id), retryBody.requestId);
+  await page.route(pattern, route => route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: 'Expired synthetic authentication' }) }), { times: 1 });
+  await page.getByRole('button', { name: 'Request a listener', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Mobile number', exact: true }).waitFor();
+  const expiredAuth = { message: await page.getByRole('alert').filter({ hasText: 'Error:' }).innerText(), submitDisabled: await page.getByRole('button', { name: 'Request a listener', exact: true }).isDisabled(), phoneSignInVisible: await page.getByRole('textbox', { name: 'Mobile number', exact: true }).isVisible() };
+  await page.unroute(pattern);
+  return { lostResponse: { persisted, displayedFailure, retryStatus: retried.status(), retryBody, sameRequest: persisted.body.requestId === retryBody.requestId, sameKey: persisted.body.idempotencyKey === retryBody.idempotencyKey }, expiredAuth };
+})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:3107/
+- Page Title: Venterr — Talk to a Trained Human Listener
+- Console: 4 errors, 0 warnings
+### Events
+- New console entries: .playwright-cli\console-2026-09-07T17-58-57-320Z.log#L10-L11

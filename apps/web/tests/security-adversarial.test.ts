@@ -1,13 +1,11 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { NextRequest } from 'next/server';
 import crypto from 'node:crypto';
-import { POST as endSessionHandler } from '../src/app/api/sessions/[id]/end/route';
 import { POST as ratingHandler } from '../src/app/api/sessions/[id]/rating/route';
 import { POST as audioTokenHandler } from '../src/app/api/sessions/[id]/token/route';
 import { POST as refundHandler } from '../src/app/api/finance/refunds/route';
 import { POST as approvePayoutHandler } from '../src/app/api/finance/payouts/[id]/approve/route';
 import { POST as executePayoutHandler } from '../src/app/api/finance/payouts/[id]/execute/route';
-import { GET as reconcileHandler } from '../src/app/api/finance/reconcile/route';
 import { POST as acknowledgeSafetyHandler } from '../src/app/api/safety-cases/[id]/acknowledge/route';
 import { GET as metricsHandler } from '../src/app/api/analytics/metrics/route';
 import { POST as webhookHandler } from '../src/app/api/payments/webhook/route';
@@ -18,7 +16,6 @@ describe('Package 12 — Adversarial Security, IDOR & Privilege Escalation Tests
   const admin = getSupabaseAdmin();
 
   let victimUserId: string;
-  let victimJwt: string;
   let attackerUserId: string;
   let attackerJwt: string;
   let listenerUserId: string;
@@ -46,10 +43,6 @@ describe('Package 12 — Adversarial Security, IDOR & Privilege Escalation Tests
       status: 'active',
     } as any).select().single();
     victimUserId = (uV as any).id;
-
-    const clientV = getSupabaseServerClient();
-    const { data: sV } = await clientV.auth.signInWithPassword({ phone: phoneV, password: 'Password123!' });
-    victimJwt = sV.session!.access_token;
 
     // 2. Create Attacker User (Regular authenticated user)
     const phoneA = `91${Math.floor(1000000000 + Math.random() * 9000000000)}`;

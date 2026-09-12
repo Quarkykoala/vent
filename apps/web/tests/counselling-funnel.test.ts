@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { NextRequest } from 'next/server';
-import crypto from 'node:crypto';
 import { POST as createReferralHandler } from '../src/app/api/counselling/referral/route';
 import { POST as respondReferralHandler } from '../src/app/api/counselling/referral/[id]/respond/route';
 import { POST as transferReferralHandler } from '../src/app/api/counselling/referral/[id]/transfer/route';

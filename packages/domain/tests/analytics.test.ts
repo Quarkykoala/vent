@@ -3,7 +3,6 @@ import {
   createSafeAnalyticsEvent,
   sanitizeAnalyticsProperties,
   scrubUserDataForErasure,
-  InvariantViolationError,
 } from '../src/index';
 
 describe('Phase 10 — Privacy-Preserving Analytics & DPDP 2025 Compliance', () => {

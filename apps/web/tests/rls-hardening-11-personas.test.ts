@@ -269,7 +269,7 @@ describe('Package 2 — Real Postgres RLS Hardening Across 11 Personas', () => {
 
   describe('1. Anon Persona Denials', () => {
     it('DENY: anon cannot select users table', async () => {
-      const { data, error } = await personas['anon'].client.from('users').select('*');
+      const { data } = await personas['anon'].client.from('users').select('*');
       expect(data === null || data.length === 0).toBe(true);
     });
 

@@ -1,0 +1,270 @@
+Scope: 4 of 5 workspace projects
+   Γû▓ Next.js 15.5.25
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully in 8.0s
+   Linting and checking validity of types ...
+
+./src/app/api/analytics/events/route.ts
+27:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/analytics/metrics/route.ts
+52:48  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+80:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/auth/me/route.ts
+15:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/auth/otp/send/route.ts
+19:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/auth/otp/verify/route.ts
+32:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/blocks/route.ts
+43:14  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+56:32  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+58:31  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+60:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/counselling/book/route.ts
+29:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/counselling/referral/route.ts
+32:35  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+41:22  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+41:49  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+50:80  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+61:41  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+70:39  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+74:98  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+74:106  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+77:33  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+78:49  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+92:32  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+98:31  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+100:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/counselling/referral/[id]/respond/route.ts
+23:40  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+33:22  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+40:97  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+40:105  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+57:26  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+58:34  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+61:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/counselling/referral/[id]/transfer/route.ts
+15:40  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+25:23  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+25:59  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+35:56  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+35:64  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+44:48  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+50:43  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+50:83  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+60:32  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+61:40  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+62:42  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+66:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/finance/payouts/proposal/route.ts
+17:80  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+17:88  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+34:26  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+35:29  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+36:25  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+37:30  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+38:28  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+41:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/finance/payouts/[id]/approve/route.ts
+18:82  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+18:90  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+33:48  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+39:43  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+50:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/finance/payouts/[id]/execute/route.ts
+16:38  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+43:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/finance/reconcile/route.ts
+26:44  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+57:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/finance/refunds/route.ts
+30:36  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+31:87  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+38:24  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+42:24  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+43:91  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+50:49  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+61:38  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+88:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/listeners/presence/heartbeat/route.ts
+32:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/listeners/presence/toggle/route.ts
+81:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/matches/[id]/accept/route.ts
+54:75  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+65:36  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+71:30  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+76:27  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+90:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/matches/[id]/decline/route.ts
+45:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/operations/maintenance/route.ts
+40:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/operations/reservation-expiry/route.ts
+31:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/payments/orders/route.ts
+100:52  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+116:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/payments/webhook/route.ts
+15:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/privacy/erasure/route.ts
+24:100  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+34:38  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+73:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/safety-cases/route.ts
+35:24  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+39:31  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+40:33  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+59:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/safety-cases/[id]/acknowledge/route.ts
+32:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/safety-cases/[id]/resolve/route.ts
+48:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/sessions/[id]/end/route.ts
+16:38  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+41:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/sessions/[id]/rating/route.ts
+39:24  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+47:24  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+49:60  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+74:37  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+77:12  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+86:39  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+95:48  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+107:55  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+124:36  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+126:14  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+132:36  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+139:37  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+141:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/sessions/[id]/token/route.ts
+30:69  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+32:66  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+41:24  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+50:50  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+50:77  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+84:32  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+91:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/support-requests/route.ts
+14:76  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+22:22  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+69:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/webhooks/razorpay/route.ts
+16:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/page.tsx
+45:19  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/features/audio/use-livekit-room.ts
+104:19  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/features/auth/auth-guard.ts
+58:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+66:38  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/features/auth/supabase-auth-service.ts
+92:24  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+93:43  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+151:43  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/features/matching/coordinator.ts
+173:56  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+188:37  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+231:67  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+260:56  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+276:56  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/features/payments/payment-processor.ts
+162:21  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+   Collecting page data ...
+   Generating static pages (0/28) ...
+   Generating static pages (7/28) 
+   Generating static pages (14/28) 
+   Generating static pages (21/28) 
+ Γ£ô Generating static pages (28/28)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                     Size  First Load JS
+Γöî Γùï /                                        2.83 kB         105 kB
+Γö£ Γùï /_not-found                                994 B         104 kB
+Γö£ ╞Æ /api/analytics/events                      219 B         103 kB
+Γö£ ╞Æ /api/analytics/metrics                     219 B         103 kB
+Γö£ ╞Æ /api/auth/me                               219 B         103 kB
+Γö£ ╞Æ /api/auth/otp/send                         219 B         103 kB
+Γö£ ╞Æ /api/auth/otp/verify                       219 B         103 kB
+Γö£ ╞Æ /api/blocks                                219 B         103 kB
+Γö£ ╞Æ /api/counselling/book                      219 B         103 kB
+Γö£ ╞Æ /api/counselling/referral                  219 B         103 kB
+Γö£ ╞Æ /api/counselling/referral/[id]/respond     219 B         103 kB
+Γö£ ╞Æ /api/counselling/referral/[id]/transfer    219 B         103 kB
+Γö£ ╞Æ /api/counselling/slots                     219 B         103 kB
+Γö£ ╞Æ /api/finance/payouts/[id]/approve          219 B         103 kB
+Γö£ ╞Æ /api/finance/payouts/[id]/execute          219 B         103 kB
+Γö£ ╞Æ /api/finance/payouts/proposal              219 B         103 kB
+Γö£ ╞Æ /api/finance/reconcile                     219 B         103 kB
+Γö£ ╞Æ /api/finance/refunds                       219 B         103 kB
+Γö£ ╞Æ /api/health                                219 B         103 kB
+Γö£ ╞Æ /api/listeners/presence/heartbeat          219 B         103 kB
+Γö£ ╞Æ /api/listeners/presence/toggle             219 B         103 kB
+Γö£ ╞Æ /api/matches/[id]/accept                   219 B         103 kB
+Γö£ ╞Æ /api/matches/[id]/decline                  219 B         103 kB
+Γö£ ╞Æ /api/operations/maintenance                219 B         103 kB
+Γö£ ╞Æ /api/operations/reservation-expiry         219 B         103 kB
+Γö£ ╞Æ /api/payments/orders                       219 B         103 kB
+Γö£ ╞Æ /api/payments/webhook                      219 B         103 kB
+Γö£ ╞Æ /api/privacy/erasure                       219 B         103 kB
+Γö£ ╞Æ /api/safety-cases                          219 B         103 kB
+Γö£ ╞Æ /api/safety-cases/[id]/acknowledge         219 B         103 kB
+Γö£ ╞Æ /api/safety-cases/[id]/resolve             219 B         103 kB
+Γö£ ╞Æ /api/sessions/[id]/end                     219 B         103 kB
+Γö£ ╞Æ /api/sessions/[id]/rating                  219 B         103 kB
+Γö£ ╞Æ /api/sessions/[id]/token                   219 B         103 kB
+Γö£ ╞Æ /api/support-requests                      219 B         103 kB
+Γö£ ╞Æ /api/support-requests/[id]/match           219 B         103 kB
+Γö£ ╞Æ /api/webhooks/razorpay                     219 B         103 kB
+Γöö Γùï /crisis                                    165 B         106 kB
++ First Load JS shared by all                 103 kB
+  Γö£ chunks/2e9bfde9-51061558bbbaaee6.js      54.2 kB
+  Γö£ chunks/6230-8714675bcf7e8947.js          46.3 kB
+  Γöö other shared chunks (total)              1.97 kB
+
+
+Γùï  (Static)   prerendered as static content
+╞Æ  (Dynamic)  server-rendered on demand
+

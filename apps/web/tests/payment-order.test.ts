@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { NextRequest } from 'next/server';
-import crypto from 'node:crypto';
 import { POST as createOrderHandler } from '../src/app/api/payments/orders/route';
 import { getSupabaseAdmin } from '../src/lib/supabase-server';
 
@@ -149,6 +148,62 @@ describe('Package 4 — Payment Order API Route & Fail-Closed Behavior', () => {
     expect(dbPayment).toBeDefined();
     expect((dbPayment as any).provider_order_id).toBe(data.orderId);
     expect((dbPayment as any).state).toBe('created');
+
+    delete process.env.RAZORPAY_TEST_SIMULATOR;
+  });
+
+  it('is retry-safe: a second order call for the same request returns the pending payment', async () => {
+    process.env.RAZORPAY_TEST_SIMULATOR = 'true';
+
+    const { data: req } = await admin
+      .from('support_requests')
+      .insert({
+        user_id: testUserId,
+        topic: 'work_stress',
+        language: 'English',
+        service_tier: 'listener',
+        state: 'created',
+        idempotency_key: `order_retry_req_${Date.now()}`,
+      } as any)
+      .select()
+      .single();
+    const retryRequestId = (req as any).id;
+
+    const body = JSON.stringify({ requestId: retryRequestId });
+    const headers = {
+      authorization: `Bearer ${testJwt}`,
+      'content-type': 'application/json',
+    };
+
+    const first = await createOrderHandler(
+      new NextRequest('http://localhost:3000/api/payments/orders', {
+        method: 'POST',
+        headers,
+        body,
+      })
+    );
+    expect(first.status).toBe(201);
+    const firstBody = await first.json();
+
+    const retry = await createOrderHandler(
+      new NextRequest('http://localhost:3000/api/payments/orders', {
+        method: 'POST',
+        headers,
+        body,
+      })
+    );
+    expect(retry.status).toBe(200);
+    const retryBody = await retry.json();
+    expect(retryBody.paymentId).toBe(firstBody.paymentId);
+    expect(retryBody.orderId).toBe(firstBody.orderId);
+    expect(retryBody.idempotentReplay).toBe(true);
+
+    const { data: payments } = await admin
+      .from('payments')
+      .select('id')
+      .eq('user_id', testUserId);
+    const linked = (payments as any[]).filter((p) => p.id === firstBody.paymentId);
+    expect(linked).toHaveLength(1);
 
     delete process.env.RAZORPAY_TEST_SIMULATOR;
   });

@@ -1,0 +1,16 @@
+- main [ref=e3]:
+  - heading "Muse sign-in component test" [level=1] [ref=e4]
+  - paragraph [ref=e5]: Isolated preview. All API responses are synthetic; no SMS is sent.
+  - generic [ref=e6]:
+    - 'checkbox "Test: age confirmed" [checked] [ref=e7]'
+    - text: "Test: age confirmed"
+  - generic [ref=e8]:
+    - generic [ref=e9]:
+      - paragraph [ref=e28]: Code sent to +919000000002
+      - generic [ref=e29]: 6-digit code
+      - textbox "6-digit code" [ref=e30]:
+        - /placeholder: "123456"
+      - button "Verify code" [ref=e31] [cursor=pointer]
+      - button "Change phone" [ref=e32] [cursor=pointer]
+    - paragraph [ref=e33]: Code sent. Enter the 6-digit code.
+  - status "Authentication successes" [ref=e13]: "0"

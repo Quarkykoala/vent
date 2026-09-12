@@ -1,0 +1,62 @@
+ M .github/workflows/ci.yml
+ M AGENTS.md
+ M apps/web/package.json
+ M apps/web/src/app/api/counselling/referral/route.ts
+ M apps/web/src/app/api/listeners/presence/heartbeat/route.ts
+ M apps/web/src/app/api/listeners/presence/toggle/route.ts
+ M apps/web/src/app/api/matches/[id]/accept/route.ts
+ M apps/web/src/app/api/privacy/erasure/route.ts
+ M apps/web/src/app/api/support-requests/route.ts
+ M apps/web/src/app/api/webhooks/razorpay/route.ts
+ M apps/web/src/features/auth/mock-auth-service.ts
+ M apps/web/src/features/auth/supabase-auth-service.ts
+ M apps/web/src/features/payments/payment-processor.ts
+ M apps/web/src/features/sessions/AudioCallInterface.tsx
+ M apps/web/tests/analytics-erasure.test.ts
+ M apps/web/tests/completion-ratings-blocks.test.ts
+ M apps/web/tests/counselling-funnel.test.ts
+ M apps/web/tests/finance-hardening.test.ts
+ M apps/web/tests/payment-order.test.ts
+ M apps/web/tests/payment-webhook.test.ts
+ M apps/web/tests/rls-hardening-11-personas.test.ts
+ M apps/web/tests/security-adversarial.test.ts
+ M package.json
+ M packages/db/package.json
+ M packages/db/src/index.ts
+ M packages/db/src/repositories/listener.repository.ts
+ M packages/db/src/repositories/session.repository.ts
+ M packages/db/src/repositories/user.repository.ts
+ M packages/db/src/types.ts
+ M packages/db/tests/db.test.ts
+ M packages/domain/package.json
+ M packages/domain/tests/analytics.test.ts
+ M packages/domain/tests/counselling.test.ts
+ M packages/domain/tests/state-machines.test.ts
+ M packages/validation/package.json
+ M packages/validation/tests/auth.test.ts
+ M packages/validation/tests/listener.test.ts
+ M pnpm-lock.yaml
+ M supabase/migrations/ROLLBACK.md
+?? .codex-harness/
+?? .commandcode/
+?? CONTINUE_HERE.md
+?? apps/web/src/app/api/operations/
+?? apps/web/src/app/api/support-requests/[id]/
+?? apps/web/src/features/matching/
+?? apps/web/src/lib/rate-limit.ts
+?? apps/web/tests/age-evidence.test.ts
+?? apps/web/tests/db-authority.test.ts
+?? apps/web/tests/matching-authorization.test.ts
+?? apps/web/tests/matching-coordinator.test.ts
+?? apps/web/tests/presence-persistence.test.ts
+?? apps/web/tests/support-request-flow.test.ts
+?? apps/web/tests/webhook-route-security.test.ts
+?? audit-context/
+?? docs/
+?? eslint.config.mjs
+?? knowledge/
+?? logs/
+?? output/
+?? packages/db/src/repositories/support-request.repository.ts
+?? supabase/migrations/20260905000001_db_authority_lockdown.sql
+?? supabase/migrations/20260905000002_age_evidence_nullability.sql

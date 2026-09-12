@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Authorize caller: user or assigned listener
-    let isUser = (sessionRow as any).user_id === session.userId;
+    const isUser = (sessionRow as any).user_id === session.userId;
     let isListener = false;
 
     const { data: lp } = await adminClient

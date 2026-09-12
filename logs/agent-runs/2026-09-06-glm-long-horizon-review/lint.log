@@ -1,0 +1,24 @@
+$ eslint .
+node:fs:440
+    return binding.readFileUtf8(path, stringToFlags(options.flag));
+                   ^
+
+Error: EPERM: operation not permitted, open 'C:\Users\lenovo\projects\vent\node_modules\.pnpm\eslint@10.10.0_jiti@1.21.7\node_modules\eslint\bin\eslint.js'
+    at Object.readFileSync (node:fs:440:20)
+    at defaultLoadImpl (node:internal/modules/cjs/loader:1139:17)
+    at loadSource (node:internal/modules/cjs/loader:1788:20)
+    at Object..js (node:internal/modules/cjs/loader:1886:44)
+    at Module.load (node:internal/modules/cjs/loader:1481:32)
+    at Module._load (node:internal/modules/cjs/loader:1300:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  errno: -4048,
+  code: 'EPERM',
+  syscall: 'open',
+  path: 'C:\\Users\\lenovo\\projects\\vent\\node_modules\\.pnpm\\eslint@10.10.0_jiti@1.21.7\\node_modules\\eslint\\bin\\eslint.js'
+}
+
+Node.js v24.11.1
+[ELIFECYCLE] Command failed with exit code 1.

@@ -1,0 +1,24 @@
+### Result
+{"records":[{"label":"first-submit","status":201,"response":{"requestId":"2a90278a-3ad0-481f-bc09-3e016a62821d","state":"created","topic":"Work & Career Stress","language":"Hindi","idempotencyKey":"efe6c5cc-66db-47b1-b275-b27880e34ca2","createdAt":"2026-09-07T18:01:34.709459+00:00"},"confirmation":"Your request is in. Topic: Work & Career Stress. Language: Hindi. Request ID: 2a90278a-3ad0-481f-bc09-3e016a62821d. We'll now find you a trained listener."},{"label":"same-submit-after-success","status":201,"response":{"requestId":"c89f0338-5956-4ddb-8834-e6c37a776a34","state":"created","topic":"Work & Career Stress","language":"Hindi","idempotencyKey":"e4b02a86-9744-4abc-8fc5-c8f447ed1796","createdAt":"2026-09-07T18:01:34.93923+00:00"},"confirmation":"Your request is in. Topic: Work & Career Stress. Language: Hindi. Request ID: c89f0338-5956-4ddb-8834-e6c37a776a34. We'll now find you a trained listener."}],"storage":{"localKeys":[],"sessionKeys":[],"cookieNames":[]}}
+### Ran Playwright code
+```js
+await (async (page) => {
+  const records = [];
+  for (const label of ['first-submit', 'same-submit-after-success']) {
+    const [response] = await Promise.all([
+      page.waitForResponse(r => r.url().endsWith('/api/support-requests') && r.request().method() === 'POST'),
+      page.getByRole('button', { name: 'Request a listener', exact: true }).click()
+    ]);
+    const body = await response.json();
+    await page.waitForFunction(id => document.body.innerText.includes(id), body.requestId);
+    records.push({ label, status: response.status(), response: body, confirmation: await page.getByRole('status').innerText() });
+  }
+  return { records, storage: await page.evaluate(() => ({ localKeys: Object.keys(localStorage), sessionKeys: Object.keys(sessionStorage), cookieNames: document.cookie.split(';').filter(Boolean).map(x => x.split('=')[0].trim()) })) };
+})(page);
+```
+### Page
+- Page URL: http://127.0.0.1:3107/
+- Page Title: Venterr — Talk to a Trained Human Listener
+- Console: 2 errors, 0 warnings
+### Events
+- New console entries: .playwright-cli\console-2026-09-07T17-58-57-320Z.log#L8-L9

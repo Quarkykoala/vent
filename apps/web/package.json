@@ -6,8 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "tsc --noEmit",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "worker": "node scripts/operations-worker.mjs",
     "test": "vitest run"
   },
   "dependencies": {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { UserRole } from '@vent/domain';
+import { generateReconciliationReport, UserRole } from '@vent/domain';
 import { authenticateRequest, requireRole, handleAuthError } from '@/features/auth/auth-guard';
+import { fetchProviderTransactions } from '@/features/payments/razorpay-reconciliation';
 import { getSupabaseAdmin } from '@/lib/supabase-server';
 
 export async function GET(req: NextRequest) {
@@ -45,6 +46,43 @@ export async function GET(req: NextRequest) {
 
     const isBalanced = totalDebits === totalCredits;
 
+    // Provider reconciliation: only meaningful with a reachable provider. The
+    // local trial balance is always computed; the provider diff reports
+    // `available: false` with its reason rather than implying an all-clear.
+    const windowStartIso = new Date(Date.now() - 30 * 86400000).toISOString();
+    const windowEndIso = new Date().toISOString();
+
+    let providerSection: Record<string, unknown>;
+    const feed = await fetchProviderTransactions({ windowStartIso, windowEndIso });
+    if (!feed.available) {
+      providerSection = { available: false, reason: feed.reason, windowStartIso, windowEndIso };
+    } else {
+      const { data: localPayments } = await adminClient
+        .from('payments')
+        .select('provider_payment_id, amount_paise, state')
+        .not('provider_payment_id', 'is', null);
+
+      const local = ((localPayments ?? []) as Array<{ provider_payment_id: string; amount_paise: number; state: string }>)
+        .map((p) => ({
+          providerPaymentId: p.provider_payment_id,
+          amountPaise: BigInt(p.amount_paise),
+          status: (p.state === 'refunded' || p.state === 'partially_refunded' ? 'refunded' : 'captured') as
+            | 'captured'
+            | 'refunded',
+        }))
+        .filter((p) => p.status === 'captured' || p.status === 'refunded');
+
+      const report = generateReconciliationReport(feed.transactions, local);
+      providerSection = {
+        available: true,
+        windowStartIso: feed.windowStartIso,
+        windowEndIso: feed.windowEndIso,
+        providerTransactions: feed.transactions.length,
+        localTransactions: local.length,
+        ...report,
+      };
+    }
+
     return NextResponse.json({
       isBalanced,
       totalDebitsPaise: totalDebits.toString(),
@@ -52,6 +90,7 @@ export async function GET(req: NextRequest) {
       entriesCount: entries?.length || 0,
       accountBalances,
       reconciliationStatus: isBalanced ? 'balanced' : 'unbalanced_discrepancy',
+      providerReconciliation: providerSection,
       timestamp: new Date().toISOString(),
     }, { status: 200 });
   } catch (err: any) {

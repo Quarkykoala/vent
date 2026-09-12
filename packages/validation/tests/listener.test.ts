@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
   CreateListenerProfileSchema,
-  UpdateListenerStatusSchema,
   ToggleListenerPresenceSchema,
 } from '../src/index';
 

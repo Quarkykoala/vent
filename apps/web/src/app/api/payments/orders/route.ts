@@ -37,10 +37,55 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // INVARIANT: an order may only be created for a request that can still be
+    // entitled by a capture. Without this guard a user could pay for a request
+    // that already completed or was cancelled — money taken, no entitlement.
+    const payableStates = ['created', 'payment_failed'];
+    if (!payableStates.includes((requestRow as any).state)) {
+      return NextResponse.json(
+        {
+          error: `This request can no longer be paid for (state: ${(requestRow as any).state}).`,
+          code: 'REQUEST_NOT_PAYABLE',
+          requestState: (requestRow as any).state,
+        },
+        { status: 409 }
+      );
+    }
+
     // INVARIANT: Server ALWAYS dictates amount in paise, never from client!
     const serverAmountPaise = DEFAULT_PRICING.pricePaise;
     const keyId = process.env.RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+    // Retry safety: if this request already links a payment that is still
+    // awaiting capture, return it instead of creating a duplicate order.
+    if ((requestRow as any).payment_order_id) {
+      const { data: existingPayment } = await adminClient
+        .from('payments')
+        .select('*')
+        .eq('id', (requestRow as any).payment_order_id)
+        .eq('user_id', session.userId)
+        .maybeSingle();
+      if (
+        existingPayment &&
+        ['created', 'authorized'].includes((existingPayment as any).state) &&
+        BigInt((existingPayment as any).amount_paise) === serverAmountPaise
+      ) {
+        return NextResponse.json(
+          {
+            orderId: (existingPayment as any).provider_order_id,
+            paymentId: (existingPayment as any).id,
+            requestId,
+            amountPaise: Number(serverAmountPaise),
+            currency: DEFAULT_PRICING.currency,
+            state: (existingPayment as any).state,
+            keyId: keyId || 'simulated_test_key',
+            idempotentReplay: true,
+          },
+          { status: 200 }
+        );
+      }
+    }
 
     let providerOrderId: string;
 

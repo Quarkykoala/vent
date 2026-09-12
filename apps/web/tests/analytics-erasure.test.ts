@@ -24,10 +24,40 @@ describe('Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Anal
   let adminStaffUserId: string;
   let adminStaffJwt: string;
 
+  let listenerUserId: string;
+  let listenerAuthId: string;
+  let listenerProfileId: string;
+
   beforeAll(async () => {
-    // 0. Get an active listener profile for session creation
-    const { data: lp } = await admin.from('listener_profiles').select('id').limit(1).single();
-    const listenerProfileId = (lp as any).id;
+    // 0. Own listener fixture for session creation — never borrow shared rows,
+    //    which parallel suites may legitimately delete mid-run.
+    const listenerPhone = `91${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+    const { data: authL } = await admin.auth.admin.createUser({
+      phone: listenerPhone,
+      phone_confirm: true,
+      password: 'Password123!',
+      app_metadata: { role: UserRole.LISTENER },
+    });
+    listenerAuthId = authL.user!.id;
+    const { data: lu } = await admin.from('users').insert({
+      auth_user_id: listenerAuthId,
+      handle: `EraseListener_${Date.now()}_${Math.floor(Math.random() * 10000)}`,
+      age_verified_at: new Date().toISOString(),
+      status: 'active',
+    } as any).select().single();
+    listenerUserId = (lu as any).id;
+
+    const { data: lp, error: lpErr } = await admin.from('listener_profiles').insert({
+      user_id: listenerUserId,
+      display_name: 'Erasure Fixture Listener',
+      status: 'active',
+      tier: 'listener',
+      languages: ['English'],
+      topics: ['Work & Career Stress'],
+      quality_prior: 4.0,
+    } as any).select().single();
+    if (lpErr || !lp) throw new Error(`listener fixture: ${lpErr?.message}`);
+    listenerProfileId = (lp as any).id;
 
     // 1. Create User to be Erased
     targetPhone = `91${Math.floor(1000000000 + Math.random() * 9000000000)}`;
@@ -73,9 +103,12 @@ describe('Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Anal
       idempotency_key: `req_erase_${Date.now()}`,
     } as any);
 
+    // One balanced double-entry event: both rows must share an event_id, or the
+    // ledger contains two one-sided events and the trial balance is wrong.
+    const captureEventId = crypto.randomUUID();
     await admin.from('ledger_entries').insert([
       {
-        event_id: crypto.randomUUID(),
+        event_id: captureEventId,
         account_code: LedgerAccountCode.CASH_PG_CLEARING,
         direction: 'debit',
         amount_paise: 19900,
@@ -84,7 +117,7 @@ describe('Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Anal
         reference_id: targetPaymentId,
       },
       {
-        event_id: crypto.randomUUID(),
+        event_id: captureEventId,
         account_code: LedgerAccountCode.CUSTOMER_SERVICE_REVENUE,
         direction: 'credit',
         amount_paise: 19900,
@@ -176,7 +209,11 @@ describe('Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Anal
   });
 
   afterAll(async () => {
-    await admin.from('users').delete().in('id', [activeSessionUserId, regularUserId, adminStaffUserId]);
+    await admin.from('sessions').delete().eq('listener_id', listenerProfileId);
+    await admin.from('listener_presence').delete().eq('listener_id', listenerProfileId);
+    await admin.from('listener_profiles').delete().eq('id', listenerProfileId);
+    await admin.from('users').delete().in('id', [activeSessionUserId, regularUserId, adminStaffUserId, listenerUserId]);
+    if (listenerAuthId) await admin.auth.admin.deleteUser(listenerAuthId);
   });
 
   it('active session prevents user account erasure with 400', async () => {

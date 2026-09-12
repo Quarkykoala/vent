@@ -15,7 +15,6 @@ describe('Package 6 — Session Completion, Bayesian Ratings & Blocks', () => {
   let userBId: string;
   let userBJwt: string;
   let listenerUserId: string;
-  let listenerJwt: string;
   let listenerProfileId: string;
 
   beforeAll(async () => {
@@ -71,10 +70,6 @@ describe('Package 6 — Session Completion, Bayesian Ratings & Blocks', () => {
       status: 'active',
     } as any).select().single();
     listenerUserId = (uL as any).id;
-
-    const clientL = getSupabaseServerClient();
-    const { data: sL } = await clientL.auth.signInWithPassword({ phone: phoneL, password: 'Password123!' });
-    listenerJwt = sL.session!.access_token;
 
     const { data: lp } = await admin.from('listener_profiles').insert({
       user_id: listenerUserId,

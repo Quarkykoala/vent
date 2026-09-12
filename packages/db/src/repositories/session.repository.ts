@@ -61,6 +61,20 @@ export class SessionRepository {
     return (data as unknown as SessionRow) ?? null;
   }
 
+  async getSessionByRequestId(requestId: string): Promise<SessionRow | null> {
+    const { data, error } = await this.client
+      .from('sessions')
+      .select('*')
+      .eq('request_id', requestId)
+      .maybeSingle();
+
+    if (error) {
+      throw new Error(`Failed to lookup session by request: ${error.message}`);
+    }
+
+    return (data as unknown as SessionRow) ?? null;
+  }
+
   async endSession(params: {
     sessionId: string;
     endReason: string;

@@ -1,0 +1,214 @@
+[
+  {
+    "path": ".github/workflows/ci.yml",
+    "sha256": "14C8C5919827465684EB1D3D74F4800235CD3D00FEE469517950B458D64189B0"
+  },
+  {
+    "path": "apps/web/package.json",
+    "sha256": "19CFC379C03C98441253E93B84CCB6F253E1415FF1A3635A218CEBB0816195B1"
+  },
+  {
+    "path": "apps/web/src/app/api/counselling/referral/route.ts",
+    "sha256": "AE9B1D20156982EDD11FB7490E6714748E227337C7E2C0D972E4B2A509B27646"
+  },
+  {
+    "path": "apps/web/src/app/api/listeners/presence/heartbeat/route.ts",
+    "sha256": "ECC8C8AEE6CAF4434373C7A897DA42C47633CF4AE3FE2063366D1B3C9ADE96E7"
+  },
+  {
+    "path": "apps/web/src/app/api/listeners/presence/toggle/route.ts",
+    "sha256": "1E175A9213D943F631434C3CF0680E33833B2A000CC31C20987BCC1C601E15E3"
+  },
+  {
+    "path": "apps/web/src/app/api/matches/[id]/accept/route.ts",
+    "sha256": "1CFCD9F6DB7937EA193665C0142557B5CF5A4D1DF2683FCB646A3E585DA043DD"
+  },
+  {
+    "path": "apps/web/src/app/api/operations/maintenance/route.ts",
+    "sha256": "8C9AEDEC31D3C76F421979D3CEE44415C8966285B0716E79D5228ACADBE2CEE5"
+  },
+  {
+    "path": "apps/web/src/app/api/operations/reservation-expiry/route.ts",
+    "sha256": "9EBACFA99B4A9D184B2B5CF5B080484287D646A4C974F04E0FE9056ADF2E8912"
+  },
+  {
+    "path": "apps/web/src/app/api/privacy/erasure/route.ts",
+    "sha256": "DA6DE8D24A1F53EB5AFA47D9DA9639728D7D985F599710FB94D7909A11038D1B"
+  },
+  {
+    "path": "apps/web/src/app/api/support-requests/[id]/match/route.ts",
+    "sha256": "AEDCA9EBDEB1CD0EB84DB6A6CEA30123A6E7DE66EE1950192067D64852E0B383"
+  },
+  {
+    "path": "apps/web/src/app/api/support-requests/route.ts",
+    "sha256": "8ED6353231D5C71BDE2D39EA4F56FC753926320BF58E7B742A949CF15D8C5BC5"
+  },
+  {
+    "path": "apps/web/src/app/api/webhooks/razorpay/route.ts",
+    "sha256": "76BC93557CE304CE03E668E991A54FC9D166894C491C5B4F2FAE9B9816DD8EF1"
+  },
+  {
+    "path": "apps/web/src/features/auth/mock-auth-service.ts",
+    "sha256": "027C2A0F153E77B3220EFF9D4951A48C34930D6EC173B4C2F91136351990EEB0"
+  },
+  {
+    "path": "apps/web/src/features/auth/supabase-auth-service.ts",
+    "sha256": "82483BC4959156D59870DF9202007F71E26DD15D1D0A00CE3EB858C952B45ED0"
+  },
+  {
+    "path": "apps/web/src/features/matching/coordinator.ts",
+    "sha256": "7A4109E64F60E291464C69F10D862AED5039721F06B8F7C0289BFF4C05D6D74B"
+  },
+  {
+    "path": "apps/web/src/features/payments/payment-processor.ts",
+    "sha256": "D5C94C45980C4C89845026B42CFBE4E2C39FFC69B332BC52E11871B9BED650A4"
+  },
+  {
+    "path": "apps/web/src/features/sessions/AudioCallInterface.tsx",
+    "sha256": "0EE1C5F207CB5A1C3EB3F73A2BFA5895C07A9B7851349180CD3CACB0D138CE0B"
+  },
+  {
+    "path": "apps/web/src/lib/rate-limit.ts",
+    "sha256": "DFAF5B3D3F7FAEC4AD15F6E34CA1273182A763AA492774249B8B2F16FA6A53FA"
+  },
+  {
+    "path": "apps/web/tests/age-evidence.test.ts",
+    "sha256": "7544E554F2E138C8235147968C2E9DA93C7C70BA35A7911C4D162DC1E0AAF359"
+  },
+  {
+    "path": "apps/web/tests/analytics-erasure.test.ts",
+    "sha256": "64B92F7AB58DA21325E8DAB5079A43567B9BAD637F44572136C373009C49C60D"
+  },
+  {
+    "path": "apps/web/tests/completion-ratings-blocks.test.ts",
+    "sha256": "6B2447CB5B133F30CDAA8923435EA28A56A960A25D286F7D094884D498712487"
+  },
+  {
+    "path": "apps/web/tests/counselling-funnel.test.ts",
+    "sha256": "380EEDFDF8800539FA25C567174CE633389AFF8F1BF7651B96C4AA7FA5244B0E"
+  },
+  {
+    "path": "apps/web/tests/db-authority.test.ts",
+    "sha256": "BBE57AEA26E16AEC142782E72F7A40D54F63A899FD80CEC1088930974052F039"
+  },
+  {
+    "path": "apps/web/tests/finance-hardening.test.ts",
+    "sha256": "7D355BAE2E540542A3CE30B6862BCDC1F21E3AF6709FDE97592714348D2D9434"
+  },
+  {
+    "path": "apps/web/tests/matching-authorization.test.ts",
+    "sha256": "14409349077415AB01F6B0A8BAB38E17BEB2ECF529D41C27E8B58DDFA29D8E4C"
+  },
+  {
+    "path": "apps/web/tests/matching-coordinator.test.ts",
+    "sha256": "748184A1097CF1118CDD7E6860934F56E6F9BBA62E0BFF978FB7C43C442C165F"
+  },
+  {
+    "path": "apps/web/tests/payment-order.test.ts",
+    "sha256": "14DC63B4BB4A98CBC9AA8B598DD5F9EA8A24106E2893ED3A51577FBB5F47B54D"
+  },
+  {
+    "path": "apps/web/tests/payment-webhook.test.ts",
+    "sha256": "E5DB85A566CE7BDC0C351E11DA70C39EC267049247BCEE5A60F677D789915405"
+  },
+  {
+    "path": "apps/web/tests/presence-persistence.test.ts",
+    "sha256": "F4C217539AE173E23597DE59D82478549795E064C1A83DD88476DE57C401B847"
+  },
+  {
+    "path": "apps/web/tests/rls-hardening-11-personas.test.ts",
+    "sha256": "E7EA6A208C6CD45D613616E41648D8F7D62982D7E6D7A8CF7493DD44165D6E16"
+  },
+  {
+    "path": "apps/web/tests/security-adversarial.test.ts",
+    "sha256": "45EF20ADBFC25995D78525173CB12378D2159A6FAFC736C5FA24E22EA137714B"
+  },
+  {
+    "path": "apps/web/tests/support-request-flow.test.ts",
+    "sha256": "6A6FE7C79A40A788145BE89D4276C3EA62B967C5D7A325227F531C17A568577B"
+  },
+  {
+    "path": "apps/web/tests/webhook-route-security.test.ts",
+    "sha256": "FE2DF742651A65A5924453D82FD1200EEF68EDB548CFF809596D95FDE76D7450"
+  },
+  {
+    "path": "package.json",
+    "sha256": "9AA9599F4577BF72D62955954629884DD4AA6800F9F3B4A4353EBC8F3DA69E3D"
+  },
+  {
+    "path": "packages/db/package.json",
+    "sha256": "364A095FAEE664CE6C8980797E5D1C3863C0B9ED1BE93E5BD563063E01DBB317"
+  },
+  {
+    "path": "packages/db/src/index.ts",
+    "sha256": "B59F6AB9596BD48F5DFAADF98B22CC1E4E7E112CBC88EFFFA8AA001330B21E58"
+  },
+  {
+    "path": "packages/db/src/repositories/listener.repository.ts",
+    "sha256": "B40A106B71D7D49FF06436A54B88128699AB30AEA44ACD2477D16CDC2DBB3F2E"
+  },
+  {
+    "path": "packages/db/src/repositories/session.repository.ts",
+    "sha256": "971F32B62A960703B145E785E8A016FB08E6CDE47195E62CC27B9DE3160F0704"
+  },
+  {
+    "path": "packages/db/src/repositories/support-request.repository.ts",
+    "sha256": "66DD451956BC5B78573E3EAC961337D3EF8FC96FD15D8E2E7A79AE4096DB2975"
+  },
+  {
+    "path": "packages/db/src/repositories/user.repository.ts",
+    "sha256": "48B5B7F5B3BF2D262A59DCF30D437495B66FF54CA2CBB016DAD5E5401B17731E"
+  },
+  {
+    "path": "packages/db/src/types.ts",
+    "sha256": "107FD23F18EACC43AB9019666EAB3D379A4DB3E0B4EE26ADC256171E1D16A964"
+  },
+  {
+    "path": "packages/db/tests/db.test.ts",
+    "sha256": "AFDC9A2A04C095AD28329FF2AE363844B46C1B0FE9C1B1D7364ADE674A147242"
+  },
+  {
+    "path": "packages/domain/package.json",
+    "sha256": "8B55193BE11895DE89F0E001DA46C2FBDFE245ADE7D1D28081A148AC722C5841"
+  },
+  {
+    "path": "packages/domain/tests/analytics.test.ts",
+    "sha256": "64F633F98160A6B897F9A350844038F15CF5CCE89BF1FEEB5CDB7F19C42572C6"
+  },
+  {
+    "path": "packages/domain/tests/counselling.test.ts",
+    "sha256": "6E7CC39274D8B537B0E9AA90F082640F30446C7DDD70930C20C903757BEB6F52"
+  },
+  {
+    "path": "packages/domain/tests/state-machines.test.ts",
+    "sha256": "A34FFA1DF643F246DD3F825694FA028EAC09921A0BDFE3B3A763D287E8D0DB29"
+  },
+  {
+    "path": "packages/validation/package.json",
+    "sha256": "0DE22AF06AC43F0F95ACF95047AEBE117AEE3680ED43D63FADBE266DC9D5FEC7"
+  },
+  {
+    "path": "packages/validation/tests/auth.test.ts",
+    "sha256": "CB9539DDD0D410BD8BAB5147B4098D7E4AF6CA3E284E54B0CE7458BBEDDE5F3D"
+  },
+  {
+    "path": "packages/validation/tests/listener.test.ts",
+    "sha256": "55950D471F6EB1855B8601ED62BF01EB1BAAB720E8778A2C665B68B102BDE1B1"
+  },
+  {
+    "path": "pnpm-lock.yaml",
+    "sha256": "4787416B8260CDB2464CD4CD80F2B9A03D74CAE77D089F4399D68B2121EC83B2"
+  },
+  {
+    "path": "supabase/migrations/20260905000001_db_authority_lockdown.sql",
+    "sha256": "3C07F2406910828F88964BA7ED0EAC394AE4F44073E6FE6C912648EC48493ACA"
+  },
+  {
+    "path": "supabase/migrations/20260905000002_age_evidence_nullability.sql",
+    "sha256": "AF17CFCF696470A692F8B0C019B86F1A8E22F9EA731D5EF87D4123EBDC6CAC88"
+  },
+  {
+    "path": "supabase/migrations/ROLLBACK.md",
+    "sha256": "3B5E2A2A71795AD8D56B7D9027E44BAC77310F1E9A120D9B8F0F1531D9CE7DF3"
+  }
+]

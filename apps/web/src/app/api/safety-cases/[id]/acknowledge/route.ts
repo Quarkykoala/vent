@@ -20,7 +20,7 @@ export async function POST(
     const adminClient = getSupabaseAdmin();
     const safetyRepo = new SafetyRepository(adminClient);
 
-    await safetyRepo.acknowledgeCase(id, session.userId);
+    await safetyRepo.acknowledgeCase(id, session.userId, session.role);
 
     return NextResponse.json({
       caseId: id,

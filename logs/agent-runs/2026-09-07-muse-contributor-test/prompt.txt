@@ -1,0 +1,14 @@
+Write one small React 19 + TypeScript client component for Vent's existing phone OTP sign-in API. Return only the complete PhoneSignIn.tsx source, no explanation or tests. Use React and Tailwind classes only, no new dependencies. Export default PhoneSignIn with props { ageConfirmed: boolean; onAuthenticated: (token: string) => void }.
+
+API contracts:
+- POST /api/auth/otp/send JSON { phone }, where phone must match /^\+91[6-9]\d{9}$/. Success: HTTP 200 { success: true, message: string }.
+- POST /api/auth/otp/verify JSON { phone, code, ageConfirmed: true }, where code is exactly six digits. Success: HTTP 200 { session: { token: string, ... } }.
+- Failures may be non-2xx JSON { error: string }, non-JSON responses, or network rejection.
+
+Behavior:
+1. Show a labelled phone field accepting either a 10-digit Indian mobile number or +91 format, normalize to E.164, and a Send code button. Do not send anything without ageConfirmed and valid input. The age checkbox belongs to the parent; do not add consent copy.
+2. After confirmed send success, show a labelled six-digit code field and Verify code button. Show a Change phone button that returns to the phone step and clears the old code/error. Verify the number that actually received the code, not an edited/new number. Prevent duplicate actions while a request is pending.
+3. Validate the verification response has a nonempty string session token, then call onAuthenticated exactly once for that successful submission. Clear sensitive component fields. Keep token handling in memory; no logging, storage, analytics, cookies, URLs or other network calls. Do not render the token.
+4. On failure show a short accessible error and allow retry. Do not echo arbitrary raw server messages or HTML. Use type-safe unknown/error handling, no any. Use ordinary accessible form controls with visible labels, disabled pending actions and a status/error region.
+
+Keep it readable and focused (roughly 150-220 lines if practical). The caller and backend are out of scope. The reviewer will compile and exercise the component with synthetic API responses. Do not claim tests ran.

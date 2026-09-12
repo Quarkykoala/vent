@@ -6,3 +6,4 @@ export * from './repositories/payment.repository';
 export * from './repositories/matching.repository';
 export * from './repositories/session.repository';
 export * from './repositories/safety.repository';
+export * from './repositories/support-request.repository';

@@ -1,0 +1,4 @@
+BEGIN
+DO
+ROLLBACK
+NOTICE:  {"probe": "one-capture-one-request", "captureSuccess": true, "actualQueuedRequests": 2, "expectedQueuedRequests": 1, "requestsBoundToOnePayment": 2}

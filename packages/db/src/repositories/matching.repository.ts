@@ -128,4 +128,59 @@ export class MatchingRepository {
       throw new Error(data?.error || 'Failed to atomically expire reservation');
     }
   }
+
+  /**
+   * R2 durable recovery: after reservation acceptance, converge on exactly one
+   * session for the request. Returns the existing session when a previous
+   * attempt already created it; otherwise creates it inside the same
+   * transaction. The UNIQUE(request_id) constraint is the final guard.
+   *
+   * A request or session that already reached a terminal state is reported as
+   * `terminal: true` with no mutation: a replayed acceptance must never
+   * resurrect a finished session, reservation or presence row.
+   */
+  async recoverSession(
+    reservationId: string,
+    listenerId: string
+  ): Promise<{
+    sessionId: string | null;
+    roomName: string | null;
+    requestId: string | null;
+    recovered: boolean;
+    terminal: boolean;
+    terminalState?: string;
+  }> {
+    const rawClient = this.client as any;
+    const { data, error } = await rawClient.rpc('atomic_accept_session_recovery', {
+      p_reservation_id: reservationId,
+      p_listener_id: listenerId,
+    });
+
+    if (error) {
+      throw new Error(`Database error in atomic_accept_session_recovery: ${error.message}`);
+    }
+
+    if (data?.code === 'TERMINAL_STATE') {
+      return {
+        sessionId: data.session_id ?? null,
+        roomName: null,
+        requestId: null,
+        recovered: false,
+        terminal: true,
+        terminalState: data.session_state ?? data.request_state,
+      };
+    }
+
+    if (!data || !data.success) {
+      throw new Error(data?.error || 'Failed to recover accepted session');
+    }
+
+    return {
+      sessionId: data.session_id,
+      roomName: data.room_name,
+      requestId: data.request_id,
+      recovered: data.recovered === true,
+      terminal: false,
+    };
+  }
 }

@@ -3,6 +3,14 @@ import { UserRole } from '@vent/domain';
 import { authenticateRequest, requireRole, handleAuthError } from '@/features/auth/auth-guard';
 import { getSupabaseAdmin } from '@/lib/supabase-server';
 
+/**
+ * Approve a payout batch.
+ *
+ * The decision is made inside `atomic_approve_payout_batch`, which locks the
+ * row and refuses anything that is not `pending_approval` — an executed or
+ * rejected batch can never be silently re-approved. The human approval is what
+ * unlocks execution (enforced separately in `atomic_execute_payout_batch`).
+ */
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -13,38 +21,30 @@ export async function POST(
 
     const { id } = await params;
     const adminClient = getSupabaseAdmin();
-    const now = new Date().toISOString();
 
-    const { data: updated, error } = await (adminClient.from('payout_batches' as any) as any)
-      .update({
-        status: 'approved',
-        approved_by: session.userId,
-        approved_at: now,
-      })
-      .eq('id', id)
-      .select()
-      .maybeSingle();
-
-    if (error || !updated) {
-      return NextResponse.json({ error: error?.message || 'Payout batch not found' }, { status: 404 });
-    }
-
-    // Write audit event
-    await (adminClient.from('audit_events') as any).insert({
-      actor_id: session.userId,
-      actor_role: session.role,
-      action: 'payout_batch_approved',
-      entity_type: 'payout_batch',
-      entity_id: id,
-      metadata: { totalPaise: (updated as any).total_paise },
-      created_at: now,
+    const { data, error } = await (adminClient as any).rpc('atomic_approve_payout_batch', {
+      p_batch_id: id,
+      p_approver_id: session.userId,
+      p_approver_role: session.role,
     });
 
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    if (!data || !data.success) {
+      const code = data?.code;
+      const status =
+        code === 'BATCH_NOT_FOUND' ? 404 : code === 'ALREADY_APPROVED' || code === 'INVALID_BATCH_STATE' ? 409 : 400;
+      return NextResponse.json({ error: data?.error || 'Approval failed', code }, { status });
+    }
+
     return NextResponse.json({
-      batchId: id,
-      status: 'approved',
-      approvedBy: session.userId,
-      approvedAt: now,
+      batchId: data.batch_id,
+      status: data.status,
+      totalPaise: data.total_paise,
+      approvedBy: data.approved_by,
+      approvedAt: data.approved_at,
       message: 'Payout batch approved by authorized human finance reviewer. Ready for execution.',
     }, { status: 200 });
   } catch (err: any) {

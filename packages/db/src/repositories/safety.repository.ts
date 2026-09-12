@@ -45,7 +45,11 @@ export class SafetyRepository {
     };
   }
 
-  async acknowledgeCase(caseId: string, supervisorId: string): Promise<void> {
+  async acknowledgeCase(
+    caseId: string,
+    supervisorId: string,
+    actorRole = 'clinical_supervisor'
+  ): Promise<void> {
     const rawClient = this.client as any;
     const now = new Date().toISOString();
 
@@ -62,9 +66,10 @@ export class SafetyRepository {
       throw new Error(`Failed to acknowledge safety case: ${updErr.message}`);
     }
 
+    // The audit row records the caller's real role, not an assumed one.
     await rawClient.from('audit_events').insert({
       actor_id: supervisorId,
-      actor_role: 'clinical_supervisor',
+      actor_role: actorRole,
       action: 'safety_case_acknowledged',
       entity_type: 'safety_case',
       entity_id: caseId,
@@ -77,6 +82,7 @@ export class SafetyRepository {
     caseId: string;
     supervisorId: string;
     resolutionCode: string;
+    actorRole?: string;
   }): Promise<void> {
     const rawClient = this.client as any;
     const now = new Date().toISOString();
@@ -97,7 +103,7 @@ export class SafetyRepository {
 
     await rawClient.from('audit_events').insert({
       actor_id: params.supervisorId,
-      actor_role: 'clinical_supervisor',
+      actor_role: params.actorRole ?? 'clinical_supervisor',
       action: 'safety_case_resolved',
       entity_type: 'safety_case',
       entity_id: params.caseId,

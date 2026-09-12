@@ -1,0 +1,31 @@
+$ pnpm --recursive --filter "@vent/*" run typecheck
+Scope: 4 of 5 workspace projects
+$ tsc --noEmit
+$ tsc --noEmit
+$ tsc --noEmit
+$ tsc --noEmit
+src/features/matching/coordinator.ts(72,36): error TS2769: No overload matches this call.
+  Overload 1 of 4, '(value: string | number | Date): Date', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'string | number | Date'.
+  Overload 2 of 4, '(value: string | number): Date', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'string | number'.
+src/features/matching/coordinator.ts(75,48): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/features/matching/coordinator.ts(81,11): error TS2322: Type 'unknown' is not assignable to type 'string | undefined'.
+src/features/matching/coordinator.ts(82,11): error TS2322: Type 'unknown' is not assignable to type 'string | undefined'.
+src/features/matching/coordinator.ts(83,11): error TS2322: Type 'unknown' is not assignable to type 'string | undefined'.
+tests/matching-coordinator.test.ts(279,11): error TS2353: Object literal may only specify known properties, and 'normalizedQuality' does not exist in type 'ScoreComponents'.
+tests/matching-coordinator.test.ts(292,11): error TS2353: Object literal may only specify known properties, and 'normalizedQuality' does not exist in type 'ScoreComponents'.
+tests/matching-coordinator.test.ts(446,9): error TS2322: Type 'Promise<{ id: string | undefined; }>' is not assignable to type 'Promise<{ id: string; }>'.
+  Type '{ id: string | undefined; }' is not assignable to type '{ id: string; }'.
+    Types of property 'id' are incompatible.
+      Type 'string | undefined' is not assignable to type 'string'.
+        Type 'undefined' is not assignable to type 'string'.
+tests/matching-coordinator.test.ts(471,9): error TS2322: Type 'Promise<{ id: string | undefined; }>' is not assignable to type 'Promise<{ id: string; }>'.
+  Type '{ id: string | undefined; }' is not assignable to type '{ id: string; }'.
+    Types of property 'id' are incompatible.
+      Type 'string | undefined' is not assignable to type 'string'.
+        Type 'undefined' is not assignable to type 'string'.
+C:\Users\lenovo\projects\vent\apps\web:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @vent/web@0.1.0 typecheck: `tsc --noEmit`
+Exit status 2
+[ELIFECYCLE] Command failed with exit code 2.

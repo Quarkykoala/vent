@@ -1,0 +1,17 @@
+$ vitest run "tests/completion-ratings-blocks.test.ts" "tests/counselling-funnel.test.ts" "tests/finance-hardening.test.ts" "tests/payment-order.test.ts" "tests/rls-hardening-11-personas.test.ts" "--maxWorkers=2" "--minWorkers=1"
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/apps/web[39m
+
+ [32m✓[39m tests/completion-ratings-blocks.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 1312[2mms[22m[39m
+ [32m✓[39m tests/rls-hardening-11-personas.test.ts [2m([22m[2m36 tests[22m[2m)[22m[33m 3174[2mms[22m[39m
+ [32m✓[39m tests/finance-hardening.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 1171[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 8 — Real Finance, Refunds & Human-Gated Payouts[2m > [22mSTRICT INVARIANT: Payout execution strictly requires human finance approval [33m324[2mms[22m[39m
+ [32m✓[39m tests/payment-order.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 629[2mms[22m[39m
+ [32m✓[39m tests/counselling-funnel.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 1246[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m      Tests [22m [1m[32m54 passed[39m[22m[90m (54)[39m
+[2m   Start at [22m 00:09:54
+[2m   Duration [22m 6.26s[2m (transform 470ms, setup 0ms, collect 1.94s, tests 7.53s, environment 1ms, prepare 1.01s)[22m
+

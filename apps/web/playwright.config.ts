@@ -5,7 +5,12 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // One worker on purpose: every browser journey signs in through the same
+  // locally mapped test phone numbers, and the local Auth SMS endpoint is
+  // rate limited (1 request/second per number). Running these files in
+  // parallel makes them collide on that single shared resource, which showed
+  // up as flaky "Code sent to" timeouts rather than as a product defect.
+  workers: 1,
   reporter: 'html',
   use: {
     baseURL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',

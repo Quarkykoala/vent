@@ -160,9 +160,12 @@ describe('Package 7 — Real Safety System Hardening & Audit Logging', () => {
     expect((dbSess as any).state).toBe('safety_ended');
     expect((dbSess as any).end_reason).toBe('safety_escalation');
 
-    // 3. Verify support request transitioned to completed
+    // 3. Verify support request is recorded as a SAFETY outcome, not a normal
+    //    completion. `completed` would conflate a safety escalation with a
+    //    routine session end and hide it from safety reporting; the request
+    //    state machine has a dedicated `safety_escalated` branch (PRD FR-04).
     const { data: dbReq } = await admin.from('support_requests').select('*').eq('id', testSupportRequestId).single();
-    expect((dbReq as any).state).toBe('completed');
+    expect((dbReq as any).state).toBe('safety_escalated');
 
     // 4. Verify listener presence freed to available
     const { data: dbPresence } = await admin.from('listener_presence').select('*').eq('listener_id', testListenerProfileId).single();

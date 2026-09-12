@@ -6,7 +6,7 @@ import { POST as refundHandler } from '../src/app/api/finance/refunds/route';
 import { POST as createProposalHandler } from '../src/app/api/finance/payouts/proposal/route';
 import { POST as approvePayoutHandler } from '../src/app/api/finance/payouts/[id]/approve/route';
 import { POST as executePayoutHandler } from '../src/app/api/finance/payouts/[id]/execute/route';
-import { UserRole, LedgerAccountCode } from '@vent/domain';
+import { UserRole, LedgerAccountCode, DEFAULT_PRICING } from '@vent/domain';
 import { getSupabaseAdmin, getSupabaseServerClient } from '../src/lib/supabase-server';
 
 describe('Package 8 — Real Finance, Refunds & Human-Gated Payouts', () => {
@@ -17,8 +17,11 @@ describe('Package 8 — Real Finance, Refunds & Human-Gated Payouts', () => {
   let testFinanceUserId: string;
   let testFinanceJwt: string;
   let testPaymentId: string;
-  let testSessionId: string;
   const initialPaise = 50000n; // ₹500
+  let listenerAuthUserId: string;
+  let listenerUserId: string;
+  let listenerProfileId: string;
+  let payoutRequestId: string;
 
   beforeAll(async () => {
     // 1. Create Regular User
@@ -95,9 +98,78 @@ describe('Package 8 — Real Finance, Refunds & Human-Gated Payouts', () => {
         reference_id: testPaymentId,
       },
     ] as any);
+
+    // 4. Listener fixture with one completed session, so payout totals are
+    //    computed from real rows instead of a caller-supplied number.
+    const phoneL = `91${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+    const { data: authL } = await admin.auth.admin.createUser({
+      phone: phoneL,
+      phone_confirm: true,
+      password: 'Password123!',
+      app_metadata: { role: UserRole.LISTENER },
+    });
+    listenerAuthUserId = authL.user!.id;
+    const { data: uL } = await admin.from('users').insert({
+      auth_user_id: listenerAuthUserId,
+      handle: `FinanceListener_${Date.now()}_${Math.floor(Math.random() * 10000)}`,
+      age_verified_at: new Date().toISOString(),
+      status: 'active',
+    } as any).select().single();
+    listenerUserId = (uL as any).id;
+
+    const { data: profile } = await admin.from('listener_profiles').insert({
+      user_id: listenerUserId,
+      display_name: `Finance Listener ${Date.now()}`,
+      status: 'active',
+      tier: 'listener',
+      languages: ['English'],
+      topics: ['Work & Career Stress'],
+      verified_at: new Date().toISOString(),
+      training_expires_at: new Date(Date.now() + 7 * 86400000).toISOString(),
+    } as any).select().single();
+    listenerProfileId = (profile as any).id;
+
+    const { data: completedReq } = await admin.from('support_requests').insert({
+      user_id: testUserId,
+      topic: 'Work & Career Stress',
+      language: 'English',
+      service_tier: 'listener',
+      state: 'completed',
+      idempotency_key: `fin_payout_req_${Date.now()}`,
+    } as any).select().single();
+    payoutRequestId = (completedReq as any).id;
+
+    await admin.from('sessions').insert({
+      request_id: payoutRequestId,
+      user_id: testUserId,
+      listener_id: listenerProfileId,
+      room_name: `room_fin_${crypto.randomUUID().replace(/-/g, '').slice(0, 12)}`,
+      state: 'ended',
+      started_at: new Date(Date.now() - 3600_000).toISOString(),
+      ended_at: new Date().toISOString(),
+      duration_seconds: 900,
+      end_reason: 'normal_completion',
+    } as any);
   });
 
   afterAll(async () => {
+    // Remove the payout fixture first: sessions/listener rows cascade from the
+    // listener profile and the user.
+    if (listenerProfileId) {
+      await admin.from('sessions').delete().eq('listener_id', listenerProfileId);
+      await admin.from('listener_presence').delete().eq('listener_id', listenerProfileId);
+      await admin.from('listener_profiles').delete().eq('id', listenerProfileId);
+    }
+    if (payoutRequestId) {
+      await admin.from('support_requests').delete().eq('id', payoutRequestId);
+    }
+    if (listenerUserId) {
+      await admin.from('audit_events').delete().eq('actor_id', listenerUserId);
+      await admin.from('users').delete().eq('id', listenerUserId);
+    }
+    if (listenerAuthUserId) {
+      await admin.auth.admin.deleteUser(listenerAuthUserId);
+    }
     await admin.from('users').delete().in('id', [testUserId, testFinanceUserId]);
   });
 
@@ -132,7 +204,7 @@ describe('Package 8 — Real Finance, Refunds & Human-Gated Payouts', () => {
     expect(res.status).toBe(403);
   });
 
-  it('refund executes, updates payment to refunded, and writes balanced compensating ledger entries', async () => {
+  it('refund is recorded as pending provider with no ledger effect until it settles', async () => {
     const req = new NextRequest('http://localhost:3000/api/finance/refunds', {
       method: 'POST',
       headers: {
@@ -150,40 +222,93 @@ describe('Package 8 — Real Finance, Refunds & Human-Gated Payouts', () => {
     expect(res.status).toBe(200);
     const data = await res.json();
 
-    expect(data.state).toBe('refunded');
+    // No provider credentials exist in this environment, so the honest outcome
+    // is "pending", not "refunded".
+    expect(data.providerOutcome).toBe('not_configured');
+    expect(data.state).toBe('pending_provider');
+    expect(data.ledgerPosted).toBe(false);
     expect(data.refundAmountPaise).toBe(Number(initialPaise));
 
-    // 1. Verify payment record updated in PostgreSQL
+    // 1. The payment is pending, not refunded: no money has moved yet.
+    const { data: dbPay } = await admin.from('payments').select('state').eq('id', testPaymentId).single();
+    expect((dbPay as any).state).toBe('refund_pending');
+
+    // 2. No compensating ledger entries may exist before settlement.
+    const { data: earlyEntries } = await admin
+      .from('ledger_entries')
+      .select('*')
+      .eq('reference_id', testPaymentId)
+      .eq('reference_type', 'refund');
+    expect(earlyEntries).toHaveLength(0);
+
+    // 3. The request is audited.
+    const { data: requestedAudit } = await admin
+      .from('audit_events')
+      .select('*')
+      .eq('entity_id', testPaymentId)
+      .eq('action', 'payment_refund_requested');
+    expect(requestedAudit).toHaveLength(1);
+  });
+
+  it('settling the refund posts the compensating journal and marks the payment refunded', async () => {
+    const { data: refundRow } = await admin
+      .from('refunds')
+      .select('*')
+      .eq('payment_id', testPaymentId)
+      .eq('state', 'pending_provider')
+      .single();
+
+    const { data: markResult, error: markErr } = await (admin as any).rpc('atomic_mark_refund_state', {
+      p_refund_id: (refundRow as any).id,
+      p_state: 'settled',
+      p_provider_refund_id: 'rfnd_test_local',
+      p_detail: 'settled by finance against the provider dashboard',
+      p_actor_role: 'finance',
+    });
+    expect(markErr).toBeNull();
+    expect(markResult.state).toBe('settled');
+    expect(markResult.payment_state).toBe('refunded');
+
     const { data: dbPay } = await admin.from('payments').select('state').eq('id', testPaymentId).single();
     expect((dbPay as any).state).toBe('refunded');
 
-    // 2. Verify compensating ledger entries exist (Debit revenue, Credit cash)
     const { data: refundEntries } = await admin
       .from('ledger_entries')
       .select('*')
       .eq('reference_id', testPaymentId)
       .eq('reference_type', 'refund');
-
     expect(refundEntries).toHaveLength(2);
     const dr = (refundEntries as any).find((e: any) => e.direction === 'debit');
     const cr = (refundEntries as any).find((e: any) => e.direction === 'credit');
-
     expect(dr.account_code).toBe(LedgerAccountCode.CUSTOMER_SERVICE_REVENUE);
     expect(cr.account_code).toBe(LedgerAccountCode.CASH_PG_CLEARING);
     expect(BigInt(dr.amount_paise)).toBe(initialPaise);
     expect(BigInt(cr.amount_paise)).toBe(initialPaise);
 
-    // 3. Verify audit log entry
-    const { data: auditLog } = await admin
+    const { data: settledAudit } = await admin
       .from('audit_events')
       .select('*')
       .eq('entity_id', testPaymentId)
       .eq('action', 'payment_refunded');
+    expect(settledAudit).toHaveLength(1);
 
-    expect(auditLog).toHaveLength(1);
+    // Idempotent: a replayed settlement must not double-journal.
+    const { data: replay } = await (admin as any).rpc('atomic_mark_refund_state', {
+      p_refund_id: (refundRow as any).id,
+      p_state: 'settled',
+      p_provider_refund_id: 'rfnd_test_local',
+      p_actor_role: 'finance',
+    });
+    expect(replay.idempotent_replay).toBe(true);
+    const { data: afterReplay } = await admin
+      .from('ledger_entries')
+      .select('*')
+      .eq('reference_id', testPaymentId)
+      .eq('reference_type', 'refund');
+    expect(afterReplay).toHaveLength(2);
   });
 
-  it('duplicate refund on already refunded payment is rejected with 409 Conflict', async () => {
+  it('duplicate refund on an already refunded payment is rejected with 409 Conflict', async () => {
     const req = new NextRequest('http://localhost:3000/api/finance/refunds', {
       method: 'POST',
       headers: {
@@ -200,25 +325,31 @@ describe('Package 8 — Real Finance, Refunds & Human-Gated Payouts', () => {
     const res = await refundHandler(req);
     expect(res.status).toBe(409);
     const data = await res.json();
-    expect(data.error).toMatch(/already been refunded/i);
+    expect(data.error).toMatch(/already been refunded|already in flight/i);
   });
 
   it('STRICT INVARIANT: Payout execution strictly requires human finance approval', async () => {
-    // 1. Create payout proposal batch
+    // 1. Create payout proposal batch. The total is COMPUTED server-side from
+    //    completed sessions — the caller may not supply an amount.
     const propReq = new NextRequest('http://localhost:3000/api/finance/payouts/proposal', {
       method: 'POST',
       headers: {
         authorization: `Bearer ${testFinanceJwt}`,
         'content-type': 'application/json',
       },
-      body: JSON.stringify({
-        totalPaise: 25000, // ₹250
-      }),
+      body: JSON.stringify({}),
     });
 
     const propRes = await createProposalHandler(propReq);
     expect(propRes.status).toBe(201);
     const propData = await propRes.json();
+    // The total is derived from the completed sessions in the period at the
+    // published per-session listener earnings — never from the request body.
+    expect(propData.totalPaise).toBe(
+      Number(DEFAULT_PRICING.listenerEarningsPaise) * propData.eligibleSessionsCount
+    );
+    expect(propData.eligibleSessionsCount).toBeGreaterThanOrEqual(1);
+    expect(propData.listenerCount).toBeGreaterThanOrEqual(1);
     const batchId = propData.batchId;
     expect(propData.status).toBe('pending_approval');
 
@@ -280,7 +411,8 @@ describe('Package 8 — Real Finance, Refunds & Human-Gated Payouts', () => {
 
     expect(dr.account_code).toBe(LedgerAccountCode.LISTENER_PAYABLE);
     expect(cr.account_code).toBe(LedgerAccountCode.CASH_PG_CLEARING);
-    expect(Number(dr.amount_paise)).toBe(25000);
-    expect(Number(cr.amount_paise)).toBe(25000);
+    // The journal matches the computed batch total exactly.
+    expect(Number(dr.amount_paise)).toBe(propData.totalPaise);
+    expect(Number(cr.amount_paise)).toBe(propData.totalPaise);
   });
 });

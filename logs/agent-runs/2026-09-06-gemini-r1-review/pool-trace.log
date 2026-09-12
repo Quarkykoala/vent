@@ -1,0 +1,46 @@
+$ vitest run "--config" "../../logs/agent-runs/2026-09-06-gemini-r1-review/pool-trace.config.mjs"
+
+ RUN  v2.1.9 C:/Users/lenovo/projects/vent/apps/web
+
+stdout | tests/matching-authorization.test.ts > R1: Matching authorization regression — state and ownership invariants > criterion 4 & 5: legitimate owner matches queued request, repeating while offer active produces no duplicate, and authorized lazy expiry rematches
+R1_POOL_TRACE {"phase":"owner-initial","at":1788642502932,"selectedIsSuiteFixture":false,"selectedId":"0740aa27-a704-4b90-9fc5-93ff5d8cbffb"}
+
+stdout | tests/matching-coordinator.test.ts > WP-7 — Queue coordinator, atomic reservation, accept→session (live DB)
+R1_POOL_TRACE {"phase":"coordinator-cleanup","at":1788642503074,"profileIds":["0740aa27-a704-4b90-9fc5-93ff5d8cbffb","1312f8c3-099a-419a-89b8-be10d80d66a6"]}
+
+ ✓ tests/matching-coordinator.test.ts (9 tests) 2514ms
+ ❯ tests/matching-authorization.test.ts (6 tests | 1 failed) 2726ms
+   ✓ R1: Matching authorization regression — state and ownership invariants > criterion 1 & 5: denies a non-owner on a queued request with 403, leaving request, reservations, sessions, and listener presence unchanged without invoking coordinator 386ms
+   ✓ R1: Matching authorization regression — state and ownership invariants > criterion 2 & 5: denies a non-owner on an expired offered reservation with 403, without triggering lazy expiry, requeueing, listener release, or rematching 650ms
+   × R1: Matching authorization regression — state and ownership invariants > criterion 4 & 5: legitimate owner matches queued request, repeating while offer active produces no duplicate, and authorized lazy expiry rematches 558ms
+     → expected [] to have a length of 1 but got +0
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/matching-authorization.test.ts > R1: Matching authorization regression — state and ownership invariants > criterion 4 & 5: legitimate owner matches queued request, repeating while offer active produces no duplicate, and authorized lazy expiry rematches
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/matching-authorization.test.ts:500:33
+    498|     await testDb
+    499|       .from('match_reservations')
+    500|       .update({ expires_at: pastExpiresAt })
+       |                                 ^
+    501|       .eq('id', body1.reservationId);
+    502| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 14 passed (15)
+   Start at  02:38:19
+   Duration  4.15s (transform 358ms, setup 0ms, collect 1.14s, tests 5.24s, environment 0ms, prepare 315ms)
+
+C:\Users\lenovo\projects\vent\apps\web:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @vent/web@0.1.0 test: `vitest run "--config" "../../logs/agent-runs/2026-09-06-gemini-r1-review/pool-trace.config.mjs"`
+Exit status 1

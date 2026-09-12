@@ -8,7 +8,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "tsc --noEmit"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.48.1",

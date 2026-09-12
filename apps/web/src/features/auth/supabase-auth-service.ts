@@ -55,7 +55,11 @@ export class SupabaseAuthService implements IAuthService {
     });
 
     if (error || !data.user || !data.session) {
-      throw new Error(error?.message || 'Invalid or expired OTP code.');
+      const message = (error?.message || '').toLowerCase();
+      if (message.includes('expired')) {
+        throw new Error('This code has expired. Please request a new one.');
+      }
+      throw new Error('Invalid code. Check the code and try again.');
     }
 
     const adminClient = getSupabaseAdmin();
@@ -73,6 +77,15 @@ export class SupabaseAuthService implements IAuthService {
 
     if (userRecord.status === 'suspended' || userRecord.status === 'deleted') {
       throw new Error('Account access restricted.');
+    }
+
+    if (!userRecord.age_verified_at) {
+      // Existing profile whose age evidence is null: repair it from this genuine
+      // age-gated OTP verification. Never fabricated — ageConfirmed was required above.
+      userRecord = await userRepo.recordAgeVerification(
+        userRecord.id,
+        new Date().toISOString()
+      );
     }
 
     // Role derivation: staff roles must be provisioned via app_metadata by admin, NEVER client-selectable
@@ -125,10 +138,12 @@ export class SupabaseAuthService implements IAuthService {
     let userRecord = await userRepo.findByAuthUserId(data.user.id);
 
     if (!userRecord) {
+      // F08 invariant: token-based provisioning must NOT fabricate an 18+
+      // confirmation timestamp. Durable age evidence is only recorded by the
+      // OTP flow after an explicit ageConfirmed interaction.
       userRecord = await userRepo.createUser({
         authUserId: data.user.id,
         handle: generatePseudonym(),
-        ageVerifiedAt: new Date().toISOString(),
       });
     }
 

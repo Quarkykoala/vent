@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { SESSION_CAP_SECONDS } from '@vent/domain';
 import { livekitService, LiveKitService } from '@/features/sessions/livekit-service';
 import { authenticateRequest, handleAuthError } from '@/features/auth/auth-guard';
 import { getSupabaseAdmin } from '@/lib/supabase-server';
@@ -59,7 +60,29 @@ export async function POST(
       );
     }
 
-    // 4. Fail-closed credential check
+    // 4. Server-owned duration cap (RISK-006). A session past the approved cap
+    //    is ended by the server here; no token is issued that would extend it.
+    const startedAtIso: string | null = (sessionRow as any).started_at ?? null;
+    const elapsedSeconds = startedAtIso
+      ? Math.floor((Date.now() - new Date(startedAtIso).getTime()) / 1000)
+      : 0;
+
+    if (startedAtIso && elapsedSeconds >= SESSION_CAP_SECONDS) {
+      await (adminClient as any).rpc('atomic_expire_session_cap', {
+        p_session_id: id,
+        p_cap_seconds: SESSION_CAP_SECONDS,
+        p_end_reason: 'duration_cap',
+      });
+      return NextResponse.json(
+        {
+          error: `This session reached the ${Math.round(SESSION_CAP_SECONDS / 60)}-minute limit and has ended.`,
+          code: 'SESSION_CAP_REACHED',
+        },
+        { status: 409 }
+      );
+    }
+
+    // 5. Fail-closed credential check
     let activeService = livekitService;
 
     if (process.env.LIVEKIT_TEST_SIMULATOR === 'true') {
@@ -79,7 +102,7 @@ export async function POST(
       );
     }
 
-    // 5. Generate token bound to session's exact room_name with short TTL and zero recording grants
+    // 6. Generate token bound to session's exact room_name with short TTL and zero recording grants
     const tokenResult = activeService.generateRoomToken({
       roomName: (sessionRow as any).room_name,
       role: derivedRole,
@@ -87,7 +110,18 @@ export async function POST(
       ttlSeconds: 600, // 10 minutes maximum
     });
 
-    return NextResponse.json(tokenResult, { status: 200 });
+    return NextResponse.json(
+      {
+        ...tokenResult,
+        // Server-authoritative timing so the client timer can never disagree
+        // with the cap the server enforces.
+        startedAt: startedAtIso ?? new Date().toISOString(),
+        maxDurationSeconds: SESSION_CAP_SECONDS,
+        remainingSeconds: Math.max(0, SESSION_CAP_SECONDS - elapsedSeconds),
+        role: derivedRole,
+      },
+      { status: 200 }
+    );
   } catch (err: any) {
     if (err.name === 'AuthError') {
       return handleAuthError(err);

@@ -56,8 +56,8 @@ export async function POST(req: NextRequest) {
     if (result.auth_user_id && !result.auth_user_id.startsWith('erased_')) {
       try {
         await adminClient.auth.admin.deleteUser(result.auth_user_id);
-      } catch (authErr: any) {
-        // Log if already absent from Auth
+      } catch {
+        // Already absent from Supabase Auth.
       }
     }
 

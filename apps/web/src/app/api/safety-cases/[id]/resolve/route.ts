@@ -35,6 +35,7 @@ export async function POST(
       caseId: id,
       supervisorId: session.userId,
       resolutionCode: parsed.data.resolutionCode,
+      actorRole: session.role,
     });
 
     return NextResponse.json({

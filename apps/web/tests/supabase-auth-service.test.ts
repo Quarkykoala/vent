@@ -149,6 +149,141 @@ describe('Package 1 — SupabaseAuthService Implementation', () => {
         })
       ).rejects.toThrow(/Account access restricted/);
     });
+
+    it('repairs null age evidence for an existing profile on genuine verification', async () => {
+      mockSupabaseClient.auth.verifyOtp.mockResolvedValue({
+        data: {
+          user: { id: '00000000-0000-0000-0000-000000000003', app_metadata: {} },
+          session: { access_token: 'jwt_token_789', aal: 'aal1' },
+        },
+        error: null,
+      });
+
+      const existingRow = {
+        id: '33333333-3333-3333-3333-333333333333',
+        auth_user_id: '00000000-0000-0000-0000-000000000003',
+        handle: 'PatientMeadow789',
+        age_verified_at: null,
+        status: 'active',
+      };
+      const repairedRow = {
+        ...existingRow,
+        age_verified_at: new Date().toISOString(),
+      };
+
+      let updateCalled = false;
+      mockAdminClient.from.mockImplementation((table: string) => {
+        if (table === 'users') {
+          return {
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            maybeSingle: vi.fn().mockResolvedValue({ data: existingRow, error: null }),
+            update: vi.fn().mockImplementation(() => {
+              updateCalled = true;
+              return {
+                eq: vi.fn().mockReturnThis(),
+                select: vi.fn().mockReturnThis(),
+                single: vi.fn().mockResolvedValue({ data: repairedRow, error: null }),
+              };
+            }),
+          };
+        }
+        if (table === 'listener_profiles') {
+          return {
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+          };
+        }
+        return {};
+      });
+
+      const res = await authService.verifyOtp({
+        phone: '+919876543210',
+        code: '654321',
+        ageConfirmed: true,
+      });
+
+      expect(updateCalled).toBe(true);
+      expect(res.session.userId).toBe(existingRow.id);
+    });
+
+    it('does not rewrite existing age evidence on repeat verification', async () => {
+      mockSupabaseClient.auth.verifyOtp.mockResolvedValue({
+        data: {
+          user: { id: '00000000-0000-0000-0000-000000000004', app_metadata: {} },
+          session: { access_token: 'jwt_token_abc', aal: 'aal1' },
+        },
+        error: null,
+      });
+
+      const existingRow = {
+        id: '44444444-4444-4444-4444-444444444444',
+        auth_user_id: '00000000-0000-0000-0000-000000000004',
+        handle: 'CalmHarbor321',
+        age_verified_at: '2026-01-01T00:00:00.000Z',
+        status: 'active',
+      };
+
+      const updateSpy = vi.fn();
+      mockAdminClient.from.mockImplementation((table: string) => {
+        if (table === 'users') {
+          return {
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            maybeSingle: vi.fn().mockResolvedValue({ data: existingRow, error: null }),
+            update: updateSpy,
+          };
+        }
+        if (table === 'listener_profiles') {
+          return {
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+          };
+        }
+        return {};
+      });
+
+      const res = await authService.verifyOtp({
+        phone: '+919876543210',
+        code: '654321',
+        ageConfirmed: true,
+      });
+
+      expect(updateSpy).not.toHaveBeenCalled();
+      expect(res.session.userId).toBe(existingRow.id);
+    });
+
+    it('maps provider expiry to an expired-code message', async () => {
+      mockSupabaseClient.auth.verifyOtp.mockResolvedValue({
+        data: { user: null, session: null },
+        error: { message: 'Token has expired or is invalid' },
+      });
+
+      await expect(
+        authService.verifyOtp({
+          phone: '+919876543210',
+          code: '654321',
+          ageConfirmed: true,
+        })
+      ).rejects.toThrow(/expired.*new one/i);
+    });
+
+    it('maps a wrong code to an invalid-code message', async () => {
+      mockSupabaseClient.auth.verifyOtp.mockResolvedValue({
+        data: { user: null, session: null },
+        error: { message: 'invalid otp' },
+      });
+
+      await expect(
+        authService.verifyOtp({
+          phone: '+919876543210',
+          code: '000000',
+          ageConfirmed: true,
+        })
+      ).rejects.toThrow(/invalid code/i);
+    });
   });
 
   describe('getUserFromToken', () => {

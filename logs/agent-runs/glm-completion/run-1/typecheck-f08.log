@@ -1,0 +1,11 @@
+$ pnpm --recursive --filter "@vent/*" run typecheck
+Scope: 4 of 5 workspace projects
+$ tsc --noEmit
+$ tsc --noEmit
+$ tsc --noEmit
+$ tsc --noEmit
+tests/age-evidence.test.ts(104,15): error TS2345: Argument of type '{ age_verified_at: string; }' is not assignable to parameter of type 'never'.
+C:\Users\lenovo\projects\vent\apps\web:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @vent/web@0.1.0 typecheck: `tsc --noEmit`
+Exit status 2
+[ELIFECYCLE] Command failed with exit code 2.

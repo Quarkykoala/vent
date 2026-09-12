@@ -4,18 +4,12 @@ import { paymentWebhookProcessor } from '@/features/payments/payment-processor';
 export async function POST(req: NextRequest) {
   try {
     const rawBody = await req.text();
-    const signature = req.headers.get('x-razorpay-signature');
-
-    if (!signature) {
-      return NextResponse.json({ error: 'Missing webhook signature' }, { status: 400 });
-    }
-
-    const secret = process.env.RAZORPAY_WEBHOOK_SECRET || 'placeholder_webhook_secret';
+    const signature = req.headers.get('x-razorpay-signature') || '';
 
     const result = await paymentWebhookProcessor.processWebhook({
       rawBody,
       signature,
-      webhookSecret: secret,
+      webhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET,
     });
 
     return NextResponse.json(result, { status: result.status });

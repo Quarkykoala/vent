@@ -48,6 +48,14 @@ export class PaymentWebhookProcessor {
       return false;
     }
 
+    // Razorpay signatures are exactly 64 lowercase hex characters. Enforce the
+    // canonical shape BEFORE decoding: Buffer.from(..., 'hex') silently discards
+    // a non-hex suffix or a final unmatched hex digit, which would otherwise let
+    // malformed signatures compare equal to the expected digest.
+    if (!/^[0-9a-fA-F]{64}$/.test(signature)) {
+      return false;
+    }
+
     const expected = crypto
       .createHmac('sha256', secret)
       .update(rawBody)

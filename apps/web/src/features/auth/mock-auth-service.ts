@@ -1,5 +1,5 @@
 import { generatePseudonym } from '@vent/db';
-import { UserRole, type UserRoleType } from '@vent/domain';
+import { UserRole } from '@vent/domain';
 import type { AuthSession, IAuthService } from './types';
 
 /**

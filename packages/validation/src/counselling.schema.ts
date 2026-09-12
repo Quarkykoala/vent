@@ -9,7 +9,6 @@ export const CreateCounsellorSlotSchema = z.object({
 
 export const BookCounsellorSlotSchema = z.object({
   slotId: z.string().uuid(),
-  userId: z.string().uuid(),
   referralSessionId: z.string().uuid().optional(),
   referredFromListenerId: z.string().uuid().optional(),
 });

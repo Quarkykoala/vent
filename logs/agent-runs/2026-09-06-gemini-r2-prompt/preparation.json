@@ -1,0 +1,12 @@
+{
+  "createdAt": "2026-09-06T15:13:40.6450419+05:30",
+  "purpose": "R2 Gemini prompt preparation; no implementation or runtime test",
+  "branch": "hardening/real-mvp-vertical-slice",
+  "head": "d3ca22b397b5d50d468ee7fb162c4e09dc8ff655",
+  "sourceCount": 179,
+  "previousReviewSourcesChecked": 53,
+  "previousReviewSourceDrift": 0,
+  "prompt": "docs/prompts/gemini-3.8-flash-r2-acceptance-recovery.md",
+  "status": "prepared; not dispatched",
+  "runtimeTestsRun": false
+}

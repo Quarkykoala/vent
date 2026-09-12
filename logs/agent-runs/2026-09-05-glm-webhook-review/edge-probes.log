@@ -1,0 +1,64 @@
+$ vitest run "--config" "../../logs/agent-runs/2026-09-05-glm-webhook-review/edge-probes.config.mjs"
+
+ RUN  v2.1.9 C:/Users/lenovo/projects/vent/apps/web
+
+stdout | ../../logs/agent-runs/2026-09-05-glm-webhook-review/edge-probes.test.ts > razorpay route independent review > rejects a correct digest with non-hex suffix
+{"route":"razorpay route","case":"non-hex suffix","status":200,"persistenceCalls":1}
+
+stdout | ../../logs/agent-runs/2026-09-05-glm-webhook-review/edge-probes.test.ts > razorpay route independent review > rejects a correct digest with extra half byte
+{"route":"razorpay route","case":"extra half byte","status":200,"persistenceCalls":1}
+
+stdout | ../../logs/agent-runs/2026-09-05-glm-webhook-review/edge-probes.test.ts > razorpay route independent review > rejects a correct digest with extra full byte
+{"route":"razorpay route","case":"extra full byte","status":400,"persistenceCalls":0}
+
+stdout | ../../logs/agent-runs/2026-09-05-glm-webhook-review/edge-probes.test.ts > payments route independent review > rejects a correct digest with non-hex suffix
+{"route":"payments route","case":"non-hex suffix","status":200,"persistenceCalls":1}
+
+stdout | ../../logs/agent-runs/2026-09-05-glm-webhook-review/edge-probes.test.ts > payments route independent review > rejects a correct digest with extra half byte
+{"route":"payments route","case":"extra half byte","status":200,"persistenceCalls":1}
+
+stdout | ../../logs/agent-runs/2026-09-05-glm-webhook-review/edge-probes.test.ts > payments route independent review > rejects a correct digest with extra full byte
+{"route":"payments route","case":"extra full byte","status":400,"persistenceCalls":0}
+
+ ❯ ../../logs/agent-runs/2026-09-05-glm-webhook-review/edge-probes.test.ts (12 tests | 4 failed) 28ms
+   × razorpay route independent review > rejects a correct digest with non-hex suffix 14ms
+     → expected 200 to be 400 // Object.is equality
+   × razorpay route independent review > rejects a correct digest with extra half byte 2ms
+     → expected 200 to be 400 // Object.is equality
+   × payments route independent review > rejects a correct digest with non-hex suffix 1ms
+     → expected 200 to be 400 // Object.is equality
+   × payments route independent review > rejects a correct digest with extra half byte 1ms
+     → expected 200 to be 400 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  ../../logs/agent-runs/2026-09-05-glm-webhook-review/edge-probes.test.ts > razorpay route independent review > rejects a correct digest with non-hex suffix
+ FAIL  ../../logs/agent-runs/2026-09-05-glm-webhook-review/edge-probes.test.ts > razorpay route independent review > rejects a correct digest with extra half byte
+ FAIL  ../../logs/agent-runs/2026-09-05-glm-webhook-review/edge-probes.test.ts > payments route independent review > rejects a correct digest with non-hex suffix
+ FAIL  ../../logs/agent-runs/2026-09-05-glm-webhook-review/edge-probes.test.ts > payments route independent review > rejects a correct digest with extra half byte
+AssertionError: expected 200 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 200
+
+ ❯ ../../logs/agent-runs/2026-09-05-glm-webhook-review/edge-probes.test.ts:61:29
+     59|     const response = await handler(request(body, sign(body) + suffix));
+     60|     console.info(JSON.stringify({ route: name, case: label, status: re…
+     61|     expect(response.status).toBe(400);
+       |                             ^
+     62|     expect(boundary.admin).not.toHaveBeenCalled();
+     63|     expect(boundary.capture).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 8 passed (12)
+   Start at  22:57:45
+   Duration  1.07s (transform 74ms, setup 0ms, collect 153ms, tests 28ms, environment 0ms, prepare 124ms)
+
+C:\Users\lenovo\projects\vent\apps\web:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @vent/web@0.1.0 test: `vitest run "--config" "../../logs/agent-runs/2026-09-05-glm-webhook-review/edge-probes.config.mjs"`
+Exit status 1

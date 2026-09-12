@@ -11,13 +11,9 @@ import {
   transitionMatchReservation,
   isMatchReservationTransitionAllowed,
   transitionSession,
-  isSessionTransitionAllowed,
   transitionPayment,
-  isPaymentTransitionAllowed,
   transitionSafetyCase,
-  isSafetyCaseTransitionAllowed,
   transitionListenerPresence,
-  isListenerPresenceTransitionAllowed,
   DomainTransitionError,
 } from '../src/index';
 

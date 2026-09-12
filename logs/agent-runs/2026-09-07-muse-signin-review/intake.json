@@ -1,0 +1,18 @@
+{
+  "branch": "hardening/real-mvp-vertical-slice",
+  "head": "d3ca22b397b5d50d468ee7fb162c4e09dc8ff655",
+  "baselineFiles": 179,
+  "currentFiles": 182,
+  "changed": [
+    "apps/web/e2e/smoke.spec.ts",
+    "apps/web/src/app/page.tsx",
+    "apps/web/src/features/auth/supabase-auth-service.ts",
+    "apps/web/tests/supabase-auth-service.test.ts",
+    "packages/db/src/repositories/user.repository.ts"
+  ],
+  "added": [
+    "apps/web/e2e/phone-signin.spec.ts",
+    "apps/web/tests/otp-routes.test.ts",
+    "apps/web/src/features/auth/PhoneSignIn.tsx"
+  ]
+}

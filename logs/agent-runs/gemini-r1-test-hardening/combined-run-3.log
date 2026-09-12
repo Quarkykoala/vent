@@ -1,0 +1,18 @@
+$ vitest run "tests/matching-authorization.test.ts" "tests/matching-coordinator.test.ts" "--maxWorkers=2" "--minWorkers=1"
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/apps/web[39m
+
+ [32mΓ£ô[39m tests/matching-coordinator.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 3547[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m WP-7 ΓÇö Queue coordinator, atomic reservation, acceptΓåÆsession (live DB)[2m > [22mlazily expires a past-TTL offer and rematches; ops expiry is idempotent [33m400[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m WP-7 ΓÇö Queue coordinator, atomic reservation, acceptΓåÆsession (live DB)[2m > [22maccept creates a session, connects the request, and rejects duplicate accepts [33m554[2mms[22m[39m
+ [32mΓ£ô[39m tests/matching-authorization.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 4506[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m R1: Matching authorization regression ΓÇö state and ownership invariants[2m > [22mcriterion 1 & 5: denies a non-owner on a queued request with 403, leaving request, reservations, sessions, and listener presence unchanged without invoking coordinator [33m512[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m R1: Matching authorization regression ΓÇö state and ownership invariants[2m > [22mcriterion 2 & 5: denies a non-owner on an expired offered reservation with 403, without triggering lazy expiry, requeueing, listener release, or rematching [33m1033[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m R1: Matching authorization regression ΓÇö state and ownership invariants[2m > [22mcriterion 4 & 5: legitimate owner matches queued request, repeating while offer active produces no duplicate, and authorized lazy expiry rematches [33m1585[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[32m15 passed[39m[22m[90m (15)[39m
+[2m   Start at [22m 14:43:06
+[2m   Duration [22m 6.01s[2m (transform 378ms, setup 0ms, collect 1.14s, tests 8.05s, environment 0ms, prepare 267ms)[22m
+

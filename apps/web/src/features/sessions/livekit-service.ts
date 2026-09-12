@@ -118,6 +118,65 @@ export class LiveKitService {
 
     return `${headerB64}.${payloadB64}.${signature}`;
   }
+
+  /**
+   * Signs a short-lived server-API token (room administration only).
+   * Deliberately separate from participant tokens: it grants no media rights.
+   */
+  private signServerApiToken(ttlSeconds = 60): string {
+    const nowSeconds = Math.floor(Date.now() / 1000);
+    const header = { alg: 'HS256', typ: 'JWT' };
+    const payload = {
+      iss: this.apiKey,
+      sub: this.apiKey,
+      nbf: nowSeconds - 5,
+      exp: nowSeconds + ttlSeconds,
+      // LiveKit server APIs need the room-admin grant.
+      video: { roomAdmin: true, room: '*', roomCreate: false, roomJoin: false },
+    };
+    const headerB64 = Buffer.from(JSON.stringify(header)).toString('base64url');
+    const payloadB64 = Buffer.from(JSON.stringify(payload)).toString('base64url');
+    const signature = crypto
+      .createHmac('sha256', this.apiSecret)
+      .update(`${headerB64}.${payloadB64}`)
+      .digest('base64url');
+    return `${headerB64}.${payloadB64}.${signature}`;
+  }
+
+  /**
+   * Closes a room so a participant holding a still-valid token cannot rejoin
+   * after the session reached a terminal state. Server-only, short-lived admin
+   * token, no recording or egress involvement.
+   *
+   * Returns false when LiveKit is unconfigured or the call failed; callers must
+   * treat teardown as best-effort — the database state is what forbids rejoin
+   * (the token route refuses terminal sessions), and this is the transport-level
+   * enforcement on top of it.
+   */
+  async deleteRoom(roomName: string): Promise<boolean> {
+    if (!this.isConfigured()) return false;
+
+    const httpUrl = this.livekitUrl.replace(/^ws/, 'http');
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 5000);
+
+    try {
+      const res = await fetch(`${httpUrl}/twirp/livekit.RoomService/DeleteRoom`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.signServerApiToken()}`,
+        },
+        body: JSON.stringify({ room: roomName }),
+        signal: controller.signal,
+      });
+      return res.ok;
+    } catch {
+      return false;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
 }
 
 export const livekitService = new LiveKitService();

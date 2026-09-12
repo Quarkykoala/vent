@@ -1,0 +1,33 @@
+{
+  "TotalRows": 69,
+  "StatusCounts": [
+    {
+      "Name": "BLOCKED (ext)",
+      "Count": 1
+    },
+    {
+      "Name": "IN_PROGRESS",
+      "Count": 18
+    },
+    {
+      "Name": "NOT_STARTED",
+      "Count": 22
+    },
+    {
+      "Name": "VERIFIED_LOCAL",
+      "Count": 24
+    },
+    {
+      "Name": "VERIFIED_LOCAL (capture)",
+      "Count": 1
+    },
+    {
+      "Name": "VERIFIED_LOCAL (unit)",
+      "Count": 2
+    },
+    {
+      "Name": "VERIFIED_LOCAL (unit/RPC)",
+      "Count": 1
+    }
+  ]
+}

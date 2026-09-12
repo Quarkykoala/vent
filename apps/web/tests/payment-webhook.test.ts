@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import crypto from 'node:crypto';
 import { PaymentWebhookProcessor } from '../src/features/payments/payment-processor';
 import { PaymentRepository } from '@vent/db';
-import { LedgerAccountCode, LedgerDirection, assertLedgerBalanced } from '@vent/domain';
+import { LedgerAccountCode } from '@vent/domain';
 import { getSupabaseAdmin } from '../src/lib/supabase-server';
 
 describe('Package 4 — Real Razorpay Webhook & Ledger Persistence', () => {
@@ -60,6 +60,16 @@ describe('Package 4 — Real Razorpay Webhook & Ledger Persistence', () => {
     });
     testPaymentId = payment.id;
     testPaymentEntityId = `pay_test_${Date.now()}`;
+
+    // 4. Bind the request to this exact order, the way the order-creation route
+    //    does before the client can pay. A capture may only entitle the request
+    //    its order was created for — it never fans out to other open requests.
+    const { error: bindErr } = await (admin.from('support_requests') as any)
+      .update({ payment_order_id: testPaymentId })
+      .eq('id', testRequestId);
+    if (bindErr) {
+      throw new Error(`Failed to bind request to payment: ${bindErr.message}`);
+    }
   });
 
   afterAll(async () => {
