@@ -19,7 +19,7 @@ import crypto from 'node:crypto';
  */
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321';
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
 if (!SERVICE_KEY) {
   throw new Error('SUPABASE_SERVICE_ROLE_KEY is required for the local integrated journey. Load it from `supabase status -o env`.');
 }
