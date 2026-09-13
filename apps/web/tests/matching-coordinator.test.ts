@@ -11,6 +11,7 @@ import { MatchingCoordinator } from '../src/features/matching/coordinator';
 import { POST as acceptHandler } from '../src/app/api/matches/[id]/accept/route';
 import { POST as expiryHandler } from '../src/app/api/operations/reservation-expiry/route';
 import { POST as matchHandler } from '../src/app/api/support-requests/[id]/match/route';
+import { elevateTestSessionToAal2 } from './helpers/mfa';
 
 /**
  * WP-7 (P4.2/P4.3): real coordinator execution against the live database.
@@ -64,10 +65,14 @@ async function provisionActor(
   });
   if (signInErr || !signIn.session) throw new Error(`login ${handlePrefix}: ${signInErr?.message}`);
 
+  const token = role === UserRole.LISTENER_OPS
+    ? await elevateTestSessionToAal2(loginClient)
+    : signIn.session.access_token;
+
   return {
     userId: (userRow as any).id,
     authUserId: created.user.id,
-    token: signIn.session.access_token,
+    token,
     phone,
   };
 }
@@ -325,7 +330,7 @@ describe('WP-7 — Queue coordinator, atomic reservation, accept→session (live
     expect(active).toHaveLength(0);
   });
 
-  it('R4: rejects a queued request linked to another user\u2019s captured payment', async () => {
+  it('R4: rejects a queued request linked to another user’s captured payment', async () => {
     await setAvailablePresence(listenerA, 1);
     const { data: payment } = await admin
       .from('payments')
