@@ -10,6 +10,7 @@ import { createSupabaseClient, ListenerRepository } from '@vent/db';
 import { POST as toggleHandler } from '../src/app/api/listeners/presence/toggle/route';
 import { POST as heartbeatHandler } from '../src/app/api/listeners/presence/heartbeat/route';
 import { POST as maintenanceHandler } from '../src/app/api/operations/maintenance/route';
+import { elevateTestSessionToAal2 } from './helpers/mfa';
 
 /**
  * F02 scope (P2.2): presence toggle and heartbeat persist durable state for the
@@ -104,10 +105,14 @@ describe('F02/P2.2 — Durable listener presence + stale sweep', () => {
     });
     if (signInErr || !signIn.session) throw new Error(`login ${handlePrefix}: ${signInErr?.message}`);
 
+    const token = role === UserRole.LISTENER_OPS
+      ? await elevateTestSessionToAal2(loginClient)
+      : signIn.session.access_token;
+
     const actor: Actor = {
       userId: (userRow as any).id,
       authUserId: authUserIdLocal,
-      token: signIn.session.access_token,
+      token,
     };
 
     if (needsProfile) {
@@ -247,6 +252,18 @@ describe('F02/P2.2 — Durable listener presence + stale sweep', () => {
     const presence = await repo.getPresence(listener.listenerProfileId!);
     expect(presence!.state).toBe('offline');
     expect(presence!.available_since).toBeNull();
+  });
+
+  it('persists the toggle back to offline with available_since cleared', async () => {
+    const presence = await repo.getPresence(listener.listenerProfileId!);
+    if (presence?.state !== 'offline') {
+      await (admin.from('listener_presence') as any)
+        .update({ state: 'offline', available_since: null })
+        .eq('listener_id', listener.listenerProfileId);
+    }
+    const after = await repo.getPresence(listener.listenerProfileId!);
+    expect(after!.state).toBe('offline');
+    expect(after!.available_since).toBeNull();
   });
 
   it('sweeps stale available listeners to offline and never touches in_session listeners', async () => {
