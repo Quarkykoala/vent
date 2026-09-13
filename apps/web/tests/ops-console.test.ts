@@ -6,6 +6,7 @@ import { createSupabaseClient, ListenerRepository } from '@vent/db';
 import { POST as reviewHandler } from '../src/app/api/listeners/review/route';
 import { GET as opsQueueHandler } from '../src/app/api/operations/queue/route';
 import { GET as safetyListHandler } from '../src/app/api/safety-cases/route';
+import { elevateTestSessionToAal2 } from './helpers/mfa';
 
 const admin = getSupabaseAdmin();
 
@@ -37,12 +38,24 @@ async function provision(phone: string, role: string) {
     password: 'Password123!',
   });
   if (signInErr || !signIn.session) throw new Error(`login: ${signInErr?.message}`);
-  return { userId: (row as any).id, authId: created.user.id, token: signIn.session.access_token };
+
+  const aal1Token = signIn.session.access_token;
+  const token = role === UserRole.LISTENER_OPS
+    ? await elevateTestSessionToAal2(loginClient)
+    : aal1Token;
+
+  return {
+    userId: (row as any).id,
+    authId: created.user.id,
+    token,
+    aal1Token,
+  };
 }
 
 describe('Operator review, queue and safety reads', () => {
   const nonce = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
   let opsToken: string;
+  let opsAal1Token: string;
   let opsUserId: string;
   let opsAuthId: string;
   let userToken: string;
@@ -55,6 +68,7 @@ describe('Operator review, queue and safety reads', () => {
   beforeAll(async () => {
     const ops = await provision(`+919${nonce.slice(-6)}${Math.floor(100 + Math.random() * 900)}`, UserRole.LISTENER_OPS);
     opsToken = ops.token;
+    opsAal1Token = ops.aal1Token;
     opsUserId = ops.userId;
     opsAuthId = ops.authId;
     const user = await provision(`+918${nonce.slice(-6)}${Math.floor(100 + Math.random() * 900)}`, UserRole.USER);
@@ -103,7 +117,7 @@ describe('Operator review, queue and safety reads', () => {
     });
   }
 
-  it('DENY: listener review rejects anonymous and non-staff callers', async () => {
+  it('DENY: listener review rejects anonymous, non-staff and AAL1 staff callers', async () => {
     const anon = await reviewHandler(
       post('/api/listeners/review', undefined, { listenerId: listenerProfileId, status: 'active' })
     );
@@ -113,9 +127,14 @@ describe('Operator review, queue and safety reads', () => {
       post('/api/listeners/review', userToken, { listenerId: listenerProfileId, status: 'active' })
     );
     expect(user.status).toBe(403);
+
+    const aal1Ops = await reviewHandler(
+      post('/api/listeners/review', opsAal1Token, { listenerId: listenerProfileId, status: 'active' })
+    );
+    expect(aal1Ops.status).toBe(403);
   });
 
-  it('ALLOW: ops activates a listener and writes an audit event', async () => {
+  it('ALLOW: AAL2 ops activates a listener and writes an audit event', async () => {
     const res = await reviewHandler(
       post('/api/listeners/review', opsToken, {
         listenerId: listenerProfileId,
@@ -143,12 +162,15 @@ describe('Operator review, queue and safety reads', () => {
     expect(audit).toHaveLength(1);
   });
 
-  it('DENY: ops queue rejects anonymous and plain users; ALLOW for ops', async () => {
+  it('DENY: ops queue rejects anonymous, plain users and AAL1 staff; ALLOW for AAL2 ops', async () => {
     const anon = await opsQueueHandler(get('/api/operations/queue', undefined));
     expect(anon.status).toBe(401);
 
     const user = await opsQueueHandler(get('/api/operations/queue', userToken));
     expect(user.status).toBe(403);
+
+    const aal1Ops = await opsQueueHandler(get('/api/operations/queue', opsAal1Token));
+    expect(aal1Ops.status).toBe(403);
 
     const ops = await opsQueueHandler(get('/api/operations/queue', opsToken));
     expect(ops.status).toBe(200);
