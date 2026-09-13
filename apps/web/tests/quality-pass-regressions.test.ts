@@ -281,72 +281,86 @@ describe('financial history is append-only at the database level', () => {
 });
 
 describe('payout approval cannot rewrite an audited decision', () => {
-  it('DENY: an executed batch cannot be re-approved', async () => {
-    const financeUser = await makeUser('Finance');
-    const { data: batch } = await admin
+  it('DENY: a settled batch cannot be re-approved', async () => {
+    const maker = await makeUser('FinanceMaker');
+    const approver = await makeUser('FinanceApprover');
+    const recorder = await makeUser('FinanceRecorder');
+    const { data: batch, error: batchError } = await admin
       .from('payout_batches')
       .insert({
         period_start: new Date(Date.now() - 86400000).toISOString(),
         period_end: new Date().toISOString(),
         total_paise: 10000,
-        status: 'executed',
-        created_by: financeUser,
-        approved_by: financeUser,
+        status: 'settled',
+        created_by: maker,
+        approved_by: approver,
         approved_at: new Date().toISOString(),
         executed_at: new Date().toISOString(),
+        settlement_reference: `qg-settlement-${runId}`,
+        settlement_recorded_by: recorder,
+        settled_at: new Date().toISOString(),
       })
       .select()
       .single();
+    expect(batchError).toBeNull();
+    expect(batch).not.toBeNull();
 
     const { data } = await admin.rpc('atomic_approve_payout_batch', {
       p_batch_id: batch.id,
-      p_approver_id: financeUser,
+      p_approver_id: approver,
       p_approver_role: 'finance',
     });
     expect(data.success).toBe(false);
-    // An executed batch is not in `pending_approval`, so the guarded transition
-    // refuses it outright rather than rewriting an audited decision.
     expect(data.code).toBe('INVALID_BATCH_STATE');
 
     const { data: after } = await admin.from('payout_batches').select('status').eq('id', batch.id).single();
-    expect(after.status).toBe('executed');
+    expect(after.status).toBe('settled');
 
-    await admin.from('audit_events').delete().eq('entity_id', batch.id).then(
-      () => undefined,
-      () => undefined
-    );
     await admin.from('payout_batches').delete().eq('id', batch.id);
   });
 
-  it('ALLOW: a pending batch is approved once and only once', async () => {
-    const financeUser = await makeUser('Finance2');
-    const { data: batch } = await admin
+  it('ENFORCE: maker cannot approve own batch; independent approval is idempotent', async () => {
+    const maker = await makeUser('FinanceMaker2');
+    const approver = await makeUser('FinanceApprover2');
+    const { data: batch, error: batchError } = await admin
       .from('payout_batches')
       .insert({
         period_start: new Date(Date.now() - 86400000).toISOString(),
         period_end: new Date().toISOString(),
         total_paise: 10000,
         status: 'pending_approval',
-        created_by: financeUser,
+        created_by: maker,
       })
       .select()
       .single();
+    expect(batchError).toBeNull();
+    expect(batch).not.toBeNull();
+
+    const { data: selfApproval } = await admin.rpc('atomic_approve_payout_batch', {
+      p_batch_id: batch.id,
+      p_approver_id: maker,
+      p_approver_role: 'finance',
+    });
+    expect(selfApproval.success).toBe(false);
+    expect(selfApproval.code).toBe('SEPARATION_OF_DUTIES_REQUIRED');
 
     const { data: first } = await admin.rpc('atomic_approve_payout_batch', {
       p_batch_id: batch.id,
-      p_approver_id: financeUser,
+      p_approver_id: approver,
       p_approver_role: 'finance',
     });
     expect(first.success).toBe(true);
     expect(first.status).toBe('approved');
+    expect(first.idempotent_replay).toBe(false);
 
-    const { data: second } = await admin.rpc('atomic_approve_payout_batch', {
+    const { data: replay } = await admin.rpc('atomic_approve_payout_batch', {
       p_batch_id: batch.id,
-      p_approver_id: financeUser,
+      p_approver_id: approver,
       p_approver_role: 'finance',
     });
-    expect(second.success).toBe(false);
-    expect(second.code).toBe('ALREADY_APPROVED');
+    expect(replay.success).toBe(true);
+    expect(replay.status).toBe('approved');
+    expect(replay.idempotent_replay).toBe(true);
 
     await admin.from('payout_batches').delete().eq('id', batch.id);
   });
