@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { UpdateListenerStatusSchema } from '@vent/validation';
-import { UserRole } from '@vent/domain';
 import { ListenerRepository } from '@vent/db';
 import {
   authenticateRequest,
-  requireRole,
+  requirePermission,
   handleAuthError,
 } from '@/features/auth/auth-guard';
 import { getSupabaseAdmin } from '@/lib/supabase-server';
@@ -16,7 +15,7 @@ import { getSupabaseAdmin } from '@/lib/supabase-server';
 export async function POST(req: NextRequest) {
   try {
     const session = await authenticateRequest(req);
-    requireRole(session, [UserRole.LISTENER_OPS, UserRole.SUPER_ADMIN]);
+    requirePermission(session, 'canManageListeners');
 
     const json = await req.json().catch(() => ({}));
     const parsed = UpdateListenerStatusSchema.safeParse(json);
