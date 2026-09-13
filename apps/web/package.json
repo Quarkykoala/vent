@@ -9,7 +9,11 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "worker": "node scripts/operations-worker.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:db": "vitest run tests/db-authority.test.ts tests/lifecycle-binding-authority.test.ts tests/matching-concurrency.test.ts tests/finance-hardening.test.ts",
+    "test:rls": "vitest run tests/rls-hardening-11-personas.test.ts",
+    "test:negative": "vitest run tests/security-adversarial.test.ts tests/webhook-route-security.test.ts tests/matching-authorization.test.ts tests/safety-hardening.test.ts",
+    "test:integration": "vitest run tests/auth-live-supabase.test.ts tests/support-request-flow.test.ts tests/payment-order.test.ts tests/payment-webhook.test.ts tests/matching-coordinator.test.ts tests/completion-ratings-blocks.test.ts tests/counselling-funnel.test.ts tests/analytics-erasure.test.ts tests/presence-persistence.test.ts tests/ops-console.test.ts"
   },
   "dependencies": {
     "@vent/db": "workspace:*",
