@@ -3,6 +3,7 @@ import { UserRole } from '@vent/domain';
 import {
   authenticateRequest,
   requireRole,
+  requirePermission,
   handleAuthError,
 } from '@/features/auth/auth-guard';
 import { getSupabaseAdmin } from '@/lib/supabase-server';
@@ -19,6 +20,9 @@ export async function GET(req: NextRequest) {
       UserRole.SUPER_ADMIN,
       UserRole.SUPPORT_AGENT,
     ]);
+    // Keep the intentionally narrow operations role scope above while also
+    // enforcing the canonical staff MFA requirement.
+    requirePermission(session, 'canAccessAdminConsole');
 
     const admin = getSupabaseAdmin();
 
