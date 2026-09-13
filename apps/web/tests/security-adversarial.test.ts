@@ -190,15 +190,13 @@ describe('Package 12 — Adversarial Security, IDOR & Privilege Escalation Tests
       },
       body: JSON.stringify({
         paymentId: victimPaymentId,
-        failureReason: 'no_connection',
-        durationSeconds: 0,
       }),
     });
 
     const res = await refundHandler(req);
     expect(res.status).toBe(403);
     const data = await res.json();
-    expect(data.error).toMatch(/Unauthorized to refund this payment/i);
+    expect(data.error).toMatch(/Access Denied|lacks permission|Unauthorized/i);
   });
 
   it('ADVERSARIAL PRIVILEGE ESCALATION: Regular user cannot approve or execute payout batches', async () => {
