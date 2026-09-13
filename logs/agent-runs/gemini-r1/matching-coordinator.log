@@ -1,0 +1,14 @@
+$ vitest run "tests/matching-coordinator.test.ts" "--maxWorkers=2" "--minWorkers=1"
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/apps/web[39m
+
+ [32mΓ£ô[39m tests/matching-coordinator.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 3185[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m WP-7 ΓÇö Queue coordinator, atomic reservation, acceptΓåÆsession (live DB)[2m > [22mlazily expires a past-TTL offer and rematches; ops expiry is idempotent [33m377[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m WP-7 ΓÇö Queue coordinator, atomic reservation, acceptΓåÆsession (live DB)[2m > [22maccept creates a session, connects the request, and rejects duplicate accepts [33m387[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m9 passed[39m[22m[90m (9)[39m
+[2m   Start at [22m 02:20:24
+[2m   Duration [22m 4.73s[2m (transform 383ms, setup 0ms, collect 772ms, tests 3.18s, environment 0ms, prepare 456ms)[22m
+

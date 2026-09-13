@@ -52,3 +52,11 @@ Thumbs.db
 # Turbo / Cache
 .turbo
 *.tsbuildinfo
+# Playwright CLI output (may contain credentials)
+.playwright-cli/
+
+# Local agent/tooling state and generated output (not product content)
+.commandcode/
+.codex-harness/
+output/
+/$null

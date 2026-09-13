@@ -1,0 +1,17 @@
+$ vitest run "tests/supabase-auth-service.test.ts" "tests/otp-routes.test.ts" "tests/age-evidence.test.ts" "tests/auth-guard.test.ts" "tests/support-request-flow.test.ts" "--maxWorkers=2" "--minWorkers=1"
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+
+ RUN  v2.1.9 C:/Users/lenovo/projects/vent/apps/web
+
+ ✓ tests/supabase-auth-service.test.ts (11 tests) 36ms
+ ✓ tests/auth-guard.test.ts (10 tests) 16ms
+ ✓ tests/otp-routes.test.ts (7 tests) 23ms
+ ✓ tests/support-request-flow.test.ts (6 tests) 1399ms
+   ✓ F02/P4.1a — Durable authenticated support-request creation > is idempotent: retrying the same idempotency key returns the original request and does not duplicate rows 307ms
+ ✓ tests/age-evidence.test.ts (3 tests) 602ms
+
+ Test Files  5 passed (5)
+      Tests  37 passed (37)
+   Start at  23:27:27
+   Duration  21.93s (transform 1.01s, setup 0ms, collect 6.38s, tests 2.08s, environment 5ms, prepare 16.38s)
+

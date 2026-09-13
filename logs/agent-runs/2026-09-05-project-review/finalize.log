@@ -1,0 +1,12 @@
+Wrote C:\Users\lenovo\projects\vent\.codex-harness\run-receipt.json
+overall: ok
+Wrote C:\Users\lenovo\projects\vent\.codex-harness\diff-risk-radar.json
+overall: low
+low: .codex-harness/.commandcode/audit-context/docs/knowledge/logs/output/ 
+Wrote C:\Users\lenovo\projects\vent\knowledge\indexes\wiki-lint.json
+overall: ok
+Wrote C:\Users\lenovo\projects\vent\.codex-harness\blindspot-lint.json
+overall: review
+medium: Endpoint-sensitive work lacks a concrete endpoint label.
+Wrote C:\Users\lenovo\projects\vent\.codex-harness\proof-capsules\2026-09-05T11-27-05Z-vent-project-review-20260905
+codex-autonomy-finalize complete

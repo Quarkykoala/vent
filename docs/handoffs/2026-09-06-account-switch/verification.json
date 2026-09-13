@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-09-06T14:12:59.8602837+05:30",
+  "contextAndEvidenceHashesVerified": 20,
+  "sourceHashesVerified": 53,
+  "localMarkdownLinksVerified": 14,
+  "requiredSectionsVerified": 9,
+  "branchMatches": true,
+  "headMatches": true,
+  "agentEntryPointPresent": true,
+  "applicationTestsRerun": false
+}

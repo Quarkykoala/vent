@@ -78,25 +78,59 @@ export class PaymentRepository {
     });
   }
 
+  /**
+   * Atomically executes payment state transition to CAPTURED, append-only ledger journaling,
+   * support request queuing, and durable idempotency key storage in a single Postgres transaction.
+   */
+  async capturePaymentWebhook(params: {
+    providerOrderId: string;
+    providerPaymentId: string;
+    amountPaise: bigint;
+    currency: string;
+    idempotencyKey: string;
+    idempotencyResponse: any;
+  }): Promise<{ success: boolean; paymentId: string; idempotentReplay?: boolean }> {
+    const rawClient = this.client as any;
+    const { data, error } = await rawClient.rpc('atomic_capture_payment_webhook', {
+      p_provider_order_id: params.providerOrderId,
+      p_provider_payment_id: params.providerPaymentId,
+      p_amount_paise: Number(params.amountPaise),
+      p_currency: params.currency,
+      p_idempotency_key: params.idempotencyKey,
+      p_idempotency_response: params.idempotencyResponse,
+    });
+
+    if (error) {
+      throw new Error(`Database error in atomic_capture_payment_webhook: ${error.message}`);
+    }
+
+    if (!data || !data.success) {
+      throw new Error(data?.error || 'Payment capture failed');
+    }
+
+    return {
+      success: true,
+      paymentId: data.payment_id,
+      idempotentReplay: data.idempotent_replay || false,
+    };
+  }
+
   async recordCapturedPaymentAndLedger(params: {
     paymentId: string;
     currentState: PaymentStateType;
     providerPaymentId: string;
     journalEntries: UnpersistedLedgerEntry[];
   }): Promise<void> {
-    // Assert domain state machine transition
     const nextState = transitionPayment({
       paymentId: params.paymentId,
       currentState: params.currentState,
       nextState: PaymentState.CAPTURED,
     });
 
-    // Assert double-entry balance invariant
     assertLedgerBalanced(params.journalEntries);
 
     const rawClient = this.client as any;
 
-    // Update payment state
     const { error: payErr } = await rawClient
       .from('payments')
       .update({
@@ -110,7 +144,6 @@ export class PaymentRepository {
       throw new Error(`Failed to update payment state: ${payErr.message}`);
     }
 
-    // Insert balanced ledger rows (append-only)
     const ledgerRows = params.journalEntries.map((e) => ({
       event_id: e.event_id,
       account_code: e.account_code,

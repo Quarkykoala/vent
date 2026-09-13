@@ -1,0 +1,10 @@
+{
+  "status": "PREPARED_NOT_DISPATCHED",
+  "branch": "hardening/real-mvp-vertical-slice",
+  "head": "d3ca22b397b5d50d468ee7fb162c4e09dc8ff655",
+  "unchangedSourceFiles": 182,
+  "prompt": "docs/prompts/muse-spark-finish-lean-mvp.md",
+  "promptSha256": "27DAC0D3F8E1E97FFA469537D306328DBC88DFBE94EE96CCF08147A3140C6B3E",
+  "modelCalls": 0,
+  "applicationChanges": 0
+}

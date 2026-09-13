@@ -14,7 +14,7 @@ export interface Database {
           id: string;
           auth_user_id: string;
           handle: string;
-          age_verified_at: string;
+          age_verified_at: string | null;
           status: 'active' | 'suspended' | 'deletion_pending' | 'deleted';
           created_at: string;
         };
@@ -22,7 +22,7 @@ export interface Database {
           id?: string;
           auth_user_id: string;
           handle: string;
-          age_verified_at: string;
+          age_verified_at?: string;
           status?: 'active' | 'suspended' | 'deletion_pending' | 'deleted';
           created_at?: string;
         };

@@ -1,0 +1,17 @@
+$ vitest run "--config" "../../logs/agent-runs/2026-09-06-glm-long-horizon-review/adversarial.config.mjs" "-t" "denies a non-owner"
+
+ RUN  v2.1.9 C:/Users/lenovo/projects/vent/apps/web
+
+stdout | ../../logs/agent-runs/2026-09-06-glm-long-horizon-review/adversarial.test.ts > Independent long-horizon review — real local database counterexamples > denies a non-owner without changing the victim request or reserving a listener
+{"probe":"authorization-before-mutation","response":403,"requestState":"queued","reservationStates":[],"sessionCount":0,"presenceState":"available"}
+
+stdout | ../../logs/agent-runs/2026-09-06-glm-long-horizon-review/adversarial.test.ts > Independent long-horizon review — real local database counterexamples
+Review synthetic fixtures cleaned up.
+
+ ✓ ../../logs/agent-runs/2026-09-06-glm-long-horizon-review/adversarial.test.ts (4 tests | 3 skipped) 961ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 3 skipped (4)
+   Start at  02:36:19
+   Duration  2.48s (transform 378ms, setup 0ms, collect 737ms, tests 961ms, environment 0ms, prepare 117ms)
+

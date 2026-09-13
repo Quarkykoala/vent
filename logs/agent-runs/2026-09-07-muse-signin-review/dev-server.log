@@ -1,0 +1,36 @@
+   ▲ Next.js 15.5.25
+   - Local:        http://127.0.0.1:3107
+   - Network:      http://127.0.0.1:3107
+
+ ✓ Starting...
+ ✓ Ready in 18.1s
+ ○ Compiling / ...
+ ✓ Compiled / in 14.2s (656 modules)
+ ✓ Compiled in 2s (263 modules)
+ GET / 200 in 16368ms
+ ○ Compiling /api/auth/otp/send ...
+ ✓ Compiled /api/auth/otp/send in 2.7s (766 modules)
+ POST /api/auth/otp/send 200 in 3563ms
+ ○ Compiling /api/auth/otp/verify ...
+ ✓ Compiled /api/auth/otp/verify in 690ms (768 modules)
+ POST /api/auth/otp/verify 401 in 1051ms
+ POST /api/auth/otp/verify 200 in 177ms
+ ○ Compiling /api/support-requests ...
+ ✓ Compiled /api/support-requests in 575ms (769 modules)
+ POST /api/support-requests 201 in 1180ms
+ POST /api/support-requests 201 in 159ms
+ POST /api/support-requests 201 in 189ms
+ POST /api/support-requests 200 in 147ms
+ GET / 200 in 608ms
+ ✓ Compiled /api/auth/otp/send in 284ms (519 modules)
+ POST /api/auth/otp/send 200 in 630ms
+ ✓ Compiled /api/auth/otp/verify in 241ms (521 modules)
+ POST /api/auth/otp/verify 200 in 482ms
+ POST /api/support-requests 201 in 191ms
+ GET / 200 in 523ms
+ POST /api/auth/otp/send 200 in 104ms
+ POST /api/auth/otp/verify 401 in 75ms
+ GET / 200 in 264ms
+ ○ Compiling /crisis ...
+ ✓ Compiled /crisis in 1528ms (776 modules)
+ GET /crisis 200 in 1849ms

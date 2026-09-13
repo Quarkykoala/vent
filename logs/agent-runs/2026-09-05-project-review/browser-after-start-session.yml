@@ -1,0 +1,83 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]: In Crisis?
+      - generic [ref=e5]: "If you are in immediate danger or having thoughts of self-harm, please reach out for emergency support:"
+      - generic [ref=e6]:
+        - text: "Tele-MANAS:"
+        - strong [ref=e7]: "14416"
+        - text: "| Emergency:"
+        - strong [ref=e8]: "112"
+    - link "Verified Crisis Resources →" [ref=e9] [cursor=pointer]:
+      - /url: /crisis
+  - banner [ref=e10]:
+    - generic [ref=e11]:
+      - link "Venterr.in Trained Human Listeners" [ref=e12] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e13]: Venterr.in
+        - generic [ref=e14]: Trained Human Listeners
+      - generic [ref=e15]:
+        - link "Emergency & Crisis Help" [ref=e16] [cursor=pointer]:
+          - /url: /crisis
+        - generic [ref=e17]: "|"
+        - generic [ref=e18]: 18+ Adults Only
+  - main [ref=e19]:
+    - generic [ref=e20]:
+      - generic [ref=e21]:
+        - heading "Talk to someone who listens." [level=1] [ref=e22]
+        - paragraph [ref=e23]: Anonymous browser audio with a vetted, trained human listener. No judgment, no recordings, no prescriptions.
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - generic [ref=e27]: What is on your mind?
+            - combobox [ref=e28]:
+              - option "Relationship Conflict" [selected]
+              - option "Breakup & Heartbreak"
+              - option "Loneliness"
+              - option "Work & Career Stress"
+              - option "Family Issues"
+              - option "Exam & Academic Pressure"
+              - option "Grief & Loss"
+              - option "Overthinking & Anxiety"
+          - generic [ref=e29]:
+            - generic [ref=e30]: Preferred Language
+            - generic [ref=e31]:
+              - button "English" [ref=e32] [cursor=pointer]
+              - button "Hindi" [ref=e33] [cursor=pointer]
+          - generic [ref=e34]:
+            - generic [ref=e35]:
+              - paragraph [ref=e36]: Session Duration
+              - paragraph [ref=e37]: 20 Minutes
+            - generic [ref=e38]:
+              - paragraph [ref=e39]: Fixed Price
+              - paragraph [ref=e40]: ₹199
+          - generic [ref=e42] [cursor=pointer]:
+            - checkbox "I confirm that I am 18 years of age or older. I understand that this service provides compassionate human listening and is not therapy, medical advice, or crisis intervention." [checked] [ref=e43]
+            - generic [ref=e44]:
+              - text: I confirm that I am
+              - strong [ref=e45]: 18 years of age or older
+              - text: . I understand that this service provides compassionate human listening and is
+              - strong [ref=e46]: not therapy, medical advice, or crisis intervention
+              - text: .
+          - button "Start Session (₹199)" [ref=e47] [cursor=pointer]
+        - generic [ref=e66]: "Support request created! Request ID: edb77572-448c-408c-b51c-664cfd3b826c. Proceeding to checkout (Order: ₹199)."
+      - paragraph [ref=e49]: 🔒 End-to-end pseudonymous. The listener never sees your phone number or email.
+  - contentinfo [ref=e50]:
+    - generic [ref=e51]:
+      - generic [ref=e52]:
+        - paragraph [ref=e53]: Important Service Scope & Clinical Boundaries
+        - paragraph [ref=e54]:
+          - text: Venterr provides compassionate, pseudonymous human active listening. It is
+          - strong [ref=e55]: NOT
+          - text: therapy, psychiatric medical treatment, clinical diagnosis, or an emergency crisis hotline. Listeners do not prescribe medication or provide clinical advice.
+      - generic [ref=e56]:
+        - generic [ref=e57]: 🔒 Strict Zero-Recording & Zero-Transcript Guarantee
+        - generic [ref=e58]: •
+        - generic [ref=e59]: 🇮🇳 Regulated Under DPDP Act 2023 & India IT Act
+        - generic [ref=e60]: •
+        - generic [ref=e61]: 🔞 18+ Adults Only
+        - generic [ref=e62]: •
+        - 'link "Helplines: Tele-MANAS (14416)" [ref=e63] [cursor=pointer]':
+          - /url: /crisis
+      - generic [ref=e64]: © 2026 Venterr India. All rights reserved. Transparent fixed pricing (₹199 / ₹399 / ₹599) with automated technical failure refund protection.
+  - alert [ref=e65]

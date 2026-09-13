@@ -11,7 +11,7 @@ test.describe('Marketplace Smoke & Safety Flow', () => {
     await expect(page.getByRole('heading', { name: /Talk to someone who listens/i })).toBeVisible();
 
     // Check 18+ age gate requirement
-    const submitBtn = page.getByRole('button', { name: /Start Session/i });
+    const submitBtn = page.getByRole('button', { name: /Request a listener/i });
     await expect(submitBtn).toBeDisabled();
 
     // Check crisis page link

@@ -1,0 +1,18 @@
+$ vitest run "--config" "../../logs/agent-runs/2026-09-07-muse-signin-review/r3-current-contract.config.mjs" "-t" "records genuine age confirmation"
+
+ RUN  v2.1.9 C:/Users/lenovo/projects/vent/apps/web
+
+stdout | ../../logs/agent-runs/2026-09-07-muse-signin-review/r3-current-contract.test.ts > Independent long-horizon review — real local database counterexamples > records genuine age confirmation for an existing token-provisioned user
+{"probe":"existing-user-age-confirmation","ageEvidencePresent":true,"createResponse":201}
+
+stdout | ../../logs/agent-runs/2026-09-07-muse-signin-review/r3-current-contract.test.ts > Independent long-horizon review — real local database counterexamples
+Review synthetic fixtures cleaned up.
+
+ ✓ ../../logs/agent-runs/2026-09-07-muse-signin-review/r3-current-contract.test.ts (4 tests | 3 skipped) 1400ms
+   ✓ Independent long-horizon review — real local database counterexamples > records genuine age confirmation for an existing token-provisioned user 427ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 3 skipped (4)
+   Start at  23:30:11
+   Duration  2.39s (transform 308ms, setup 0ms, collect 610ms, tests 1.40s, environment 0ms, prepare 155ms)
+

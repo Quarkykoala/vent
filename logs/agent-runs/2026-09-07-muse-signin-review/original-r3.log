@@ -1,0 +1,43 @@
+$ vitest run "--config" "../../logs/agent-runs/2026-09-06-glm-long-horizon-review/adversarial.config.mjs" "-t" "records genuine age confirmation"
+
+ RUN  v2.1.9 C:/Users/lenovo/projects/vent/apps/web
+
+stdout | ../../logs/agent-runs/2026-09-06-glm-long-horizon-review/adversarial.test.ts > Independent long-horizon review — real local database counterexamples > records genuine age confirmation for an existing token-provisioned user
+{"probe":"existing-user-age-confirmation","ageEvidencePresent":true,"createResponse":400}
+
+stdout | ../../logs/agent-runs/2026-09-06-glm-long-horizon-review/adversarial.test.ts > Independent long-horizon review — real local database counterexamples
+Review synthetic fixtures cleaned up.
+
+ ❯ ../../logs/agent-runs/2026-09-06-glm-long-horizon-review/adversarial.test.ts (4 tests | 1 failed | 3 skipped) 1851ms
+   × Independent long-horizon review — real local database counterexamples > records genuine age confirmation for an existing token-provisioned user 752ms
+     → expected 400 to be 201 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  ../../logs/agent-runs/2026-09-06-glm-long-horizon-review/adversarial.test.ts > Independent long-horizon review — real local database counterexamples > records genuine age confirmation for an existing token-provisioned user
+AssertionError: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ ../../logs/agent-runs/2026-09-06-glm-long-horizon-review/adversarial.test.ts:175:29
+    173|     console.info(JSON.stringify({ probe: 'existing-user-age-confirmati…
+    174|     expect(evidence.data.age_verified_at).not.toBeNull();
+    175|     expect(response.status).toBe(201);
+       |                             ^
+    176|   });
+    177| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 skipped (4)
+   Start at  23:28:54
+   Duration  2.92s (transform 325ms, setup 0ms, collect 665ms, tests 1.85s, environment 0ms, prepare 147ms)
+
+C:\Users\lenovo\projects\vent\apps\web:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @vent/web@0.1.0 test: `vitest run "--config" "../../logs/agent-runs/2026-09-06-glm-long-horizon-review/adversarial.config.mjs" "-t" "records genuine age confirmation"`
+Exit status 1

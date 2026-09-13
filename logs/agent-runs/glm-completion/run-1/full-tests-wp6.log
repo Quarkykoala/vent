@@ -1,0 +1,132 @@
+$ pnpm --recursive --filter "@vent/*" run test
+Scope: 4 of 5 workspace projects
+$ vitest run
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/packages/domain[39m
+
+ [32m✓[39m tests/roles.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m tests/audio-token.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m tests/analytics.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32m✓[39m tests/presence.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32m✓[39m tests/finance.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 12[2mms[22m[39m
+ [32m✓[39m tests/scoring.test.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m tests/ledger.test.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32m✓[39m tests/safety.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 11[2mms[22m[39m
+ [32m✓[39m tests/matcher.test.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32m✓[39m tests/counselling.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 22[2mms[22m[39m
+ [32m✓[39m tests/state-machines.test.ts [2m([22m[2m18 tests[22m[2m)[22m[90m 12[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m11 passed[39m[22m[90m (11)[39m
+[2m      Tests [22m [1m[32m80 passed[39m[22m[90m (80)[39m
+[2m   Start at [22m 00:43:40
+[2m   Duration [22m 1.13s[2m (transform 560ms, setup 0ms, collect 3.31s, tests 111ms, environment 3ms, prepare 2.56s)[22m
+
+$ vitest run
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/packages/validation[39m
+
+ [32m✓[39m tests/listener.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m tests/auth.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32m✓[39m tests/validation.test.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m14 passed[39m[22m[90m (14)[39m
+[2m   Start at [22m 00:43:42
+[2m   Duration [22m 1.05s[2m (transform 411ms, setup 0ms, collect 1.44s, tests 26ms, environment 1ms, prepare 518ms)[22m
+
+$ vitest run
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/packages/db[39m
+
+ [32m✓[39m tests/db.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 12[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 00:43:43
+[2m   Duration [22m 1.41s[2m (transform 359ms, setup 0ms, collect 598ms, tests 12ms, environment 0ms, prepare 368ms)[22m
+
+$ vitest run
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/apps/web[39m
+
+ [32m✓[39m tests/webhook-route-security.test.ts [2m([22m[2m28 tests[22m[2m)[22m[90m 44[2mms[22m[39m
+ [32m✓[39m tests/db-authority.test.ts [2m([22m[2m14 tests[22m[2m)[22m[33m 1723[2mms[22m[39m
+ [32m✓[39m tests/audio-call.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 1903[2mms[22m[39m
+ [31m❯[39m tests/presence-persistence.test.ts [2m([22m[2m8 tests[22m[2m | [22m[33m8 skipped[39m[2m)[22m[33m 452[2mms[22m[39m
+ [32m✓[39m tests/supabase-auth-service.test.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 24[2mms[22m[39m
+ [32m✓[39m tests/payment-webhook.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 387[2mms[22m[39m
+ [32m✓[39m tests/matching-concurrency.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 3460[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 3 — Database Invariants and Matching Concurrency[2m > [22mtwo concurrent requests racing for one listener: exactly one wins, one remains queued [33m616[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 3 — Database Invariants and Matching Concurrency[2m > [22mrematching after decline: retains declined reservation and creates new offer for same request [33m315[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 3 — Database Invariants and Matching Concurrency[2m > [22maccept vs timeout: expired offer cannot be accepted and returns request to queued [33m1612[2mms[22m[39m
+ [32m✓[39m tests/auth-guard.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 34[2mms[22m[39m
+ [32m✓[39m tests/finance-hardening.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 3450[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 8 — Real Finance, Refunds & Human-Gated Payouts[2m > [22mfinance summary reflects real ledger entries in PostgreSQL and enforces trial balance invariant [33m306[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 8 — Real Finance, Refunds & Human-Gated Payouts[2m > [22mrefund executes, updates payment to refunded, and writes balanced compensating ledger entries [33m338[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 8 — Real Finance, Refunds & Human-Gated Payouts[2m > [22mSTRICT INVARIANT: Payout execution strictly requires human finance approval [33m1146[2mms[22m[39m
+ [32m✓[39m tests/completion-ratings-blocks.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 3611[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 6 — Session Completion, Bayesian Ratings & Blocks[2m > [22msession completion atomically updates DB state, sets duration, and frees listener presence [33m323[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 6 — Session Completion, Bayesian Ratings & Blocks[2m > [22mrejects rating someone else’s session with 403 Forbidden [33m360[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 6 — Session Completion, Bayesian Ratings & Blocks[2m > [22mrejects rating an unended session with 400 [33m327[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 6 — Session Completion, Bayesian Ratings & Blocks[2m > [22msubmitting rating updates listener Bayesian quality score in Postgres [33m455[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 6 — Session Completion, Bayesian Ratings & Blocks[2m > [22mblock mutation bidirectionally excludes the pair from future matching [33m314[2mms[22m[39m
+ [32m✓[39m tests/security-adversarial.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 3450[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 12 — Adversarial Security, IDOR & Privilege Escalation Tests[2m > [22mADVERSARIAL IDOR: Attacker cannot submit ratings on victim’s completed session [33m317[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 12 — Adversarial Security, IDOR & Privilege Escalation Tests[2m > [22mADVERSARIAL PRIVILEGE ESCALATION: Regular user cannot approve or execute payout batches [33m485[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 12 — Adversarial Security, IDOR & Privilege Escalation Tests[2m > [22mADVERSARIAL PRIVILEGE ESCALATION: Regular user cannot acknowledge safety cases or view analytics metrics [33m432[2mms[22m[39m
+ [32m✓[39m tests/routes.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 11[2mms[22m[39m
+ [32m✓[39m tests/completion.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 11[2mms[22m[39m
+ [32m✓[39m tests/safety-hardening.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 3849[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 7 — Real Safety System Hardening & Audit Logging[2m > [22mcreates safety case in database, safely terminates active session, and logs audit event [33m363[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 7 — Real Safety System Hardening & Audit Logging[2m > [22mclinical supervisor can acknowledge and resolve safety case [33m689[2mms[22m[39m
+ [32m✓[39m tests/counselling-funnel.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 4178[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 9 — Counselling Funnel, Partner Transfer & Consent Invariants[2m > [22mreferral created and persisted in PostgreSQL without transcript or clinical notes [33m356[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 9 — Counselling Funnel, Partner Transfer & Consent Invariants[2m > [22mSTRICT INVARIANT: Partner transfer requires prior explicit user consent [33m910[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 9 — Counselling Funnel, Partner Transfer & Consent Invariants[2m > [22mrejects unauthorized user B from accepting user A’s referral with 403 [33m390[2mms[22m[39m
+ [32m✓[39m tests/support-request-flow.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 2958[2mms[22m[39m
+   [33m[2m✓[22m[39m F02/P4.1a — Durable authenticated support-request creation[2m > [22mpersists a durable created request for the authenticated user [33m326[2mms[22m[39m
+   [33m[2m✓[22m[39m F02/P4.1a — Durable authenticated support-request creation[2m > [22mis idempotent: retrying the same idempotency key returns the original request and does not duplicate rows [33m618[2mms[22m[39m
+   [33m[2m✓[22m[39m F02/P4.1a — Durable authenticated support-request creation[2m > [22mignores client-supplied lifecycle fields: a state of queued is not persisted [33m450[2mms[22m[39m
+ [32m✓[39m tests/payment-order.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 1694[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 4 — Payment Order API Route & Fail-Closed Behavior[2m > [22mFAIL CLOSED: when Razorpay credentials missing, returns 503 configuration error [33m332[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 4 — Payment Order API Route & Fail-Closed Behavior[2m > [22mcreates order and persists payment in PostgreSQL in created state [33m367[2mms[22m[39m
+ [32m✓[39m tests/analytics.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 11[2mms[22m[39m
+ [32m✓[39m tests/analytics-erasure.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 4781[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Analytics[2m > [22mactive session prevents user account erasure with 400 [33m363[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Analytics[2m > [22mexecutes real DPDP 2025 erasure: scrubs DB PII, purges Supabase Auth, and preserves financial ledger [33m678[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Analytics[2m > [22manalytics endpoint computes metrics from real DB tables and applies k-anonymity privacy safeguards [33m451[2mms[22m[39m
+ [32m✓[39m tests/counselling.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32m✓[39m tests/auth.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 13[2mms[22m[39m
+ [32m✓[39m tests/finance.test.ts [2m([22m[2m1 test[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32m✓[39m tests/safety.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32m✓[39m tests/presence.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32m✓[39m tests/matching.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32m✓[39m tests/rls-hardening-11-personas.test.ts [2m([22m[2m36 tests[22m[2m)[22m[33m 8135[2mms[22m[39m
+ [32m✓[39m tests/auth-live-supabase.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 3758[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 1 — Comprehensive Live Supabase Auth Integration[2m > [22mcross-user isolation: User A and User B receive distinct UUIDs and handles [33m349[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[1m[7m Failed Suites 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/presence-persistence.test.ts[2m > [22mF02/P2.2 — Durable listener presence + stale sweep
+[31m[1mError[22m: provision PresenceListener: Phone number already registered by another user[39m
+[36m [2m❯[22m provision tests/presence-persistence.test.ts:[2m57:43[22m[39m
+    [90m 55| [39m      app_metadata[33m:[39m { role }[33m,[39m
+    [90m 56| [39m    })[33m;[39m
+    [90m 57| [39m    [35mif[39m (createErr [33m||[39m [33m![39mcreated[33m.[39muser) [35mthrow[39m [35mnew[39m [33mError[39m([32m`provision [39m[36m${[39mhandl…
+    [90m   | [39m                                          [31m^[39m
+    [90m 58| [39m
+    [90m 59| [39m    [35mconst[39m { data[33m:[39m userRow[33m,[39m error[33m:[39m userErr } [33m=[39m [35mawait[39m admin
+[90m [2m❯[22m tests/presence-persistence.test.ts:[2m99:15[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m26 passed[39m[22m[90m (27)[39m
+[2m      Tests [22m [1m[32m178 passed[39m[22m[2m | [22m[33m8 skipped[39m[90m (186)[39m
+[2m   Start at [22m 00:43:46
+[2m   Duration [22m 12.12s[2m (transform 7.31s, setup 0ms, collect 42.01s, tests 47.98s, environment 11ms, prepare 13.61s)[22m
+
+C:\Users\lenovo\projects\vent\apps\web:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @vent/web@0.1.0 test: `vitest run`
+Exit status 1
+[ELIFECYCLE] Test failed. See above for more details.

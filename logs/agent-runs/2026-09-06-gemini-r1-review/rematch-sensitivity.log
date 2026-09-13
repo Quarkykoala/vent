@@ -1,0 +1,15 @@
+$ vitest run "--config" "../../logs/agent-runs/2026-09-06-gemini-r1-review/rematch-sensitivity.config.mjs" "-t" "legitimate owner"
+
+ RUN  v2.1.9 C:/Users/lenovo/projects/vent/apps/web
+
+stdout | tests/matching-authorization.test.ts > R1: Matching authorization regression — state and ownership invariants > criterion 4 & 5: legitimate owner matches queued request, repeating while offer active produces no duplicate, and authorized lazy expiry rematches
+R1_REMATCH_SENSITIVITY Injected early no_candidates after real expiry; rematching suppressed
+
+ ✓ tests/matching-authorization.test.ts (6 tests | 5 skipped) 1389ms
+   ✓ R1: Matching authorization regression — state and ownership invariants > criterion 4 & 5: legitimate owner matches queued request, repeating while offer active produces no duplicate, and authorized lazy expiry rematches 701ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 5 skipped (6)
+   Start at  02:39:37
+   Duration  2.80s (transform 264ms, setup 0ms, collect 530ms, tests 1.39s, environment 0ms, prepare 119ms)
+

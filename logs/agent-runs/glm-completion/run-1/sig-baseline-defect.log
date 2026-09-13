@@ -1,0 +1,65 @@
+$ vitest run "tests/webhook-route-security.test.ts" "--maxWorkers=2" "--minWorkers=1"
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/apps/web[39m
+
+ [31m❯[39m tests/webhook-route-security.test.ts [2m([22m[2m28 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[90m 36[2mms[22m[39m
+[31m   [31m×[31m 'POST /api/webhooks/razorpay' fail-closed behavior[2m > [22mconfigured secret with bad signatures[2m > [22mreturns 400 for a valid digest followed by a non-hex suffix (zz)[90m 8[2mms[22m[31m[39m
+[31m     → expected 200 to be 400 // Object.is equality[39m
+[31m   [31m×[31m 'POST /api/webhooks/razorpay' fail-closed behavior[2m > [22mconfigured secret with bad signatures[2m > [22mreturns 400 for a valid digest followed by one extra hex digit[90m 1[2mms[22m[31m[39m
+[31m     → expected 200 to be 400 // Object.is equality[39m
+[31m   [31m×[31m 'POST /api/payments/webhook' fail-closed behavior[2m > [22mconfigured secret with bad signatures[2m > [22mreturns 400 for a valid digest followed by a non-hex suffix (zz)[90m 1[2mms[22m[31m[39m
+[31m     → expected 200 to be 400 // Object.is equality[39m
+[31m   [31m×[31m 'POST /api/payments/webhook' fail-closed behavior[2m > [22mconfigured secret with bad signatures[2m > [22mreturns 400 for a valid digest followed by one extra hex digit[90m 1[2mms[22m[31m[39m
+[31m     → expected 200 to be 400 // Object.is equality[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 4 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/webhook-route-security.test.ts[2m > [22m'POST /api/webhooks/razorpay' fail-closed behavior[2m > [22mconfigured secret with bad signatures[2m > [22mreturns 400 for a valid digest followed by a non-hex suffix (zz)
+[31m[1m[7m FAIL [27m[22m[39m tests/webhook-route-security.test.ts[2m > [22m'POST /api/payments/webhook' fail-closed behavior[2m > [22mconfigured secret with bad signatures[2m > [22mreturns 400 for a valid digest followed by a non-hex suffix (zz)
+[31m[1mAssertionError[22m: expected 200 to be 400 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 200[39m
+
+[36m [2m❯[22m tests/webhook-route-security.test.ts:[2m257:26[22m[39m
+    [90m255| [39m      )[33m;[39m
+    [90m256| [39m
+    [90m257| [39m      [34mexpect[39m(res[33m.[39mstatus)[33m.[39m[34mtoBe[39m([34m400[39m)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m258| [39m      [34mexpectBoundaryUntouched[39m()[33m;[39m
+    [90m259| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/webhook-route-security.test.ts[2m > [22m'POST /api/webhooks/razorpay' fail-closed behavior[2m > [22mconfigured secret with bad signatures[2m > [22mreturns 400 for a valid digest followed by one extra hex digit
+[31m[1m[7m FAIL [27m[22m[39m tests/webhook-route-security.test.ts[2m > [22m'POST /api/payments/webhook' fail-closed behavior[2m > [22mconfigured secret with bad signatures[2m > [22mreturns 400 for a valid digest followed by one extra hex digit
+[31m[1mAssertionError[22m: expected 200 to be 400 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 200[39m
+
+[36m [2m❯[22m tests/webhook-route-security.test.ts:[2m271:26[22m[39m
+    [90m269| [39m      )[33m;[39m
+    [90m270| [39m
+    [90m271| [39m      [34mexpect[39m(res[33m.[39mstatus)[33m.[39m[34mtoBe[39m([34m400[39m)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m272| [39m      [34mexpectBoundaryUntouched[39m()[33m;[39m
+    [90m273| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m4 failed[39m[22m[2m | [22m[1m[32m24 passed[39m[22m[90m (28)[39m
+[2m   Start at [22m 00:30:17
+[2m   Duration [22m 660ms[2m (transform 63ms, setup 0ms, collect 133ms, tests 36ms, environment 0ms, prepare 297ms)[22m
+
+C:\Users\lenovo\projects\vent\apps\web:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @vent/web@0.1.0 test: `vitest run "tests/webhook-route-security.test.ts" "--maxWorkers=2" "--minWorkers=1"`
+Exit status 1

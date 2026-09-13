@@ -55,13 +55,13 @@ export class UserRepository {
     ageVerifiedAt?: string;
   }): Promise<UserRow> {
     const handle = params.handle || generatePseudonym();
-    const ageVerifiedAt = params.ageVerifiedAt || new Date().toISOString();
-
+    // Durable 18+ evidence is only written when a caller performed an explicit
+    // age-gate interaction; never defaulted to "now".
     const insertPayload: UserInsert = {
       auth_user_id: params.authUserId,
       handle,
-      age_verified_at: ageVerifiedAt,
       status: 'active',
+      ...(params.ageVerifiedAt ? { age_verified_at: params.ageVerifiedAt } : {}),
     };
 
     const { data, error } = await this.client
@@ -73,6 +73,33 @@ export class UserRepository {
 
     if (error) {
       throw new Error(`Database error creating user: ${error.message}`);
+    }
+
+    return data as unknown as UserRow;
+  }
+
+  /**
+   * Writes genuine 18+ evidence after an explicit age-gate interaction.
+   * Only fills a missing timestamp; never rewrites existing evidence.
+   */
+  async recordAgeVerification(userId: string, verifiedAt: string): Promise<UserRow> {
+    const existing = await this.findById(userId);
+    if (!existing) {
+      throw new Error('Database error recording age verification: user not found');
+    }
+    if (existing.age_verified_at) {
+      return existing;
+    }
+
+    const { data, error } = await (this.client as any)
+      .from('users')
+      .update({ age_verified_at: verifiedAt })
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (error || !data) {
+      throw new Error(`Database error recording age verification: ${error?.message}`);
     }
 
     return data as unknown as UserRow;

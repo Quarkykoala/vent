@@ -348,3 +348,11 @@ Not done:
 - legal/consent copy changes
 - admin access expansion
 - AI enters user-support or safety path
+
+---
+
+## 19. Resume across accounts on this laptop
+
+For continuation of the current Vent work, read [CONTINUE_HERE.md](C:/Users/lenovo/projects/vent/CONTINUE_HERE.md) and its linked manifest, latest review and scope-calibration protocol before reconstructing context or starting another task. Verify the live checkout; the handoff records a snapshot, not future state. Preserve the existing uncommitted implementation and historical evidence.
+
+The user's current workflow is Gemini 3.8 Flash High for bounded implementation and Codex for prompt preparation and independent verification. Pioneer access has been removed: do not invoke Pioneer or restart an older Pioneer-only/whole-project mission. Reading the handoff does not authorize launching an external model. Keep the product safety and change-approval rules above in force.

@@ -1,0 +1,38 @@
+[
+  {
+    "path": "/api/auth/otp/send",
+    "body": {
+      "phone": "+919000000001"
+    }
+  },
+  {
+    "path": "/api/auth/otp/verify",
+    "body": {
+      "phone": "+919000000001",
+      "code": "000000",
+      "ageConfirmed": true
+    }
+  },
+  {
+    "path": "/api/auth/otp/verify",
+    "body": {
+      "phone": "+919000000001",
+      "code": "111111",
+      "ageConfirmed": true
+    }
+  },
+  {
+    "path": "/api/auth/otp/send",
+    "body": {
+      "phone": "+919000000002"
+    }
+  },
+  {
+    "path": "/api/auth/otp/verify",
+    "body": {
+      "phone": "+919000000002",
+      "code": "123456",
+      "ageConfirmed": true
+    }
+  }
+]

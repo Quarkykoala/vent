@@ -1,0 +1,65 @@
+
+C:\Users\lenovo\projects\vent\apps\web\next-env.d.ts
+  3:1  error  Do not use a triple slash reference for ./.next/types/routes.d.ts, use `import` style instead  @typescript-eslint/triple-slash-reference
+
+C:\Users\lenovo\projects\vent\apps\web\src\app\api\counselling\referral\route.ts
+  32:9  error  'isUser' is never reassigned. Use 'const' instead  prefer-const
+
+C:\Users\lenovo\projects\vent\apps\web\src\app\api\privacy\erasure\route.ts
+  59:16  error  'authErr' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\lenovo\projects\vent\apps\web\src\features\auth\mock-auth-service.ts
+  2:25  error  'UserRoleType' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\lenovo\projects\vent\apps\web\src\features\sessions\AudioCallInterface.tsx
+  16:3  error  'sessionId' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\lenovo\projects\vent\apps\web\tests\completion-ratings-blocks.test.ts
+  18:7  error  'listenerJwt' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\lenovo\projects\vent\apps\web\tests\counselling-funnel.test.ts
+  3:8  error  'crypto' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\lenovo\projects\vent\apps\web\tests\finance-hardening.test.ts
+  20:7  error  'testSessionId' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\lenovo\projects\vent\apps\web\tests\payment-order.test.ts
+  3:8  error  'crypto' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\lenovo\projects\vent\apps\web\tests\payment-webhook.test.ts
+  5:29  error  'LedgerDirection' is defined but never used. Allowed unused vars must match /^_/u       @typescript-eslint/no-unused-vars
+  5:46  error  'assertLedgerBalanced' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\lenovo\projects\vent\apps\web\tests\rls-hardening-11-personas.test.ts
+  272:21  error  'error' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\lenovo\projects\vent\apps\web\tests\security-adversarial.test.ts
+   4:18  error  'endSessionHandler' is defined but never used. Allowed unused vars must match /^_/u   @typescript-eslint/no-unused-vars
+  10:17  error  'reconcileHandler' is defined but never used. Allowed unused vars must match /^_/u    @typescript-eslint/no-unused-vars
+  21:7   error  'victimJwt' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\lenovo\projects\vent\packages\db\tests\db.test.ts
+  1:32  error  'beforeEach' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  1:44  error  'afterEach' is defined but never used. Allowed unused vars must match /^_/u   @typescript-eslint/no-unused-vars
+
+C:\Users\lenovo\projects\vent\packages\domain\tests\analytics.test.ts
+  6:3  error  'InvariantViolationError' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\lenovo\projects\vent\packages\domain\tests\counselling.test.ts
+  5:3  error  'InvariantViolationError' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\lenovo\projects\vent\packages\domain\tests\state-machines.test.ts
+  14:3  error  'isSessionTransitionAllowed' is defined but never used. Allowed unused vars must match /^_/u           @typescript-eslint/no-unused-vars
+  16:3  error  'isPaymentTransitionAllowed' is defined but never used. Allowed unused vars must match /^_/u           @typescript-eslint/no-unused-vars
+  18:3  error  'isSafetyCaseTransitionAllowed' is defined but never used. Allowed unused vars must match /^_/u        @typescript-eslint/no-unused-vars
+  20:3  error  'isListenerPresenceTransitionAllowed' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\lenovo\projects\vent\packages\validation\tests\auth.test.ts
+  4:3  error  'SendOtpSchema' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+C:\Users\lenovo\projects\vent\packages\validation\tests\listener.test.ts
+  4:3  error  'UpdateListenerStatusSchema' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+✖ 25 problems (25 errors, 0 warnings)
+  1 error and 0 warnings potentially fixable with the `--fix` option.
+

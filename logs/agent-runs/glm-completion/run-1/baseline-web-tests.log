@@ -1,0 +1,50 @@
+$ vitest run
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/apps/web[39m
+
+ [32m✓[39m tests/webhook-route-security.test.ts [2m([22m[2m24 tests[22m[2m)[22m[90m 47[2mms[22m[39m
+ [32m✓[39m tests/payment-webhook.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 356[2mms[22m[39m
+ [32m✓[39m tests/supabase-auth-service.test.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 18[2mms[22m[39m
+ [32m✓[39m tests/auth-guard.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 28[2mms[22m[39m
+ [32m✓[39m tests/matching-concurrency.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 2605[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 3 — Database Invariants and Matching Concurrency[2m > [22maccept vs timeout: expired offer cannot be accepted and returns request to queued [33m1695[2mms[22m[39m
+ [32m✓[39m tests/audio-call.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 2497[2mms[22m[39m
+ [32m✓[39m tests/finance-hardening.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 2819[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 8 — Real Finance, Refunds & Human-Gated Payouts[2m > [22mSTRICT INVARIANT: Payout execution strictly requires human finance approval [33m781[2mms[22m[39m
+ [32m✓[39m tests/security-adversarial.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 2812[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 12 — Adversarial Security, IDOR & Privilege Escalation Tests[2m > [22mADVERSARIAL PRIVILEGE ESCALATION: Regular user cannot approve or execute payout batches [33m314[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 12 — Adversarial Security, IDOR & Privilege Escalation Tests[2m > [22mADVERSARIAL PRIVILEGE ESCALATION: Regular user cannot acknowledge safety cases or view analytics metrics [33m336[2mms[22m[39m
+ [32m✓[39m tests/safety-hardening.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 2865[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 7 — Real Safety System Hardening & Audit Logging[2m > [22mcreates safety case in database, safely terminates active session, and logs audit event [33m383[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 7 — Real Safety System Hardening & Audit Logging[2m > [22mclinical supervisor can acknowledge and resolve safety case [33m463[2mms[22m[39m
+ [32m✓[39m tests/routes.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32m✓[39m tests/counselling-funnel.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 3108[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 9 — Counselling Funnel, Partner Transfer & Consent Invariants[2m > [22mreferral created and persisted in PostgreSQL without transcript or clinical notes [33m307[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 9 — Counselling Funnel, Partner Transfer & Consent Invariants[2m > [22mSTRICT INVARIANT: Partner transfer requires prior explicit user consent [33m661[2mms[22m[39m
+ [32m✓[39m tests/completion.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32m✓[39m tests/payment-order.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 1394[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 4 — Payment Order API Route & Fail-Closed Behavior[2m > [22mcreates order and persists payment in PostgreSQL in created state [33m346[2mms[22m[39m
+ [32m✓[39m tests/completion-ratings-blocks.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 3664[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 6 — Session Completion, Bayesian Ratings & Blocks[2m > [22msession completion atomically updates DB state, sets duration, and frees listener presence [33m355[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 6 — Session Completion, Bayesian Ratings & Blocks[2m > [22msubmitting rating updates listener Bayesian quality score in Postgres [33m388[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 6 — Session Completion, Bayesian Ratings & Blocks[2m > [22mblock mutation bidirectionally excludes the pair from future matching [33m418[2mms[22m[39m
+ [32m✓[39m tests/analytics-erasure.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 3646[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Analytics[2m > [22mexecutes real DPDP 2025 erasure: scrubs DB PII, purges Supabase Auth, and preserves financial ledger [33m523[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Analytics[2m > [22manalytics endpoint computes metrics from real DB tables and applies k-anonymity privacy safeguards [33m434[2mms[22m[39m
+ [32m✓[39m tests/analytics.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 11[2mms[22m[39m
+ [32m✓[39m tests/counselling.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32m✓[39m tests/auth-live-supabase.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 3359[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 1 — Comprehensive Live Supabase Auth Integration[2m > [22mcross-user isolation: User A and User B receive distinct UUIDs and handles [33m356[2mms[22m[39m
+ [32m✓[39m tests/finance.test.ts [2m([22m[2m1 test[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m tests/safety.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32m✓[39m tests/auth.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32m✓[39m tests/presence.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32m✓[39m tests/matching.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32m✓[39m tests/rls-hardening-11-personas.test.ts [2m([22m[2m36 tests[22m[2m)[22m[33m 6852[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m24 passed[39m[22m[90m (24)[39m
+[2m      Tests [22m [1m[32m154 passed[39m[22m[90m (154)[39m
+[2m   Start at [22m 23:55:13
+[2m   Duration [22m 8.64s[2m (transform 2.76s, setup 0ms, collect 14.00s, tests 36.15s, environment 9ms, prepare 6.52s)[22m
+

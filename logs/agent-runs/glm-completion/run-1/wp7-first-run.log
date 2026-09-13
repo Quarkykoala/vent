@@ -1,0 +1,89 @@
+$ vitest run "tests/matching-coordinator.test.ts" "--maxWorkers=2" "--minWorkers=1"
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/apps/web[39m
+
+ [31m❯[39m tests/matching-coordinator.test.ts [2m([22m[2m9 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[33m 2784[2mms[22m[39m
+[31m   [31m×[31m WP-7 — Queue coordinator, atomic reservation, accept→session (live DB)[2m > [22mdecline releases the pair and rematch selects the longer-waiting listener[90m 68[2mms[22m[31m[39m
+[31m     → expected 'no_candidates' to be 'reserved' // Object.is equality[39m
+[31m   [31m×[31m WP-7 — Queue coordinator, atomic reservation, accept→session (live DB)[2m > [22mlazily expires a past-TTL offer and rematches; ops expiry is idempotent[90m 61[2mms[22m[31m[39m
+[31m     → expected 'no_candidates' to be 'reserved' // Object.is equality[39m
+[31m   [31m×[31m WP-7 — Queue coordinator, atomic reservation, accept→session (live DB)[2m > [22mnever matches a blocked pair (either direction)[90m 290[2mms[22m[31m[39m
+[31m     → expected 'no_candidates' to be 'reserved' // Object.is equality[39m
+[31m   [31m×[31m WP-7 — Queue coordinator, atomic reservation, accept→session (live DB)[2m > [22maccept creates a session, connects the request, and rejects duplicate accepts[90m 51[2mms[22m[31m[39m
+[31m     → expected 'no_candidates' to be 'reserved' // Object.is equality[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 4 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/matching-coordinator.test.ts[2m > [22mWP-7 — Queue coordinator, atomic reservation, accept→session (live DB)[2m > [22mdecline releases the pair and rematch selects the longer-waiting listener
+[31m[1mAssertionError[22m: expected 'no_candidates' to be 'reserved' // Object.is equality[39m
+
+Expected: [32m"reserved"[39m
+Received: [31m"no_candidates"[39m
+
+[36m [2m❯[22m tests/matching-coordinator.test.ts:[2m320:26[22m[39m
+    [90m318| [39m    [35mconst[39m { requestId } [33m=[39m [35mawait[39m [34mmakeQueuedPaidRequest[39m()[33m;[39m
+    [90m319| [39m    [35mconst[39m first [33m=[39m [35mawait[39m coordinator[33m.[39m[34mattemptMatch[39m(requestId)[33m;[39m
+    [90m320| [39m    [34mexpect[39m(first[33m.[39mstatus)[33m.[39m[34mtoBe[39m([32m'reserved'[39m)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m321| [39m    cleanupIds[33m.[39mreservationIds[33m.[39m[34mpush[39m(first[33m.[39mreservationId[33m![39m)[33m;[39m
+    [90m322| [39m    [35mconst[39m firstListenerId [33m=[39m first[33m.[39mlistenerId[33m![39m[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/matching-coordinator.test.ts[2m > [22mWP-7 — Queue coordinator, atomic reservation, accept→session (live DB)[2m > [22mlazily expires a past-TTL offer and rematches; ops expiry is idempotent
+[31m[1mAssertionError[22m: expected 'no_candidates' to be 'reserved' // Object.is equality[39m
+
+Expected: [32m"reserved"[39m
+Received: [31m"no_candidates"[39m
+
+[36m [2m❯[22m tests/matching-coordinator.test.ts:[2m343:26[22m[39m
+    [90m341| [39m    [35mconst[39m { requestId } [33m=[39m [35mawait[39m [34mmakeQueuedPaidRequest[39m()[33m;[39m
+    [90m342| [39m    [35mconst[39m first [33m=[39m [35mawait[39m coordinator[33m.[39m[34mattemptMatch[39m(requestId)[33m;[39m
+    [90m343| [39m    [34mexpect[39m(first[33m.[39mstatus)[33m.[39m[34mtoBe[39m([32m'reserved'[39m)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m344| [39m    cleanupIds[33m.[39mreservationIds[33m.[39m[34mpush[39m(first[33m.[39mreservationId[33m![39m)[33m;[39m
+    [90m345| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/matching-coordinator.test.ts[2m > [22mWP-7 — Queue coordinator, atomic reservation, accept→session (live DB)[2m > [22mnever matches a blocked pair (either direction)
+[31m[1mAssertionError[22m: expected 'no_candidates' to be 'reserved' // Object.is equality[39m
+
+Expected: [32m"reserved"[39m
+Received: [31m"no_candidates"[39m
+
+[36m [2m❯[22m tests/matching-coordinator.test.ts:[2m400:27[22m[39m
+    [90m398| [39m
+    [90m399| [39m    [35mconst[39m result [33m=[39m [35mawait[39m coordinator[33m.[39m[34mattemptMatch[39m(requestId)[33m;[39m
+    [90m400| [39m    [34mexpect[39m(result[33m.[39mstatus)[33m.[39m[34mtoBe[39m([32m'reserved'[39m)[33m;[39m
+    [90m   | [39m                          [31m^[39m
+    [90m401| [39m    cleanupIds[33m.[39mreservationIds[33m.[39m[34mpush[39m(result[33m.[39mreservationId[33m![39m)[33m;[39m
+    [90m402| [39m    [34mexpect[39m(result[33m.[39mlistenerId)[33m.[39m[34mtoBe[39m(listenerB[33m.[39mprofileId)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/matching-coordinator.test.ts[2m > [22mWP-7 — Queue coordinator, atomic reservation, accept→session (live DB)[2m > [22maccept creates a session, connects the request, and rejects duplicate accepts
+[31m[1mAssertionError[22m: expected 'no_candidates' to be 'reserved' // Object.is equality[39m
+
+Expected: [32m"reserved"[39m
+Received: [31m"no_candidates"[39m
+
+[36m [2m❯[22m tests/matching-coordinator.test.ts:[2m430:26[22m[39m
+    [90m428| [39m    [35mconst[39m { requestId } [33m=[39m [35mawait[39m [34mmakeQueuedPaidRequest[39m()[33m;[39m
+    [90m429| [39m    [35mconst[39m match [33m=[39m [35mawait[39m coordinator[33m.[39m[34mattemptMatch[39m(requestId)[33m;[39m
+    [90m430| [39m    [34mexpect[39m(match[33m.[39mstatus)[33m.[39m[34mtoBe[39m([32m'reserved'[39m)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m431| [39m    cleanupIds[33m.[39mreservationIds[33m.[39m[34mpush[39m(match[33m.[39mreservationId[33m![39m)[33m;[39m
+    [90m432| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m4 failed[39m[22m[2m | [22m[1m[32m5 passed[39m[22m[90m (9)[39m
+[2m   Start at [22m 01:12:35
+[2m   Duration [22m 4.17s[2m (transform 318ms, setup 0ms, collect 624ms, tests 2.78s, environment 0ms, prepare 104ms)[22m
+
+C:\Users\lenovo\projects\vent\apps\web:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @vent/web@0.1.0 test: `vitest run "tests/matching-coordinator.test.ts" "--maxWorkers=2" "--minWorkers=1"`
+Exit status 1

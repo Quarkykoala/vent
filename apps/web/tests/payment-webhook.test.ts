@@ -1,23 +1,92 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import crypto from 'node:crypto';
 import { PaymentWebhookProcessor } from '../src/features/payments/payment-processor';
-import { LedgerAccountCode, LedgerDirection, assertLedgerBalanced } from '@vent/domain';
+import { PaymentRepository } from '@vent/db';
+import { LedgerAccountCode } from '@vent/domain';
+import { getSupabaseAdmin } from '../src/lib/supabase-server';
 
-describe('Phase 3 — Payment Webhooks & Ledger Property Tests', () => {
-  const secret = 'webhook_secret_key_12345';
+describe('Package 4 — Real Razorpay Webhook & Ledger Persistence', () => {
+  const admin = getSupabaseAdmin();
+  const paymentRepo = new PaymentRepository(admin);
   const processor = new PaymentWebhookProcessor();
+  const testWebhookSecret = 'test_webhook_secret_key_88888888';
 
-  function makePayload(paymentId: string, amount: number) {
+  let testUserId: string;
+  let testRequestId: string;
+  let testOrderId: string;
+  let testPaymentId: string;
+  let testPaymentEntityId: string;
+  const testAmountPaise = 50000n; // ₹500.00
+
+  beforeAll(async () => {
+    // 1. Create test user
+    const { data: user, error: userErr } = await admin
+      .from('users')
+      .insert({
+        auth_user_id: crypto.randomUUID(),
+        handle: `PaymentTester${Date.now()}${Math.floor(Math.random() * 1000)}`,
+        age_verified_at: new Date().toISOString(),
+        status: 'active',
+      } as any)
+      .select()
+      .single();
+
+    if (userErr || !user) {
+      throw new Error(`Failed to create test user in beforeAll: ${userErr?.message}`);
+    }
+    testUserId = (user as any).id;
+
+    // 2. Create support request
+    const { data: req } = await admin
+      .from('support_requests')
+      .insert({
+        user_id: testUserId,
+        topic: 'work_stress',
+        language: 'English',
+        service_tier: 'listener',
+        state: 'created',
+        idempotency_key: `pay_test_req_${Date.now()}`,
+      } as any)
+      .select()
+      .single();
+    testRequestId = (req as any).id;
+
+    // 3. Create initial payment record in CREATED state
+    testOrderId = `order_test_${Date.now()}`;
+    const payment = await paymentRepo.createPayment({
+      userId: testUserId,
+      providerOrderId: testOrderId,
+      amountPaise: testAmountPaise,
+    });
+    testPaymentId = payment.id;
+    testPaymentEntityId = `pay_test_${Date.now()}`;
+
+    // 4. Bind the request to this exact order, the way the order-creation route
+    //    does before the client can pay. A capture may only entitle the request
+    //    its order was created for — it never fans out to other open requests.
+    const { error: bindErr } = await (admin.from('support_requests') as any)
+      .update({ payment_order_id: testPaymentId })
+      .eq('id', testRequestId);
+    if (bindErr) {
+      throw new Error(`Failed to bind request to payment: ${bindErr.message}`);
+    }
+  });
+
+  afterAll(async () => {
+    await admin.from('users').delete().eq('id', testUserId);
+  });
+
+  function makeWebhookPayload(orderId: string, paymentId: string, amount: number, currency = 'INR') {
     return JSON.stringify({
       event: 'payment.captured',
-      account_id: 'acc_rzp_test',
+      account_id: 'acc_rzp_test_001',
       payload: {
         payment: {
           entity: {
             id: paymentId,
-            order_id: `order_${paymentId}`,
+            order_id: orderId,
             amount,
-            currency: 'INR',
+            currency,
             status: 'captured',
           },
         },
@@ -25,107 +94,169 @@ describe('Phase 3 — Payment Webhooks & Ledger Property Tests', () => {
     });
   }
 
-  function signPayload(body: string, secretKey: string) {
+  function signPayload(body: string, secretKey: string): string {
     return crypto.createHmac('sha256', secretKey).update(body).digest('hex');
   }
 
-  it('authenticates genuine webhook and posts balanced double-entry ledger entries', async () => {
-    const rawBody = makePayload('pay_genuine_001', 19900);
-    const signature = signPayload(rawBody, secret);
+  it('authenticates genuine webhook, updates payment to captured, and writes balanced ledger rows in Postgres', async () => {
+    const rawBody = makeWebhookPayload(testOrderId, testPaymentEntityId, Number(testAmountPaise));
+    const signature = signPayload(rawBody, testWebhookSecret);
 
     const result = await processor.processWebhook({
       rawBody,
       signature,
-      webhookSecret: secret,
+      webhookSecret: testWebhookSecret,
     });
 
     expect(result.success).toBe(true);
     expect(result.status).toBe(200);
-    expect(result.paymentId).toBe('pay_genuine_001');
-    expect(result.journalEntries).toBeDefined();
-    expect(result.journalEntries).toHaveLength(2);
+    expect(result.paymentId).toBe(testPaymentId);
 
-    // Verify DR cash, CR revenue
-    const [dr, cr] = result.journalEntries!;
-    expect(dr?.account_code).toBe(LedgerAccountCode.CASH_PG_CLEARING);
-    expect(dr?.direction).toBe(LedgerDirection.DEBIT);
-    expect(dr?.amount_paise).toBe(19900n);
+    // 1. Verify payment record updated in Postgres
+    const { data: updatedPay } = await admin
+      .from('payments')
+      .select('*')
+      .eq('id', testPaymentId)
+      .single();
 
-    expect(cr?.account_code).toBe(LedgerAccountCode.CUSTOMER_SERVICE_REVENUE);
-    expect(cr?.direction).toBe(LedgerDirection.CREDIT);
-    expect(cr?.amount_paise).toBe(19900n);
+    expect((updatedPay as any).state).toBe('captured');
+    expect((updatedPay as any).provider_payment_id).toBe(testPaymentEntityId);
+    expect((updatedPay as any).captured_at).toBeDefined();
 
-    // Ledger invariant test
-    expect(() => assertLedgerBalanced(result.journalEntries!)).not.toThrow();
+    // 2. Verify ledger entries in Postgres with UUID reference_id
+    const { data: entries } = await admin
+      .from('ledger_entries')
+      .select('*')
+      .eq('reference_id', testPaymentId);
+
+    expect(entries).toHaveLength(2);
+
+    const dr = (entries as any).find((e: any) => e.direction === 'debit');
+    const cr = (entries as any).find((e: any) => e.direction === 'credit');
+
+    expect(dr.account_code).toBe(LedgerAccountCode.CASH_PG_CLEARING);
+    expect(BigInt(dr.amount_paise)).toBe(testAmountPaise);
+    expect(dr.currency).toBe('INR');
+
+    expect(cr.account_code).toBe(LedgerAccountCode.CUSTOMER_SERVICE_REVENUE);
+    expect(BigInt(cr.amount_paise)).toBe(testAmountPaise);
+    expect(cr.currency).toBe('INR');
+
+    // Double-entry invariant in DB
+    expect(Number(dr.amount_paise)).toBe(Number(cr.amount_paise));
+
+    // 3. Verify support request transitioned to queued
+    const { data: reqAfter } = await admin
+      .from('support_requests')
+      .select('*')
+      .eq('id', testRequestId)
+      .single();
+
+    expect((reqAfter as any).state).toBe('queued');
   });
 
-  it('CRITICAL ACCEPTANCE: Duplicate webhook replay produces exactly ONE capture and idempotent response', async () => {
-    const rawBody = makePayload('pay_duplicate_002', 19900);
-    const signature = signPayload(rawBody, secret);
+  it('CRITICAL ACCEPTANCE: Duplicate webhook is idempotent and does not double-journal ledger', async () => {
+    const rawBody = makeWebhookPayload(testOrderId, testPaymentEntityId, Number(testAmountPaise));
+    const signature = signPayload(rawBody, testWebhookSecret);
 
-    // First delivery
-    const firstResult = await processor.processWebhook({
+    // Replay duplicate delivery
+    const result = await processor.processWebhook({
       rawBody,
       signature,
-      webhookSecret: secret,
+      webhookSecret: testWebhookSecret,
     });
-    expect(firstResult.success).toBe(true);
-    expect(firstResult.idempotentReplay).toBeFalsy();
 
-    // Duplicate delivery
-    const secondResult = await processor.processWebhook({
-      rawBody,
-      signature,
-      webhookSecret: secret,
-    });
-    expect(secondResult.success).toBe(true);
-    expect(secondResult.idempotentReplay).toBe(true);
-    expect(secondResult.paymentId).toBe('pay_duplicate_002');
+    expect(result.success).toBe(true);
+    expect(result.idempotentReplay).toBe(true);
+    expect(result.paymentId).toBe(testPaymentId);
+
+    // INVARIANT: Ledger still has EXACTLY two entries, not four!
+    const { data: entries } = await admin
+      .from('ledger_entries')
+      .select('*')
+      .eq('reference_id', testPaymentId);
+
+    expect(entries).toHaveLength(2);
   });
 
-  it('CRITICAL ACCEPTANCE: Rejects forged webhook with invalid signature', async () => {
-    const rawBody = makePayload('pay_forged_003', 19900);
-    const forgedSignature = 'abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789';
+  it('CRITICAL ACCEPTANCE: Rejects forged webhook with invalid signature with 400', async () => {
+    const rawBody = makeWebhookPayload(testOrderId, 'pay_forged_999', Number(testAmountPaise));
+    const badSignature = '0000000000000000000000000000000000000000000000000000000000000000';
 
     const result = await processor.processWebhook({
       rawBody,
-      signature: forgedSignature,
-      webhookSecret: secret,
+      signature: badSignature,
+      webhookSecret: testWebhookSecret,
     });
 
     expect(result.success).toBe(false);
-    expect(result.status).toBe(401);
+    expect(result.status).toBe(400);
     expect(result.message).toMatch(/Invalid webhook signature/i);
   });
 
-  describe('Ledger Property Balance Invariant', () => {
-    it('always balances across 50 random positive rupee amounts in paise', () => {
-      for (let i = 0; i < 50; i++) {
-        // Random amount between ₹10 and ₹1,000 in paise
-        const randomPaise = BigInt(Math.floor(1000 + Math.random() * 99000));
-        const journal = [
-          {
-            event_id: `evt_prop_${i}`,
-            account_code: LedgerAccountCode.CASH_PG_CLEARING,
-            direction: LedgerDirection.DEBIT,
-            amount_paise: randomPaise,
-            currency: 'INR' as const,
-            reference_type: 'payment',
-            reference_id: `pay_${i}`,
-          },
-          {
-            event_id: `evt_prop_${i}`,
-            account_code: LedgerAccountCode.CUSTOMER_SERVICE_REVENUE,
-            direction: LedgerDirection.CREDIT,
-            amount_paise: randomPaise,
-            currency: 'INR' as const,
-            reference_type: 'payment',
-            reference_id: `pay_${i}`,
-          },
-        ];
-
-        expect(() => assertLedgerBalanced(journal)).not.toThrow();
-      }
+  it('rejects webhook when amount does not match expected order amount in database', async () => {
+    // Create new order for amount test
+    const newOrderId = `order_amount_mismatch_${Date.now()}`;
+    await paymentRepo.createPayment({
+      userId: testUserId,
+      providerOrderId: newOrderId,
+      amountPaise: 50000n,
     });
+
+    // Webhook claims only 1000 paise
+    const rawBody = makeWebhookPayload(newOrderId, 'pay_mismatch_001', 1000);
+    const signature = signPayload(rawBody, testWebhookSecret);
+
+    const result = await processor.processWebhook({
+      rawBody,
+      signature,
+      webhookSecret: testWebhookSecret,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.status).toBe(400);
+    expect(result.message).toMatch(/Amount mismatch/i);
+  });
+
+  it('rejects webhook when currency is not INR', async () => {
+    const newOrderId = `order_curr_mismatch_${Date.now()}`;
+    await paymentRepo.createPayment({
+      userId: testUserId,
+      providerOrderId: newOrderId,
+      amountPaise: 50000n,
+    });
+
+    const rawBody = makeWebhookPayload(newOrderId, 'pay_curr_001', 50000, 'USD');
+    const signature = signPayload(rawBody, testWebhookSecret);
+
+    const result = await processor.processWebhook({
+      rawBody,
+      signature,
+      webhookSecret: testWebhookSecret,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.status).toBe(400);
+    expect(result.message).toMatch(/Unsupported currency/i);
+  });
+
+  it('FAIL CLOSED: Rejects processing when webhook secret is missing/unconfigured', async () => {
+    const rawBody = makeWebhookPayload(testOrderId, 'pay_test_fail_closed', Number(testAmountPaise));
+    const signature = 'some_sig';
+
+    const oldEnv = process.env.RAZORPAY_WEBHOOK_SECRET;
+    delete process.env.RAZORPAY_WEBHOOK_SECRET;
+
+    const result = await processor.processWebhook({
+      rawBody,
+      signature,
+      webhookSecret: '',
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.status).toBe(503);
+    expect(result.message).toMatch(/unconfigured/i);
+
+    process.env.RAZORPAY_WEBHOOK_SECRET = oldEnv;
   });
 });

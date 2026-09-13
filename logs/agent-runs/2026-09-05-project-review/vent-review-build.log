@@ -1,0 +1,62 @@
+$ pnpm --recursive --filter "@vent/*" run build
+Scope: 4 of 5 workspace projects
+$ next build
+   ▲ Next.js 15.5.25
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 9.3s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/26) ...
+   Generating static pages (6/26) 
+   Generating static pages (12/26) 
+   Generating static pages (19/26) 
+ ✓ Generating static pages (26/26)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                     Size  First Load JS
+┌ ○ /                                        2.82 kB         105 kB
+├ ○ /_not-found                                989 B         103 kB
+├ ƒ /api/analytics/events                      195 B         103 kB
+├ ƒ /api/analytics/metrics                     195 B         103 kB
+├ ƒ /api/auth/me                               195 B         103 kB
+├ ƒ /api/auth/otp/send                         195 B         103 kB
+├ ƒ /api/auth/otp/verify                       195 B         103 kB
+├ ƒ /api/blocks                                195 B         103 kB
+├ ƒ /api/counselling/book                      195 B         103 kB
+├ ƒ /api/counselling/referral                  195 B         103 kB
+├ ƒ /api/counselling/referral/[id]/respond     195 B         103 kB
+├ ƒ /api/counselling/referral/[id]/transfer    195 B         103 kB
+├ ƒ /api/counselling/slots                     195 B         103 kB
+├ ƒ /api/finance/payouts/[id]/approve          195 B         103 kB
+├ ƒ /api/finance/payouts/[id]/execute          195 B         103 kB
+├ ƒ /api/finance/payouts/proposal              195 B         103 kB
+├ ƒ /api/finance/reconcile                     195 B         103 kB
+├ ƒ /api/finance/refunds                       195 B         103 kB
+├ ƒ /api/health                                195 B         103 kB
+├ ƒ /api/listeners/presence/heartbeat          195 B         103 kB
+├ ƒ /api/listeners/presence/toggle             195 B         103 kB
+├ ƒ /api/matches/[id]/accept                   195 B         103 kB
+├ ƒ /api/matches/[id]/decline                  195 B         103 kB
+├ ƒ /api/payments/orders                       195 B         103 kB
+├ ƒ /api/payments/webhook                      195 B         103 kB
+├ ƒ /api/privacy/erasure                       195 B         103 kB
+├ ƒ /api/safety-cases                          195 B         103 kB
+├ ƒ /api/safety-cases/[id]/acknowledge         195 B         103 kB
+├ ƒ /api/safety-cases/[id]/resolve             195 B         103 kB
+├ ƒ /api/sessions/[id]/end                     195 B         103 kB
+├ ƒ /api/sessions/[id]/rating                  195 B         103 kB
+├ ƒ /api/sessions/[id]/token                   195 B         103 kB
+├ ƒ /api/support-requests                      195 B         103 kB
+├ ƒ /api/webhooks/razorpay                     195 B         103 kB
+└ ○ /crisis                                    161 B         106 kB
++ First Load JS shared by all                 103 kB
+  ├ chunks/230-914514274a101767.js           46.3 kB
+  ├ chunks/2e9bfde9-03c630e25fa39e7c.js      54.2 kB
+  └ other shared chunks (total)              1.96 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -1,0 +1,16 @@
+Wrote C:\Users\lenovo\projects\vent\.codex-harness\route-health.json
+agent-worker: missing 
+opencode: ok C:\Users\lenovo\.local\opencode.ps1
+pioneer-opencode: ok C:\tools\pioneer-opencode.ps1
+gemini: ok C:\Users\lenovo\.local\gemini.ps1
+npm: ok C:\Program Files\nodejs\npm.ps1
+git: ok C:\Program Files\Git\cmd\git.exe
+Wrote C:\Users\lenovo\projects\vent\knowledge\indexes
+Wrote C:\Users\lenovo\projects\vent\.codex-harness\AGENT_CONTEXT.compiled.md
+Wrote C:\Users\lenovo\projects\vent\.codex-harness\run-receipt.json
+overall: ok
+Wrote C:\Users\lenovo\projects\vent\.codex-harness\diff-risk-radar.json
+overall: low
+low: .codex-harness/.commandcode/knowledge/ 
+Wrote C:\Users\lenovo\projects\vent\.codex-harness\task-contract.json
+codex-autonomy-preflight complete

@@ -1,0 +1,21 @@
+$ pnpm --recursive --filter "@vent/*" run typecheck
+Scope: 4 of 5 workspace projects
+$ tsc --noEmit
+$ tsc --noEmit
+$ tsc --noEmit
+$ tsc --noEmit
+src/app/api/operations/maintenance/route.ts(2,19): error TS2307: Cannot find module 'zod' or its corresponding type declarations.
+tests/presence-persistence.test.ts(39,11): error TS2749: 'UserRole' refers to a value, but is being used as a type here. Did you mean 'typeof UserRole'?
+tests/presence-persistence.test.ts(104,50): error TS2345: Argument of type '{ status: string; }' is not assignable to parameter of type 'never'.
+tests/presence-persistence.test.ts(104,81): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type '{}'.
+  Type 'undefined' is not assignable to type '{}'.
+tests/presence-persistence.test.ts(185,15): error TS2345: Argument of type '{ heartbeat_at: string; }' is not assignable to parameter of type 'never'.
+tests/presence-persistence.test.ts(186,26): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type '{}'.
+  Type 'undefined' is not assignable to type '{}'.
+tests/presence-persistence.test.ts(228,15): error TS2345: Argument of type '{ state: string; heartbeat_at: string; }' is not assignable to parameter of type 'never'.
+tests/presence-persistence.test.ts(229,26): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type '{}'.
+  Type 'undefined' is not assignable to type '{}'.
+C:\Users\lenovo\projects\vent\apps\web:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @vent/web@0.1.0 typecheck: `tsc --noEmit`
+Exit status 2
+[ELIFECYCLE] Command failed with exit code 2.

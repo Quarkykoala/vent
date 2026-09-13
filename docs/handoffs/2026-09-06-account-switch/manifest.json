@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-06T14:12:02.1107152+05:30",
+  "timeZone": "Asia/Calcutta",
+  "workspace": "C:\\Users\\lenovo\\projects\\vent",
+  "sourceTaskId": "01a0713d-36c8-7741-b288-e14e2ff84ddb",
+  "branch": "hardening/real-mvp-vertical-slice",
+  "head": "d3ca22b397b5d50d468ee7fb162c4e09dc8ff655",
+  "dirtyTrackedEntries": 39,
+  "untrackedEntries": 23,
+  "sourceInventoryCoverage": "52 files from the independent review plus the added authorization test; not the entire checkout",
+  "sourceFileCount": 53,
+  "contextAndEvidence": [
+    {
+      "path": "CONTINUE_HERE.md",
+      "sha256": "FE79AF550E8DDE8FFF07E9ECC64C84FC4423F4A1C8B654918989F89C4B416F58"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "25CD15262A6E71023AF861765113C3FAA99FA6180F66D88AB4B2954675ACE246"
+    },
+    {
+      "path": "docs/prompts/gemini-3.8-flash-r1-test-hardening.md",
+      "sha256": "0A182B601D861D8958F883E282ABB795ACF4D128EA14E84C7BA1F259E9E996D4"
+    },
+    {
+      "path": "docs/execution/GEMINI_SCOPE_CALIBRATION.md",
+      "sha256": "85A303734E587DFAC0AA7431A4D7AA88A230A01719711F594902AE700E01234A"
+    },
+    {
+      "path": "docs/reviews/2026-09-06-gemini-r1-review.md",
+      "sha256": "68D8ABE84AE31E72862D1D25F1EC2CA29BE72C9A477F010B01374D4F7848DC06"
+    },
+    {
+      "path": "docs/reviews/gemini-r1-matching-authorization-result.md",
+      "sha256": "694D1A125B9D12DB16777B6F97CD5B873723B648D2E42807AB3D06EE9451A724"
+    },
+    {
+      "path": "docs/prompts/gemini-3.8-flash-r1-matching-authorization.md",
+      "sha256": "3E03508844AE0794ED607086D69313FAE41115899F48A6349A55F8225D647954"
+    },
+    {
+      "path": "docs/reviews/2026-09-05-glm-webhook-review.md",
+      "sha256": "B3AAC8C7F7D931984E02D406193D89A9B9C69B56B1AA9338B8CE46CBB21D7061"
+    },
+    {
+      "path": "docs/reviews/2026-09-06-glm-long-horizon-review.md",
+      "sha256": "FAEE3B52428A41E942D71F153668DB900AB1F7013D4BE9952F7ECE695DD4176C"
+    },
+    {
+      "path": "docs/reviews/2026-09-05-project-assessment.md",
+      "sha256": "8DB1B8082E7FC323DD52332F7E6DE499B108B813AE62BCCD90E88E8725F61C02"
+    },
+    {
+      "path": "docs/execution/GLM_COMPLETION_MATRIX.md",
+      "sha256": "9F8E5240E7CC48D79CC674A4D6C89C0D7A93EAEFD5A3A1EFBD0949FBEFDF9CBB"
+    },
+    {
+      "path": "docs/execution/GLM_RUN_STATE.md",
+      "sha256": "1436DEED6270602C224FBC2C6CB8C9C2A550C142399126BCD7B12244DCB362BC"
+    },
+    {
+      "path": "logs/agent-runs/2026-09-06-glm-long-horizon-review/adversarial.test.ts",
+      "sha256": "58430FD3B4DF25540A50BC6A5F7F2EC1208216F903BBB265B93183114C35168A"
+    },
+    {
+      "path": "logs/agent-runs/2026-09-06-glm-long-horizon-review/adversarial.config.mjs",
+      "sha256": "405C8958FB5F400F520D5CD09259F24A3E672F34A0A5B34E163A178B490C3AC6"
+    },
+    {
+      "path": "logs/agent-runs/2026-09-06-gemini-r1-review/rematch-sensitivity.config.mjs",
+      "sha256": "568A75EC96B7C0CC3FA08A747AC948DCCDE3097E43CB9C0A2C09D5B1DD4F11BD"
+    },
+    {
+      "path": "logs/agent-runs/2026-09-06-gemini-r1-review/pool-trace.config.mjs",
+      "sha256": "E0E72C6B4FAC5125EF79D9E077EE01E5382484486240DC204ACA1EFF9DAEF550"
+    },
+    {
+      "path": "logs/agent-runs/2026-09-06-gemini-r1-review/pool-trace.log",
+      "sha256": "891354142D9B1CA0CAC8CA3EAA5651EE738A1265D1E14A20F72A7EDFC8FBF55C"
+    },
+    {
+      "path": "logs/agent-runs/2026-09-06-gemini-r1-review/full-tests.log",
+      "sha256": "A6A1EB0B96321A9547087C7895E843BD8A5458C3DDEA5AA7970A41CA6A2EDB62"
+    },
+    {
+      "path": "docs/handoffs/2026-09-06-account-switch/source-sha256.json",
+      "sha256": "176DC4284806F55C710E93B867E29F1C4DE361A5ECEA7A38EA550981542F0570"
+    },
+    {
+      "path": "docs/handoffs/2026-09-06-account-switch/git-status.txt",
+      "sha256": "4919036ACF02D08CCA7A37B4029B1CBA28865E1A42B9AB167417641C40C39CAD"
+    }
+  ],
+  "providerPolicy": {
+    "implementation": "Gemini 3.8 Flash High",
+    "verifier": "Codex",
+    "alternative": "GLM when needed",
+    "pioneer": "Do not invoke; access removed by user"
+  },
+  "pendingTask": "R1 G1/G2 test hardening, then independent review",
+  "pendingPrompt": "docs/prompts/gemini-3.8-flash-r1-test-hardening.md",
+  "expectedResult": "docs/reviews/gemini-r1-test-hardening-result.md",
+  "resultPresentAtSnapshot": false,
+  "verificationBoundary": "Prior review test results are historical; source hashes and references checked during handoff; no application tests rerun."
+}

@@ -13,7 +13,6 @@ export interface AudioCallInterfaceProps {
 }
 
 export function AudioCallInterface({
-  sessionId,
   roomName,
   participantAlias,
   role,

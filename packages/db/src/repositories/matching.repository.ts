@@ -1,20 +1,16 @@
 import type { TypedSupabaseClient } from '../client';
 import type { Database } from '../types';
-import {
-  MatchReservationState,
-  SupportRequestState,
-  ListenerPresenceState,
-  handleOfferDecline,
-  handleOfferTimeout,
-  handleOfferAccept,
-  type ScoreComponents,
-} from '@vent/domain';
+import type { ScoreComponents } from '@vent/domain';
 
 export type MatchReservationRow = Database['public']['Tables']['match_reservations']['Row'];
 
 export class MatchingRepository {
   constructor(private client: TypedSupabaseClient) {}
 
+  /**
+   * Atomically locks candidate listener, verifies queue status, heartbeats,
+   * language/topic alignment and blocks, and creates the reservation with TTL.
+   */
   async createReservation(params: {
     requestId: string;
     listenerId: string;
@@ -23,41 +19,28 @@ export class MatchingRepository {
     expiresInSeconds?: number;
   }): Promise<MatchReservationRow> {
     const rawClient = this.client as any;
-    const expiresSeconds = params.expiresInSeconds || 45;
-    const expiresAt = new Date(Date.now() + expiresSeconds * 1000).toISOString();
+    const { data, error } = await rawClient.rpc('atomic_reserve_match', {
+      p_request_id: params.requestId,
+      p_listener_id: params.listenerId,
+      p_score: params.score,
+      p_score_components: params.scoreComponents,
+      p_ttl_seconds: params.expiresInSeconds || 45,
+    });
 
-    // 1. Transition support request to RESERVED
-    await rawClient
-      .from('support_requests')
-      .update({ state: SupportRequestState.RESERVED })
-      .eq('id', params.requestId);
-
-    // 2. Transition listener presence to RESERVED
-    await rawClient
-      .from('listener_presence')
-      .update({ state: ListenerPresenceState.RESERVED })
-      .eq('listener_id', params.listenerId);
-
-    // 3. Create reservation row
-    const { data, error } = await rawClient
-      .from('match_reservations')
-      .insert({
-        request_id: params.requestId,
-        listener_id: params.listenerId,
-        state: MatchReservationState.OFFERED,
-        score: params.score,
-        score_components: params.scoreComponents,
-        offered_at: new Date().toISOString(),
-        expires_at: expiresAt,
-      })
-      .select()
-      .single();
-
-    if (error || !data) {
-      throw new Error(`Failed to create match reservation: ${error?.message}`);
+    if (error) {
+      throw new Error(`Database error in atomic_reserve_match: ${error.message}`);
     }
 
-    return data as MatchReservationRow;
+    if (!data || !data.success) {
+      throw new Error(data?.error || 'Failed to atomically reserve match');
+    }
+
+    const reservation = await this.getReservation(data.reservation_id);
+    if (!reservation) {
+      throw new Error(`Created reservation ${data.reservation_id} could not be retrieved`);
+    }
+
+    return reservation;
   }
 
   async getReservation(reservationId: string): Promise<MatchReservationRow | null> {
@@ -74,96 +57,130 @@ export class MatchingRepository {
     return (data as unknown as MatchReservationRow) ?? null;
   }
 
-  async acceptReservation(reservationId: string): Promise<void> {
-    const reservation = await this.getReservation(reservationId);
-    if (!reservation) {
-      throw new Error('Reservation not found');
-    }
-
-    const { nextReservationState, nextRequestState, nextListenerPresence } =
-      handleOfferAccept({
-        reservationState: reservation.state as any,
-        requestState: SupportRequestState.RESERVED,
-      });
-
+  /**
+   * Atomically accepts a match reservation with locked state check and expiration guard.
+   */
+  async acceptReservation(reservationId: string, listenerId?: string): Promise<void> {
     const rawClient = this.client as any;
 
-    await rawClient
-      .from('match_reservations')
-      .update({
-        state: nextReservationState,
-        accepted_at: new Date().toISOString(),
-      })
-      .eq('id', reservationId);
-
-    await rawClient
-      .from('support_requests')
-      .update({ state: nextRequestState })
-      .eq('id', reservation.request_id);
-
-    await rawClient
-      .from('listener_presence')
-      .update({ state: nextListenerPresence })
-      .eq('listener_id', reservation.listener_id);
-  }
-
-  async declineReservation(reservationId: string): Promise<void> {
-    const reservation = await this.getReservation(reservationId);
-    if (!reservation) {
-      throw new Error('Reservation not found');
+    let targetListenerId = listenerId;
+    if (!targetListenerId) {
+      const res = await this.getReservation(reservationId);
+      if (!res) throw new Error('Reservation not found');
+      targetListenerId = res.listener_id;
     }
 
-    const { nextReservationState, nextRequestState, nextListenerPresence } =
-      handleOfferDecline({
-        reservationState: reservation.state as any,
-        requestState: SupportRequestState.RESERVED,
-      });
+    const { data, error } = await rawClient.rpc('atomic_accept_reservation', {
+      p_reservation_id: reservationId,
+      p_listener_id: targetListenerId,
+    });
 
-    const rawClient = this.client as any;
+    if (error) {
+      throw new Error(`Database error in atomic_accept_reservation: ${error.message}`);
+    }
 
-    await rawClient
-      .from('match_reservations')
-      .update({ state: nextReservationState })
-      .eq('id', reservationId);
-
-    await rawClient
-      .from('support_requests')
-      .update({ state: nextRequestState })
-      .eq('id', reservation.request_id);
-
-    await rawClient
-      .from('listener_presence')
-      .update({ state: nextListenerPresence })
-      .eq('listener_id', reservation.listener_id);
+    if (!data || !data.success) {
+      throw new Error(data?.error || 'Failed to atomically accept reservation');
+    }
   }
 
+  /**
+   * Atomically declines an offer, returning the support request to QUEUED and listener to AVAILABLE.
+   */
+  async declineReservation(reservationId: string, listenerId?: string): Promise<void> {
+    const rawClient = this.client as any;
+
+    let targetListenerId = listenerId;
+    if (!targetListenerId) {
+      const res = await this.getReservation(reservationId);
+      if (!res) throw new Error('Reservation not found');
+      targetListenerId = res.listener_id;
+    }
+
+    const { data, error } = await rawClient.rpc('atomic_decline_reservation', {
+      p_reservation_id: reservationId,
+      p_listener_id: targetListenerId,
+    });
+
+    if (error) {
+      throw new Error(`Database error in atomic_decline_reservation: ${error.message}`);
+    }
+
+    if (!data || !data.success) {
+      throw new Error(data?.error || 'Failed to atomically decline reservation');
+    }
+  }
+
+  /**
+   * Atomically expires an offer after TTL, returning request to QUEUED and listener to AVAILABLE.
+   */
   async expireReservation(reservationId: string): Promise<void> {
-    const reservation = await this.getReservation(reservationId);
-    if (!reservation) {
-      throw new Error('Reservation not found');
+    const rawClient = this.client as any;
+    const { data, error } = await rawClient.rpc('atomic_expire_reservation', {
+      p_reservation_id: reservationId,
+    });
+
+    if (error) {
+      throw new Error(`Database error in atomic_expire_reservation: ${error.message}`);
     }
 
-    const { nextReservationState, nextRequestState, nextListenerPresence } =
-      handleOfferTimeout({
-        reservationState: reservation.state as any,
-        requestState: SupportRequestState.RESERVED,
-      });
+    if (!data || !data.success) {
+      throw new Error(data?.error || 'Failed to atomically expire reservation');
+    }
+  }
 
+  /**
+   * R2 durable recovery: after reservation acceptance, converge on exactly one
+   * session for the request. Returns the existing session when a previous
+   * attempt already created it; otherwise creates it inside the same
+   * transaction. The UNIQUE(request_id) constraint is the final guard.
+   *
+   * A request or session that already reached a terminal state is reported as
+   * `terminal: true` with no mutation: a replayed acceptance must never
+   * resurrect a finished session, reservation or presence row.
+   */
+  async recoverSession(
+    reservationId: string,
+    listenerId: string
+  ): Promise<{
+    sessionId: string | null;
+    roomName: string | null;
+    requestId: string | null;
+    recovered: boolean;
+    terminal: boolean;
+    terminalState?: string;
+  }> {
     const rawClient = this.client as any;
+    const { data, error } = await rawClient.rpc('atomic_accept_session_recovery', {
+      p_reservation_id: reservationId,
+      p_listener_id: listenerId,
+    });
 
-    await rawClient
-      .from('match_reservations')
-      .update({ state: nextReservationState })
-      .eq('id', reservationId);
+    if (error) {
+      throw new Error(`Database error in atomic_accept_session_recovery: ${error.message}`);
+    }
 
-    await rawClient
-      .from('support_requests')
-      .update({ state: nextRequestState })
-      .eq('id', reservation.request_id);
+    if (data?.code === 'TERMINAL_STATE') {
+      return {
+        sessionId: data.session_id ?? null,
+        roomName: null,
+        requestId: null,
+        recovered: false,
+        terminal: true,
+        terminalState: data.session_state ?? data.request_state,
+      };
+    }
 
-    await rawClient
-      .from('listener_presence')
-      .update({ state: nextListenerPresence })
-      .eq('listener_id', reservation.listener_id);
+    if (!data || !data.success) {
+      throw new Error(data?.error || 'Failed to recover accepted session');
+    }
+
+    return {
+      sessionId: data.session_id,
+      roomName: data.room_name,
+      requestId: data.request_id,
+      recovered: data.recovered === true,
+      terminal: false,
+    };
   }
 }

@@ -1,0 +1,5 @@
+{
+  "AuthorizationProbeExit": 0,
+  "MutationProcessExit": 1,
+  "IntendedMutationFailureObserved": true
+}

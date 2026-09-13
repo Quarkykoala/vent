@@ -1,0 +1,66 @@
+$ pnpm --recursive --filter "@vent/*" run build
+Scope: 4 of 5 workspace projects
+$ next build
+   ▲ Next.js 15.5.25
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 10.4s
+   Linting and checking validity of types ...
+ ⨯ ESLint must be installed in order to run during builds: pnpm install --save-dev eslint
+   Collecting page data ...
+   Generating static pages (0/28) ...
+   Generating static pages (7/28) 
+   Generating static pages (14/28) 
+   Generating static pages (21/28) 
+ ✓ Generating static pages (28/28)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                     Size  First Load JS
+┌ ○ /                                        2.83 kB         105 kB
+├ ○ /_not-found                                994 B         104 kB
+├ ƒ /api/analytics/events                      219 B         103 kB
+├ ƒ /api/analytics/metrics                     219 B         103 kB
+├ ƒ /api/auth/me                               219 B         103 kB
+├ ƒ /api/auth/otp/send                         219 B         103 kB
+├ ƒ /api/auth/otp/verify                       219 B         103 kB
+├ ƒ /api/blocks                                219 B         103 kB
+├ ƒ /api/counselling/book                      219 B         103 kB
+├ ƒ /api/counselling/referral                  219 B         103 kB
+├ ƒ /api/counselling/referral/[id]/respond     219 B         103 kB
+├ ƒ /api/counselling/referral/[id]/transfer    219 B         103 kB
+├ ƒ /api/counselling/slots                     219 B         103 kB
+├ ƒ /api/finance/payouts/[id]/approve          219 B         103 kB
+├ ƒ /api/finance/payouts/[id]/execute          219 B         103 kB
+├ ƒ /api/finance/payouts/proposal              219 B         103 kB
+├ ƒ /api/finance/reconcile                     219 B         103 kB
+├ ƒ /api/finance/refunds                       219 B         103 kB
+├ ƒ /api/health                                219 B         103 kB
+├ ƒ /api/listeners/presence/heartbeat          219 B         103 kB
+├ ƒ /api/listeners/presence/toggle             219 B         103 kB
+├ ƒ /api/matches/[id]/accept                   219 B         103 kB
+├ ƒ /api/matches/[id]/decline                  219 B         103 kB
+├ ƒ /api/operations/maintenance                219 B         103 kB
+├ ƒ /api/operations/reservation-expiry         219 B         103 kB
+├ ƒ /api/payments/orders                       219 B         103 kB
+├ ƒ /api/payments/webhook                      219 B         103 kB
+├ ƒ /api/privacy/erasure                       219 B         103 kB
+├ ƒ /api/safety-cases                          219 B         103 kB
+├ ƒ /api/safety-cases/[id]/acknowledge         219 B         103 kB
+├ ƒ /api/safety-cases/[id]/resolve             219 B         103 kB
+├ ƒ /api/sessions/[id]/end                     219 B         103 kB
+├ ƒ /api/sessions/[id]/rating                  219 B         103 kB
+├ ƒ /api/sessions/[id]/token                   219 B         103 kB
+├ ƒ /api/support-requests                      219 B         103 kB
+├ ƒ /api/support-requests/[id]/match           219 B         103 kB
+├ ƒ /api/webhooks/razorpay                     219 B         103 kB
+└ ○ /crisis                                    165 B         106 kB
++ First Load JS shared by all                 103 kB
+  ├ chunks/2e9bfde9-51061558bbbaaee6.js      54.2 kB
+  ├ chunks/6230-8714675bcf7e8947.js          46.3 kB
+  └ other shared chunks (total)              1.97 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

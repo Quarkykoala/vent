@@ -1,0 +1,46 @@
+Scope: 3 of 5 workspace projects
+$ vitest run
+
+ RUN  v2.1.9 C:/Users/lenovo/projects/vent/packages/domain
+
+ ✓ tests/ledger.test.ts (6 tests) 10ms
+ ✓ tests/analytics.test.ts (4 tests) 11ms
+ ✓ tests/audio-token.test.ts (4 tests) 8ms
+ ✓ tests/scoring.test.ts (6 tests) 7ms
+ ✓ tests/presence.test.ts (8 tests) 9ms
+ ✓ tests/roles.test.ts (5 tests) 9ms
+ ✓ tests/finance.test.ts (8 tests) 15ms
+ ✓ tests/state-machines.test.ts (18 tests) 14ms
+ ✓ tests/matcher.test.ts (6 tests) 9ms
+ ✓ tests/safety.test.ts (10 tests) 12ms
+ ✓ tests/counselling.test.ts (5 tests) 10ms
+
+ Test Files  11 passed (11)
+      Tests  80 passed (80)
+   Start at  16:40:35
+   Duration  3.78s (transform 7.82s, setup 0ms, collect 13.27s, tests 113ms, environment 4ms, prepare 14.87s)
+
+$ vitest run
+
+ RUN  v2.1.9 C:/Users/lenovo/projects/vent/packages/validation
+
+ ✓ tests/listener.test.ts (3 tests) 7ms
+ ✓ tests/auth.test.ts (5 tests) 9ms
+ ✓ tests/validation.test.ts (6 tests) 10ms
+
+ Test Files  3 passed (3)
+      Tests  14 passed (14)
+   Start at  16:40:40
+   Duration  1.35s (transform 424ms, setup 0ms, collect 1.63s, tests 26ms, environment 1ms, prepare 692ms)
+
+$ vitest run
+
+ RUN  v2.1.9 C:/Users/lenovo/projects/vent/packages/db
+
+ ✓ tests/db.test.ts (5 tests) 10ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  16:40:42
+   Duration  2.74s (transform 319ms, setup 0ms, collect 1.95s, tests 10ms, environment 0ms, prepare 316ms)
+

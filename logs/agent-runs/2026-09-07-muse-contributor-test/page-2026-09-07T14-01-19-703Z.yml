@@ -1,0 +1,12 @@
+- main [ref=e3]:
+  - heading "Muse sign-in component test" [level=1] [ref=e4]
+  - paragraph [ref=e5]: Isolated preview. All API responses are synthetic; no SMS is sent.
+  - generic [ref=e6]:
+    - 'checkbox "Test: age confirmed" [ref=e7]'
+    - text: "Test: age confirmed"
+  - generic [ref=e9]:
+    - generic [ref=e10]: Mobile number
+    - textbox "Mobile number" [ref=e11]:
+      - /placeholder: 98765 43210
+    - button "Send code" [disabled] [ref=e12]
+  - status "Authentication successes" [ref=e13]: "0"

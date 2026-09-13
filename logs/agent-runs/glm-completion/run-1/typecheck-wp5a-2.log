@@ -1,0 +1,11 @@
+$ pnpm --recursive --filter "@vent/*" run typecheck
+Scope: 4 of 5 workspace projects
+$ tsc --noEmit
+$ tsc --noEmit
+$ tsc --noEmit
+src/repositories/support-request.repository.ts(72,7): error TS2578: Unused '@ts-expect-error' directive.
+src/repositories/support-request.repository.ts(74,9): error TS2353: Object literal may only specify known properties, and 'user_id' does not exist in type 'never[]'.
+C:\Users\lenovo\projects\vent\packages\db:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @vent/db@0.1.0 typecheck: `tsc --noEmit`
+Exit status 2
+[ELIFECYCLE] Command failed with exit code 2.

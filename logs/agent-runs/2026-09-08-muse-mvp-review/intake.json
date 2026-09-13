@@ -1,0 +1,41 @@
+{
+  "baselineCount": 182,
+  "changed": [
+    "apps/web/e2e/phone-signin.spec.ts",
+    "apps/web/src/app/api/counselling/book/route.ts",
+    "apps/web/src/app/api/counselling/slots/route.ts",
+    "apps/web/src/app/api/matches/[id]/accept/route.ts",
+    "apps/web/src/app/api/payments/orders/route.ts",
+    "apps/web/src/app/api/safety-cases/route.ts",
+    "apps/web/src/app/page.tsx",
+    "apps/web/src/features/audio/AudioCallRoom.tsx",
+    "apps/web/src/features/matching/coordinator.ts",
+    "apps/web/tests/counselling.test.ts",
+    "apps/web/tests/matching-coordinator.test.ts",
+    "apps/web/tests/payment-order.test.ts",
+    "packages/db/src/repositories/listener.repository.ts",
+    "packages/db/src/repositories/matching.repository.ts",
+    "packages/validation/src/counselling.schema.ts"
+  ],
+  "additional": [
+    "supabase/migrations/20260908000001_accept_session_recovery.sql",
+    "apps/web/e2e/integrated-journey.spec.ts",
+    "apps/web/tests/payment-status.test.ts",
+    "apps/web/tests/ops-console.test.ts",
+    "apps/web/tests/listener-console.test.ts",
+    "apps/web/tests/history.test.ts",
+    "apps/web/src/app/session/[id]/page.tsx",
+    "apps/web/src/app/listener/page.tsx",
+    "apps/web/src/app/history/page.tsx",
+    "apps/web/src/app/globals.css",
+    "apps/web/src/app/ops/page.tsx",
+    "apps/web/src/app/api/support-requests/[id]/queue-status/route.ts",
+    "apps/web/src/app/api/support-requests/[id]/payment-status/route.ts",
+    "apps/web/src/app/api/listeners/review/route.ts",
+    "apps/web/src/app/api/history/route.ts",
+    "apps/web/src/app/api/operations/queue/route.ts",
+    "apps/web/src/app/queue/page.tsx",
+    "apps/web/src/app/api/listeners/console/route.ts"
+  ],
+  "settings": "User reported switching default to x-high during this run; exact split and usage unknown"
+}

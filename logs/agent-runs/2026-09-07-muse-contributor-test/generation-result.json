@@ -1,0 +1,31 @@
+{
+  "startedAt": "2026-09-07T13:58:37.974Z",
+  "endpoint": "https://api.meta.ai/v1/chat/completions",
+  "requestedModel": "muse-spark-1.3-contributor",
+  "reasoningEffort": "medium",
+  "maxCompletionTokens": 8192,
+  "generationRequests": 1,
+  "automaticRetries": 0,
+  "fallbackModels": false,
+  "listedInputUsdPerMillion": 0.1,
+  "listedOutputUsdPerMillion": 0.2,
+  "httpStatus": 200,
+  "returnedModel": "muse-spark-1.3-contributor",
+  "finishReason": "stop",
+  "usage": {
+    "completion_tokens": 4332,
+    "prompt_tokens": 492,
+    "total_tokens": 4824,
+    "completion_tokens_details": {
+      "reasoning_tokens": 2578
+    },
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "estimatedListCostUsd": 0.0009156000000000001,
+  "costNote": "Estimate from listed Contributor token rates; not an invoice. Prompt caching discounts, if any, are not subtracted.",
+  "sourceBytes": 7157,
+  "elapsedMs": 34173,
+  "finishedAt": "2026-09-07T13:59:12.151Z"
+}

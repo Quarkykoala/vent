@@ -1,0 +1,36 @@
+$ vitest run "tests/matching-authorization.test.ts" "tests/matching-coordinator.test.ts" "--maxWorkers=2" "--minWorkers=1"
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+
+ RUN  v2.1.9 C:/Users/lenovo/projects/vent/apps/web
+
+ ✓ tests/matching-coordinator.test.ts (9 tests) 2972ms
+   ✓ WP-7 — Queue coordinator, atomic reservation, accept→session (live DB) > lazily expires a past-TTL offer and rematches; ops expiry is idempotent 332ms
+   ✓ WP-7 — Queue coordinator, atomic reservation, accept→session (live DB) > accept creates a session, connects the request, and rejects duplicate accepts 316ms
+ ❯ tests/matching-authorization.test.ts (6 tests | 1 failed) 3294ms
+   ✓ R1: Matching authorization regression — state and ownership invariants > criterion 1 & 5: denies a non-owner on a queued request with 403, leaving request, reservations, sessions, and listener presence unchanged without invoking coordinator 475ms
+   ✓ R1: Matching authorization regression — state and ownership invariants > criterion 2 & 5: denies a non-owner on an expired offered reservation with 403, without triggering lazy expiry, requeueing, listener release, or rematching 755ms
+   × R1: Matching authorization regression — state and ownership invariants > criterion 4 & 5: legitimate owner matches queued request, repeating while offer active produces no duplicate, and authorized lazy expiry rematches 705ms
+     → expected [ 200, 201 ] to include 409
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/matching-authorization.test.ts > R1: Matching authorization regression — state and ownership invariants > criterion 4 & 5: legitimate owner matches queued request, repeating while offer active produces no duplicate, and authorized lazy expiry rematches
+AssertionError: expected [ 200, 201 ] to include 409
+ ❯ tests/matching-authorization.test.ts:507:24
+    505|     const res3 = await matchHandler(req3, { params: Promise.resolve({ …
+    506| 
+    507|     expect([200, 201]).toContain(res3.status);
+       |                        ^
+    508|     const body3 = await res3.json();
+    509|     if (body3.reservationId) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 14 passed (15)
+   Start at  02:34:59
+   Duration  4.86s (transform 373ms, setup 0ms, collect 1.25s, tests 6.27s, environment 0ms, prepare 722ms)
+
+C:\Users\lenovo\projects\vent\apps\web:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @vent/web@0.1.0 test: `vitest run "tests/matching-authorization.test.ts" "tests/matching-coordinator.test.ts" "--maxWorkers=2" "--minWorkers=1"`
+Exit status 1

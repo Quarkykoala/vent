@@ -1,0 +1,99 @@
+Scope: 4 of 5 workspace projects
+$ vitest run "--maxWorkers=2" "--minWorkers=1"
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/packages/domain[39m
+
+ [32mΓ£ô[39m tests/finance.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32mΓ£ô[39m tests/state-machines.test.ts [2m([22m[2m18 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32mΓ£ô[39m tests/presence.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32mΓ£ô[39m tests/matcher.test.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32mΓ£ô[39m tests/ledger.test.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32mΓ£ô[39m tests/scoring.test.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32mΓ£ô[39m tests/safety.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32mΓ£ô[39m tests/analytics.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32mΓ£ô[39m tests/counselling.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 11[2mms[22m[39m
+ [32mΓ£ô[39m tests/roles.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32mΓ£ô[39m tests/audio-token.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m11 passed[39m[22m[90m (11)[39m
+[2m      Tests [22m [1m[32m80 passed[39m[22m[90m (80)[39m
+[2m   Start at [22m 14:47:29
+[2m   Duration [22m 3.58s[2m (transform 484ms, setup 0ms, collect 1.78s, tests 79ms, environment 3ms, prepare 1.48s)[22m
+
+$ vitest run "--maxWorkers=2" "--minWorkers=1"
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/packages/validation[39m
+
+ [32mΓ£ô[39m tests/auth.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32mΓ£ô[39m tests/validation.test.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32mΓ£ô[39m tests/listener.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m14 passed[39m[22m[90m (14)[39m
+[2m   Start at [22m 14:47:34
+[2m   Duration [22m 1.47s[2m (transform 377ms, setup 0ms, collect 1.18s, tests 19ms, environment 1ms, prepare 506ms)[22m
+
+$ vitest run "--maxWorkers=2" "--minWorkers=1"
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/packages/db[39m
+
+ [32mΓ£ô[39m tests/db.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 14:47:36
+[2m   Duration [22m 962ms[2m (transform 299ms, setup 0ms, collect 523ms, tests 10ms, environment 0ms, prepare 149ms)[22m
+
+$ vitest run "--maxWorkers=2" "--minWorkers=1"
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/apps/web[39m
+
+ [32mΓ£ô[39m tests/rls-hardening-11-personas.test.ts [2m([22m[2m36 tests[22m[2m)[22m[33m 4198[2mms[22m[39m
+ [32mΓ£ô[39m tests/matching-authorization.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 4547[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m R1: Matching authorization regression ΓÇö state and ownership invariants[2m > [22mcriterion 1 & 5: denies a non-owner on a queued request with 403, leaving request, reservations, sessions, and listener presence unchanged without invoking coordinator [33m613[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m R1: Matching authorization regression ΓÇö state and ownership invariants[2m > [22mcriterion 2 & 5: denies a non-owner on an expired offered reservation with 403, without triggering lazy expiry, requeueing, listener release, or rematching [33m964[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m R1: Matching authorization regression ΓÇö state and ownership invariants[2m > [22mcriterion 4 & 5: legitimate owner matches queued request, repeating while offer active produces no duplicate, and authorized lazy expiry rematches [33m1408[2mms[22m[39m
+ [32mΓ£ô[39m tests/matching-concurrency.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 2172[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m Package 3 ΓÇö Database Invariants and Matching Concurrency[2m > [22maccept vs timeout: expired offer cannot be accepted and returns request to queued [33m1614[2mms[22m[39m
+ [32mΓ£ô[39m tests/matching-coordinator.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 3543[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m WP-7 ΓÇö Queue coordinator, atomic reservation, acceptΓåÆsession (live DB)[2m > [22mlazily expires a past-TTL offer and rematches; ops expiry is idempotent [33m416[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m WP-7 ΓÇö Queue coordinator, atomic reservation, acceptΓåÆsession (live DB)[2m > [22mnever matches a blocked pair (either direction) [33m393[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m WP-7 ΓÇö Queue coordinator, atomic reservation, acceptΓåÆsession (live DB)[2m > [22maccept creates a session, connects the request, and rejects duplicate accepts [33m522[2mms[22m[39m
+ [32mΓ£ô[39m tests/completion-ratings-blocks.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 1645[2mms[22m[39m
+ [32mΓ£ô[39m tests/analytics-erasure.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 2171[2mms[22m[39m
+ [32mΓ£ô[39m tests/safety-hardening.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 1647[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m Package 7 ΓÇö Real Safety System Hardening & Audit Logging[2m > [22mclinical supervisor can acknowledge and resolve safety case [33m316[2mms[22m[39m
+ [32mΓ£ô[39m tests/webhook-route-security.test.ts [2m([22m[2m28 tests[22m[2m)[22m[90m 54[2mms[22m[39m
+ [32mΓ£ô[39m tests/finance-hardening.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 1735[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m Package 8 ΓÇö Real Finance, Refunds & Human-Gated Payouts[2m > [22mSTRICT INVARIANT: Payout execution strictly requires human finance approval [33m540[2mms[22m[39m
+ [32mΓ£ô[39m tests/db-authority.test.ts [2m([22m[2m14 tests[22m[2m)[22m[33m 746[2mms[22m[39m
+ [32mΓ£ô[39m tests/security-adversarial.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 1499[2mms[22m[39m
+ [32mΓ£ô[39m tests/counselling-funnel.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 1885[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m Package 9 ΓÇö Counselling Funnel, Partner Transfer & Consent Invariants[2m > [22mSTRICT INVARIANT: Partner transfer requires prior explicit user consent [33m466[2mms[22m[39m
+ [32mΓ£ô[39m tests/presence-persistence.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 2236[2mms[22m[39m
+ [32mΓ£ô[39m tests/payment-webhook.test.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 188[2mms[22m[39m
+ [32mΓ£ô[39m tests/audio-call.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 1464[2mms[22m[39m
+ [32mΓ£ô[39m tests/supabase-auth-service.test.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 22[2mms[22m[39m
+ [32mΓ£ô[39m tests/support-request-flow.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 1405[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m F02/P4.1a ΓÇö Durable authenticated support-request creation[2m > [22mis idempotent: retrying the same idempotency key returns the original request and does not duplicate rows [33m318[2mms[22m[39m
+ [32mΓ£ô[39m tests/auth-guard.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 34[2mms[22m[39m
+ [32mΓ£ô[39m tests/payment-order.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 827[2mms[22m[39m
+ [32mΓ£ô[39m tests/auth-live-supabase.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 2528[2mms[22m[39m
+ [32mΓ£ô[39m tests/routes.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32mΓ£ô[39m tests/completion.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 12[2mms[22m[39m
+ [32mΓ£ô[39m tests/age-evidence.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 1471[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m F08 ΓÇö Age confirmation evidence is never fabricated[2m > [22mprovisions via token WITHOUT writing an age confirmation timestamp [33m336[2mms[22m[39m
+ [32mΓ£ô[39m tests/auth.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32mΓ£ô[39m tests/analytics.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32mΓ£ô[39m tests/counselling.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+ [32mΓ£ô[39m tests/safety.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+ [32mΓ£ô[39m tests/finance.test.ts [2m([22m[2m1 test[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32mΓ£ô[39m tests/presence.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32mΓ£ô[39m tests/matching.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m30 passed[39m[22m[90m (30)[39m
+[2m      Tests [22m [1m[32m204 passed[39m[22m[90m (204)[39m
+[2m   Start at [22m 14:47:38
+[2m   Duration [22m 32.91s[2m (transform 2.66s, setup 0ms, collect 12.41s, tests 36.08s, environment 10ms, prepare 6.08s)[22m
+

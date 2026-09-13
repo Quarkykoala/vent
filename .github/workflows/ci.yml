@@ -9,6 +9,7 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -23,21 +24,69 @@ jobs:
           node-version: 22
           cache: 'pnpm'
 
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Secret scan check
         run: |
-          # Ensure no private keys or committed secrets exist in working tree
-          ! grep -r "BEGIN RSA PRIVATE KEY" . --exclude-dir=node_modules --exclude-dir=.git
-          ! grep -r "BEGIN PRIVATE KEY" . --exclude-dir=node_modules --exclude-dir=.git
-          ! grep -r "rzp_live_" . --exclude-dir=node_modules --exclude-dir=.git
+          ! grep -r "BEGIN RSA PRIVATE KEY" . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.github
+          ! grep -r "BEGIN PRIVATE KEY" . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.github
+          ! grep -r "rzp_live_" . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.github
+          # Local Supabase JWTs must come from `supabase status`, never source.
+          ! grep -r "supabase-demo.*service_role" apps packages --exclude-dir=node_modules
+
+      - name: Enable local TOTP for authorization tests
+        shell: bash
+        run: |
+          sed -i '/\[auth.mfa.totp\]/,/^\[/ {
+            s/enroll_enabled = false/enroll_enabled = true/
+            s/verify_enabled = false/verify_enabled = true/
+          }' supabase/config.toml
+
+      - name: Start local Supabase and apply migrations
+        shell: bash
+        run: |
+          supabase start
+          supabase db reset
+          eval "$(supabase status -o env)"
+          {
+            echo "NEXT_PUBLIC_SUPABASE_URL=$API_URL"
+            echo "SUPABASE_URL=$API_URL"
+            echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY"
+            echo "SUPABASE_ANON_KEY=$ANON_KEY"
+            echo "SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY"
+            echo "RAZORPAY_TEST_SIMULATOR=true"
+          } >> "$GITHUB_ENV"
 
       - name: Typecheck
         run: pnpm typecheck
 
-      - name: Unit & Invariant Tests
+      - name: Lint
+        run: pnpm lint
+
+      - name: Unit and repository invariant tests
         run: pnpm test
+
+      - name: Database integrity tests
+        run: pnpm test:db
+
+      - name: RLS authority tests
+        run: pnpm test:rls
+
+      - name: Negative security tests
+        run: pnpm test:negative
+
+      - name: Integration tests
+        run: pnpm test:integration
 
       - name: Build
         run: pnpm build
+
+      - name: Stop local Supabase
+        if: always()
+        run: supabase stop --no-backup

@@ -1,0 +1,5 @@
+### Result
+10. [GET] http://127.0.0.1:3100/crisis?_rsc=1p-R_iEY6bj0jY31 => [200] OK
+12. [POST] http://127.0.0.1:3100/api/support-requests => [401] Unauthorized
+
+Note: 10 static requests not shown, run with --static option to see them.

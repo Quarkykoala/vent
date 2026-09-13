@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import {
   validateSlotBooking,
   NON_DIAGNOSTIC_REFERRAL_CATEGORIES,
-  InvariantViolationError,
   type CounsellorSlot,
 } from '../src/index';
 

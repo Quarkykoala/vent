@@ -1,0 +1,12 @@
+$ vitest run "tests/webhook-route-security.test.ts" "--maxWorkers=2" "--minWorkers=1"
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+
+ RUN  v2.1.9 C:/Users/lenovo/projects/vent/apps/web
+
+ ✓ tests/webhook-route-security.test.ts (24 tests) 30ms
+
+ Test Files  1 passed (1)
+      Tests  24 passed (24)
+   Start at  22:55:24
+   Duration  919ms (transform 72ms, setup 0ms, collect 149ms, tests 30ms, environment 0ms, prepare 520ms)
+

@@ -7,14 +7,22 @@
     "dev": "pnpm --filter @vent/web dev",
     "build": "pnpm --recursive --filter \"@vent/*\" run build",
     "test": "pnpm --recursive --filter \"@vent/*\" run test",
+    "test:db": "pnpm --filter @vent/web run test:db",
+    "test:rls": "pnpm --filter @vent/web run test:rls",
+    "test:negative": "pnpm --filter @vent/web run test:negative",
+    "test:integration": "pnpm --filter @vent/web run test:integration",
     "test:coverage": "pnpm --recursive --filter \"@vent/*\" run test:coverage",
-    "lint": "pnpm --recursive --filter \"@vent/*\" run lint",
+    "lint": "eslint .",
     "typecheck": "pnpm --recursive --filter \"@vent/*\" run typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\""
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.10.0",
+    "globals": "^17.12.0",
     "prettier": "^3.4.2",
     "typescript": "^5.7.3",
+    "typescript-eslint": "^8.69.0",
     "vitest": "^2.1.8"
   }
 }

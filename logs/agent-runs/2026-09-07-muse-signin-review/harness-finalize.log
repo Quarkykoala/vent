@@ -1,0 +1,79 @@
+Wrote C:\Users\lenovo\projects\vent\.codex-harness\run-receipt.json
+overall: ok
+Wrote C:\Users\lenovo\projects\vent\.codex-harness\diff-risk-radar.json
+overall: high
+low: .github/workflows/ci.yml 
+low: AGENTS.md 
+low: apps/web/e2e/smoke.spec.ts 
+low: apps/web/package.json 
+medium: apps/web/src/app/api/counselling/referral/route.ts api contract
+medium: apps/web/src/app/api/listeners/presence/heartbeat/route.ts api contract
+medium: apps/web/src/app/api/listeners/presence/toggle/route.ts api contract
+medium: apps/web/src/app/api/matches/[id]/accept/route.ts api contract
+medium: apps/web/src/app/api/privacy/erasure/route.ts api contract
+medium: apps/web/src/app/api/support-requests/route.ts api contract
+medium: apps/web/src/app/api/webhooks/razorpay/route.ts api contract
+medium: apps/web/src/app/page.tsx frontend needs browser proof
+high: apps/web/src/features/auth/mock-auth-service.ts auth/secret surface
+high: apps/web/src/features/auth/supabase-auth-service.ts auth/secret surface
+low: apps/web/src/features/payments/payment-processor.ts 
+high: apps/web/src/features/sessions/AudioCallInterface.tsx auth/secret surface,frontend needs browser proof
+low: apps/web/tests/analytics-erasure.test.ts 
+low: apps/web/tests/completion-ratings-blocks.test.ts 
+low: apps/web/tests/counselling-funnel.test.ts 
+low: apps/web/tests/finance-hardening.test.ts 
+low: apps/web/tests/payment-order.test.ts 
+low: apps/web/tests/payment-webhook.test.ts 
+low: apps/web/tests/rls-hardening-11-personas.test.ts 
+low: apps/web/tests/security-adversarial.test.ts 
+high: apps/web/tests/supabase-auth-service.test.ts auth/secret surface
+low: package.json 
+low: packages/db/package.json 
+low: packages/db/src/index.ts 
+low: packages/db/src/repositories/listener.repository.ts 
+high: packages/db/src/repositories/session.repository.ts auth/secret surface
+low: packages/db/src/repositories/user.repository.ts 
+low: packages/db/src/types.ts 
+low: packages/db/tests/db.test.ts 
+low: packages/domain/package.json 
+low: packages/domain/tests/analytics.test.ts 
+low: packages/domain/tests/counselling.test.ts 
+low: packages/domain/tests/state-machines.test.ts 
+low: packages/validation/package.json 
+high: packages/validation/tests/auth.test.ts auth/secret surface
+low: packages/validation/tests/listener.test.ts 
+medium: pnpm-lock.yaml dependency lockfile
+high: supabase/migrations/ROLLBACK.md data/schema
+low: .codex-harness/ 
+low: .commandcode/ 
+low: CONTINUE_HERE.md 
+low: apps/web/e2e/phone-signin.spec.ts 
+medium: apps/web/src/app/api/operations/ api contract
+medium: apps/web/src/app/api/support-requests/[id]/ api contract
+high: apps/web/src/features/auth/PhoneSignIn.tsx auth/secret surface,frontend needs browser proof
+low: apps/web/src/features/matching/ 
+low: apps/web/src/lib/rate-limit.ts 
+low: apps/web/tests/age-evidence.test.ts 
+high: apps/web/tests/db-authority.test.ts auth/secret surface
+high: apps/web/tests/matching-authorization.test.ts auth/secret surface
+low: apps/web/tests/matching-coordinator.test.ts 
+medium: apps/web/tests/otp-routes.test.ts api contract
+low: apps/web/tests/presence-persistence.test.ts 
+low: apps/web/tests/support-request-flow.test.ts 
+medium: apps/web/tests/webhook-route-security.test.ts api contract
+low: audit-context/ 
+low: docs/ 
+low: eslint.config.mjs 
+low: knowledge/ 
+low: logs/ 
+low: output/ 
+low: packages/db/src/repositories/support-request.repository.ts 
+high: supabase/migrations/20260905000001_db_authority_lockdown.sql data/schema,auth/secret surface
+high: supabase/migrations/20260905000002_age_evidence_nullability.sql data/schema
+Wrote C:\Users\lenovo\projects\vent\knowledge\indexes\wiki-lint.json
+overall: ok
+Wrote C:\Users\lenovo\projects\vent\.codex-harness\blindspot-lint.json
+overall: review
+medium: Endpoint-sensitive work lacks a concrete endpoint label.
+Wrote C:\Users\lenovo\projects\vent\.codex-harness\proof-capsules\2026-09-07T18-06-03Z-muse-signin-review
+codex-autonomy-finalize complete

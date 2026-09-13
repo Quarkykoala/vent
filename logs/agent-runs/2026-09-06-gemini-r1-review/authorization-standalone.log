@@ -1,0 +1,15 @@
+$ vitest run "tests/matching-authorization.test.ts" "--maxWorkers=2" "--minWorkers=1"
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+
+ RUN  v2.1.9 C:/Users/lenovo/projects/vent/apps/web
+
+ ✓ tests/matching-authorization.test.ts (6 tests) 3073ms
+   ✓ R1: Matching authorization regression — state and ownership invariants > criterion 1 & 5: denies a non-owner on a queued request with 403, leaving request, reservations, sessions, and listener presence unchanged without invoking coordinator 464ms
+   ✓ R1: Matching authorization regression — state and ownership invariants > criterion 2 & 5: denies a non-owner on an expired offered reservation with 403, without triggering lazy expiry, requeueing, listener release, or rematching 671ms
+   ✓ R1: Matching authorization regression — state and ownership invariants > criterion 4 & 5: legitimate owner matches queued request, repeating while offer active produces no duplicate, and authorized lazy expiry rematches 708ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  02:35:47
+   Duration  4.40s (transform 298ms, setup 0ms, collect 580ms, tests 3.07s, environment 0ms, prepare 450ms)
+

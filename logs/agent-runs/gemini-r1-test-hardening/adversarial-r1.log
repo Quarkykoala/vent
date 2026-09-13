@@ -1,0 +1,17 @@
+$ vitest run "--config" "../../logs/agent-runs/2026-09-06-glm-long-horizon-review/adversarial.config.mjs" "-t" "denies a non-owner"
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/apps/web[39m
+
+[90mstdout[2m | ../../logs/agent-runs/2026-09-06-glm-long-horizon-review/adversarial.test.ts[2m > [22m[2mIndependent long-horizon review ΓÇö real local database counterexamples[2m > [22m[2mdenies a non-owner without changing the victim request or reserving a listener
+[22m[39m{"probe":"authorization-before-mutation","response":403,"requestState":"queued","reservationStates":[],"sessionCount":0,"presenceState":"available"}
+
+[90mstdout[2m | ../../logs/agent-runs/2026-09-06-glm-long-horizon-review/adversarial.test.ts[2m > [22m[2mIndependent long-horizon review ΓÇö real local database counterexamples
+[22m[39mReview synthetic fixtures cleaned up.
+
+ [32mΓ£ô[39m ../../logs/agent-runs/2026-09-06-glm-long-horizon-review/adversarial.test.ts [2m([22m[2m4 tests[22m[2m | [22m[33m3 skipped[39m[2m)[22m[33m 1444[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[2m | [22m[33m3 skipped[39m[90m (4)[39m
+[2m   Start at [22m 14:43:24
+[2m   Duration [22m 3.83s[2m (transform 416ms, setup 0ms, collect 1.26s, tests 1.44s, environment 0ms, prepare 140ms)[22m
+

@@ -1,0 +1,91 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]: In Crisis?
+      - generic [ref=e5]: "If you are in immediate danger or having thoughts of self-harm, please reach out for emergency support:"
+      - generic [ref=e6]:
+        - text: "Tele-MANAS:"
+        - strong [ref=e7]: "14416"
+        - text: "| Emergency:"
+        - strong [ref=e8]: "112"
+    - link "Verified Crisis Resources →" [ref=e9] [cursor=pointer]:
+      - /url: /crisis
+  - banner [ref=e10]:
+    - generic [ref=e11]:
+      - link "Venterr.in Trained Human Listeners" [ref=e12] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e13]: Venterr.in
+        - generic [ref=e14]: Trained Human Listeners
+      - generic [ref=e15]:
+        - link "Emergency & Crisis Help" [active] [ref=e16] [cursor=pointer]:
+          - /url: /crisis
+        - generic [ref=e17]: "|"
+        - generic [ref=e18]: 18+ Adults Only
+  - main [ref=e19]:
+    - generic [ref=e67]:
+      - link "← Back to Venterr" [ref=e69] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e70]:
+        - heading "Emergency & Crisis Resources (India)" [level=1] [ref=e71]
+        - paragraph [ref=e72]: If you or someone you know is in immediate danger, having thoughts of self-harm, or experiencing a life-threatening crisis, please do not use this app. Reach out to verified professional emergency services immediately.
+      - generic [ref=e73]:
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - generic [ref=e76]:
+              - heading "Tele-MANAS (Govt. of India)" [level=2] [ref=e77]
+              - paragraph [ref=e78]: National Tele Mental Health Programme providing immediate mental health counselling.
+            - generic [ref=e79]: 24 Hours, 7 Days a week
+          - generic [ref=e80]:
+            - generic [ref=e81]: "Languages: 20+ Indian Languages"
+            - link "📞 14416 / 1800 891 4416" [ref=e82] [cursor=pointer]:
+              - /url: tel:14416
+        - generic [ref=e83]:
+          - generic [ref=e84]:
+            - generic [ref=e85]:
+              - heading "National Emergency Response (ERSS)" [level=2] [ref=e86]
+              - paragraph [ref=e87]: All-in-one emergency service for police, medical, and immediate life-safety emergencies.
+            - generic [ref=e88]: 24 Hours, 7 Days a week
+          - generic [ref=e89]:
+            - generic [ref=e90]: "Languages: Pan-India Emergency"
+            - link "📞 112" [ref=e91] [cursor=pointer]:
+              - /url: tel:112
+        - generic [ref=e92]:
+          - generic [ref=e93]:
+            - generic [ref=e94]:
+              - heading "KIRAN Mental Health Helpline" [level=2] [ref=e95]
+              - paragraph [ref=e96]: Ministry of Social Justice and Empowerment helpline for psychological support and crisis management.
+            - generic [ref=e97]: 24 Hours, 7 Days a week
+          - generic [ref=e98]:
+            - generic [ref=e99]: "Languages: 13 Languages"
+            - link "📞 1800-599-0019" [ref=e100] [cursor=pointer]:
+              - /url: tel:18005990019
+        - generic [ref=e101]:
+          - generic [ref=e102]:
+            - generic [ref=e103]:
+              - heading "Vandrevala Foundation" [level=2] [ref=e104]
+              - paragraph [ref=e105]: Free, confidential psychological support and crisis intervention.
+            - generic [ref=e106]: 24 Hours, 7 Days a week
+          - generic [ref=e107]:
+            - generic [ref=e108]: "Languages: English, Hindi, and Regional Languages"
+            - link "📞 +91 9999 666 555" [ref=e109] [cursor=pointer]:
+              - /url: tel:+919999666555
+      - paragraph [ref=e111]: "Verified according to SOP Section C2. Last verified: 2026-09-01 by Clinical Operations."
+  - contentinfo [ref=e50]:
+    - generic [ref=e51]:
+      - generic [ref=e52]:
+        - paragraph [ref=e53]: Important Service Scope & Clinical Boundaries
+        - paragraph [ref=e54]:
+          - text: Venterr provides compassionate, pseudonymous human active listening. It is
+          - strong [ref=e55]: NOT
+          - text: therapy, psychiatric medical treatment, clinical diagnosis, or an emergency crisis hotline. Listeners do not prescribe medication or provide clinical advice.
+      - generic [ref=e56]:
+        - generic [ref=e57]: 🔒 Strict Zero-Recording & Zero-Transcript Guarantee
+        - generic [ref=e58]: •
+        - generic [ref=e59]: 🇮🇳 Regulated Under DPDP Act 2023 & India IT Act
+        - generic [ref=e60]: •
+        - generic [ref=e61]: 🔞 18+ Adults Only
+        - generic [ref=e62]: •
+        - 'link "Helplines: Tele-MANAS (14416)" [ref=e63] [cursor=pointer]':
+          - /url: /crisis
+      - generic [ref=e64]: © 2026 Venterr India. All rights reserved. Transparent fixed pricing (₹199 / ₹399 / ₹599) with automated technical failure refund protection.
+  - alert [ref=e65]: Crisis & Emergency Resources — Venterr

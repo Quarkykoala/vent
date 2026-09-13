@@ -1,0 +1,97 @@
+$ pnpm --recursive --filter "@vent/*" run test
+Scope: 4 of 5 workspace projects
+$ vitest run
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/packages/domain[39m
+
+ [32m✓[39m tests/audio-token.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32m✓[39m tests/finance.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32m✓[39m tests/presence.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m tests/roles.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m tests/scoring.test.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32m✓[39m tests/analytics.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32m✓[39m tests/ledger.test.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32m✓[39m tests/safety.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32m✓[39m tests/matcher.test.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 20[2mms[22m[39m
+ [32m✓[39m tests/counselling.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 20[2mms[22m[39m
+ [32m✓[39m tests/state-machines.test.ts [2m([22m[2m18 tests[22m[2m)[22m[90m 27[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m11 passed[39m[22m[90m (11)[39m
+[2m      Tests [22m [1m[32m80 passed[39m[22m[90m (80)[39m
+[2m   Start at [22m 00:26:03
+[2m   Duration [22m 1.22s[2m (transform 1.50s, setup 0ms, collect 4.61s, tests 131ms, environment 3ms, prepare 2.70s)[22m
+
+$ vitest run
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/packages/validation[39m
+
+ [32m✓[39m tests/listener.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32m✓[39m tests/auth.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32m✓[39m tests/validation.test.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m14 passed[39m[22m[90m (14)[39m
+[2m   Start at [22m 00:26:05
+[2m   Duration [22m 1.17s[2m (transform 414ms, setup 0ms, collect 1.33s, tests 24ms, environment 1ms, prepare 741ms)[22m
+
+$ vitest run
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/packages/db[39m
+
+ [32m✓[39m tests/db.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 00:26:06
+[2m   Duration [22m 934ms[2m (transform 219ms, setup 0ms, collect 377ms, tests 8ms, environment 0ms, prepare 184ms)[22m
+
+$ vitest run
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/apps/web[39m
+
+ [32m✓[39m tests/webhook-route-security.test.ts [2m([22m[2m24 tests[22m[2m)[22m[90m 68[2mms[22m[39m
+ [32m✓[39m tests/payment-webhook.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 394[2mms[22m[39m
+ [32m✓[39m tests/db-authority.test.ts [2m([22m[2m14 tests[22m[2m)[22m[33m 1371[2mms[22m[39m
+ [32m✓[39m tests/supabase-auth-service.test.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 19[2mms[22m[39m
+ [32m✓[39m tests/auth-guard.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 24[2mms[22m[39m
+ [32m✓[39m tests/audio-call.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 2578[2mms[22m[39m
+ [32m✓[39m tests/matching-concurrency.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 2965[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 3 — Database Invariants and Matching Concurrency[2m > [22maccept vs timeout: expired offer cannot be accepted and returns request to queued [33m1611[2mms[22m[39m
+ [32m✓[39m tests/security-adversarial.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 2661[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 12 — Adversarial Security, IDOR & Privilege Escalation Tests[2m > [22mADVERSARIAL PRIVILEGE ESCALATION: Regular user cannot approve or execute payout batches [33m317[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 12 — Adversarial Security, IDOR & Privilege Escalation Tests[2m > [22mADVERSARIAL PRIVILEGE ESCALATION: Regular user cannot acknowledge safety cases or view analytics metrics [33m417[2mms[22m[39m
+ [32m✓[39m tests/finance-hardening.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 3103[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 8 — Real Finance, Refunds & Human-Gated Payouts[2m > [22mSTRICT INVARIANT: Payout execution strictly requires human finance approval [33m1111[2mms[22m[39m
+ [32m✓[39m tests/counselling-funnel.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 3151[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 9 — Counselling Funnel, Partner Transfer & Consent Invariants[2m > [22mSTRICT INVARIANT: Partner transfer requires prior explicit user consent [33m794[2mms[22m[39m
+ [32m✓[39m tests/completion-ratings-blocks.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 3242[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 6 — Session Completion, Bayesian Ratings & Blocks[2m > [22msession completion atomically updates DB state, sets duration, and frees listener presence [33m359[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 6 — Session Completion, Bayesian Ratings & Blocks[2m > [22msubmitting rating updates listener Bayesian quality score in Postgres [33m394[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 6 — Session Completion, Bayesian Ratings & Blocks[2m > [22mrejects duplicate rating on the same session with 409 Conflict [33m300[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 6 — Session Completion, Bayesian Ratings & Blocks[2m > [22mblock mutation bidirectionally excludes the pair from future matching [33m350[2mms[22m[39m
+ [32m✓[39m tests/safety-hardening.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 3272[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 7 — Real Safety System Hardening & Audit Logging[2m > [22mcreates safety case in database, safely terminates active session, and logs audit event [33m373[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 7 — Real Safety System Hardening & Audit Logging[2m > [22mclinical supervisor can acknowledge and resolve safety case [33m849[2mms[22m[39m
+ [32m✓[39m tests/routes.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32m✓[39m tests/analytics-erasure.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 3498[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Analytics[2m > [22mexecutes real DPDP 2025 erasure: scrubs DB PII, purges Supabase Auth, and preserves financial ledger [33m682[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 10 — Real DPDP 2025 Erasure, Auth Purging & K-Anonymity Analytics[2m > [22manalytics endpoint computes metrics from real DB tables and applies k-anonymity privacy safeguards [33m328[2mms[22m[39m
+ [32m✓[39m tests/completion.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32m✓[39m tests/auth.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32m✓[39m tests/counselling.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32m✓[39m tests/analytics.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32m✓[39m tests/safety.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m tests/presence.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m tests/finance.test.ts [2m([22m[2m1 test[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m tests/matching.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m tests/payment-order.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 1408[2mms[22m[39m
+ [32m✓[39m tests/auth-live-supabase.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 3051[2mms[22m[39m
+   [33m[2m✓[22m[39m Package 1 — Comprehensive Live Supabase Auth Integration[2m > [22mcross-user isolation: User A and User B receive distinct UUIDs and handles [33m446[2mms[22m[39m
+ [32m✓[39m tests/rls-hardening-11-personas.test.ts [2m([22m[2m36 tests[22m[2m)[22m[33m 6025[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m25 passed[39m[22m[90m (25)[39m
+[2m      Tests [22m [1m[32m168 passed[39m[22m[90m (168)[39m
+[2m   Start at [22m 00:26:08
+[2m   Duration [22m 7.86s[2m (transform 3.47s, setup 0ms, collect 14.70s, tests 36.90s, environment 8ms, prepare 9.71s)[22m
+

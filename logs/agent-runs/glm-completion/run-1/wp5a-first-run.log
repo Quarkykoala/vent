@@ -1,0 +1,31 @@
+$ vitest run "tests/support-request-flow.test.ts" "--maxWorkers=2" "--minWorkers=1"
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/lenovo/projects/vent/apps/web[39m
+
+ [31m❯[39m tests/support-request-flow.test.ts [2m([22m[2m6 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 935[2mms[22m[39m
+[31m   [31m×[31m F02/P4.1a — Durable authenticated support-request creation[2m > [22mignores client-supplied lifecycle fields: a state of queued is not persisted[90m 61[2mms[22m[31m[39m
+[31m     → expected [ 201, 200 ] to include 400[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/support-request-flow.test.ts[2m > [22mF02/P4.1a — Durable authenticated support-request creation[2m > [22mignores client-supplied lifecycle fields: a state of queued is not persisted
+[31m[1mAssertionError[22m: expected [ 201, 200 ] to include 400[39m
+[36m [2m❯[22m tests/support-request-flow.test.ts:[2m201:24[22m[39m
+    [90m199| [39m
+    [90m200| [39m    [90m// Unknown fields are stripped by the schema; server owns lifecycl[39m…
+    [90m201| [39m    [34mexpect[39m([[34m201[39m[33m,[39m [34m200[39m])[33m.[39m[34mtoContain[39m(res[33m.[39mstatus)[33m;[39m
+    [90m   | [39m                       [31m^[39m
+    [90m202| [39m    [35mconst[39m body [33m=[39m [35mawait[39m res[33m.[39m[34mjson[39m()[33m;[39m
+    [90m203| [39m    [34mexpect[39m(body[33m.[39mstate)[33m.[39m[34mtoBe[39m([32m'created'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m5 passed[39m[22m[90m (6)[39m
+[2m   Start at [22m 00:35:46
+[2m   Duration [22m 2.00s[2m (transform 274ms, setup 0ms, collect 566ms, tests 935ms, environment 0ms, prepare 318ms)[22m
+
+C:\Users\lenovo\projects\vent\apps\web:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @vent/web@0.1.0 test: `vitest run "tests/support-request-flow.test.ts" "--maxWorkers=2" "--minWorkers=1"`
+Exit status 1
