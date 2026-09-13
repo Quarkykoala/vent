@@ -248,18 +248,67 @@ describe('Package 7 — Safety authority, least privilege & audit atomicity', ()
     expect(res.status).toBe(404);
   });
 
-  it('rejects a non-participant attempting to terminate another session', async () => {
+  it('rejects a non-participant attempting to terminate another live session', async () => {
+    // Use a real session owned by somebody else. The old test used a random
+    // session id plus an invalid reason code, so it failed schema validation
+    // with 400 and never exercised the participant authorization boundary.
+    const { data: foreignRequest, error: requestError } = await admin
+      .from('support_requests')
+      .insert({
+        user_id: supervisorUserId,
+        topic: 'Work & Career Stress',
+        language: 'English',
+        service_tier: 'listener',
+        state: 'connected',
+        idempotency_key: `safety_foreign_req_${crypto.randomUUID()}`,
+      } as any)
+      .select()
+      .single();
+    expect(requestError).toBeNull();
+
+    const { data: foreignSession, error: sessionError } = await admin
+      .from('sessions')
+      .insert({
+        request_id: (foreignRequest as any).id,
+        user_id: supervisorUserId,
+        listener_id: testListenerProfileId,
+        room_name: `room_safety_foreign_${crypto.randomUUID().replace(/-/g, '')}`,
+        state: 'active',
+        started_at: new Date().toISOString(),
+      } as any)
+      .select()
+      .single();
+    expect(sessionError).toBeNull();
+
     const req = new NextRequest('http://localhost:3000/api/safety-cases', {
       method: 'POST',
       headers: { authorization: `Bearer ${testUserJwt}`, 'content-type': 'application/json' },
       body: JSON.stringify({
-        sessionId: crypto.randomUUID(),
+        sessionId: (foreignSession as any).id,
         severity: 'review',
-        reasonCodes: ['boundary_concern'],
+        reasonCodes: ['boundary_violation'],
         idempotencyKey: crypto.randomUUID(),
       }),
     });
     const res = await createCaseHandler(req);
-    expect([403, 500]).toContain(res.status);
+    expect(res.status).toBe(403);
+    const body = await res.json();
+    expect(body.code).toBe('UNAUTHORIZED_REPORTER');
+
+    const { data: unchangedSession } = await admin
+      .from('sessions')
+      .select('state')
+      .eq('id', (foreignSession as any).id)
+      .single();
+    expect((unchangedSession as any).state).toBe('active');
+
+    const { count: unauthorizedCases } = await admin
+      .from('safety_cases')
+      .select('id', { count: 'exact', head: true })
+      .eq('session_id', (foreignSession as any).id);
+    expect(unauthorizedCases).toBe(0);
+
+    await admin.from('sessions').delete().eq('id', (foreignSession as any).id);
+    await admin.from('support_requests').delete().eq('id', (foreignRequest as any).id);
   });
 });
