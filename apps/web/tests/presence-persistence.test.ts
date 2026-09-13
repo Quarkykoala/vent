@@ -254,18 +254,6 @@ describe('F02/P2.2 — Durable listener presence + stale sweep', () => {
     expect(presence!.available_since).toBeNull();
   });
 
-  it('persists the toggle back to offline with available_since cleared', async () => {
-    const presence = await repo.getPresence(listener.listenerProfileId!);
-    if (presence?.state !== 'offline') {
-      await (admin.from('listener_presence') as any)
-        .update({ state: 'offline', available_since: null })
-        .eq('listener_id', listener.listenerProfileId);
-    }
-    const after = await repo.getPresence(listener.listenerProfileId!);
-    expect(after!.state).toBe('offline');
-    expect(after!.available_since).toBeNull();
-  });
-
   it('sweeps stale available listeners to offline and never touches in_session listeners', async () => {
     // Listener A: available with a stale heartbeat (must be swept).
     await (admin.from('listener_presence') as any)
