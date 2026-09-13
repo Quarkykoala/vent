@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { getSupabaseAdmin } from '../../src/lib/supabase-server';
 
 function decodeBase32(input: string): Buffer {
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
@@ -34,8 +35,31 @@ function currentTotp(secret: string): string {
 /**
  * Elevate a real local Supabase session from AAL1 to AAL2 using a TOTP factor.
  * CI enables local TOTP enrollment/verification before `supabase start`.
+ *
+ * GoTrue uses the auth user's email as the TOTP account label. Several of our
+ * integration fixtures intentionally sign in by phone only, so ensure those
+ * local test users also have a deterministic email before enrolling TOTP.
+ * This changes test-fixture identity data only; production authorization still
+ * relies on a cryptographically validated access token carrying `aal2`.
  */
 export async function elevateTestSessionToAal2(client: any): Promise<string> {
+  const { data: currentUser, error: currentUserError } = await client.auth.getUser();
+  if (currentUserError || !currentUser?.user?.id) {
+    throw new Error(`Unable to read test auth user before MFA enrollment: ${currentUserError?.message ?? 'missing user'}`);
+  }
+
+  if (!currentUser.user.email) {
+    const admin = getSupabaseAdmin();
+    const testEmail = `mfa-${currentUser.user.id}@example.test`;
+    const { error: emailError } = await admin.auth.admin.updateUserById(currentUser.user.id, {
+      email: testEmail,
+      email_confirm: true,
+    });
+    if (emailError) {
+      throw new Error(`Unable to add test email required for TOTP enrollment: ${emailError.message}`);
+    }
+  }
+
   const { data: enrolled, error: enrollError } = await client.auth.mfa.enroll({
     factorType: 'totp',
     friendlyName: `test-${crypto.randomUUID().slice(0, 8)}`,
