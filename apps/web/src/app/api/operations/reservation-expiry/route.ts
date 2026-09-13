@@ -1,22 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { UserRole } from '@vent/domain';
 import { MatchingCoordinator } from '@/features/matching/coordinator';
 import {
   authenticateRequest,
-  requireRole,
+  requirePermission,
   handleAuthError,
 } from '@/features/auth/auth-guard';
 import { getSupabaseAdmin } from '@/lib/supabase-server';
 
 /**
- * Operations entrypoint for the reservation-expiry job. Staff or a scheduler
- * may call it with any reservation id; execution is idempotent — an offered
- * reservation past its TTL is expired exactly once, anything else is a no-op.
+ * Human operations entrypoint for the reservation-expiry job. Schedulers use
+ * the secret-protected operations cron endpoint. Execution is idempotent — an
+ * offered reservation past its TTL is expired exactly once; anything else is
+ * a no-op.
  */
 export async function POST(req: NextRequest) {
   try {
     const session = await authenticateRequest(req);
-    requireRole(session, [UserRole.LISTENER_OPS, UserRole.SUPER_ADMIN]);
+    requirePermission(session, 'canManageListeners');
 
     const json = await req.json().catch(() => ({}));
     const reservationId = (json as { reservationId?: unknown }).reservationId;
